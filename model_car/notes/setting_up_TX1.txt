@@ -1,0 +1,305 @@
+# Installing Caffe on Jetson TX1, starting from TK1 on 31 March 2016
+#
+# Install based primarily on this page:
+#   http://planspace.org/20150614-the_nvidia_jetson_tk1_with_caffe_on_mnist/
+#
+#
+# Frist, flash Jetpack to the Jetson TX1
+#  conntect ubuntu host to TX1 with micro USB
+#  run Jetpack---.run on host
+#  follow directions, using all defaults except need to select TX1 as opposed
+#  to TK1. After going into forced recovery mode, must press Enter (this is not
+#  obvious).
+#  Requires ~18 minutes.
+#
+# Shut down TX1, disconnect micro USB, power up.
+#
+# In system settings, turn of screen lock, set time zone
+#
+# --don't do this: ran ocv.sh in ~/OpenCV4Tegra to install openCV
+
+sudo apt-get --assume-yes install git
+git clone https://github.com/karlzipser/kzpy3.0.git
+mv kzpy3.0 kzpy3
+
+# in separate terminal,
+vi kzpy3/teg1/setting_up_TX1.txt
+
+sudo apt-get --assume-yes install \
+    libprotobuf-dev protobuf-compiler gfortran \
+    libboost-dev cmake libleveldb-dev libsnappy-dev \
+    libboost-thread-dev libboost-system-dev \
+    libatlas-base-dev libhdf5-serial-dev libgflags-dev \
+    libgoogle-glog-dev liblmdb-dev gcc-4.7 g++-4.7 \
+    python-numpy \
+    libboost-filesystem-dev \
+    python-dev \
+    libboost-python-dev 
+# above requires ~ 10 minutes
+
+git clone https://github.com/BVLC/caffe.git
+cd caffe
+cp Makefile.config.example Makefile.config
+
+# Don't use the python layer. No changes necessary to Makefile.config
+
+make -j 4 all
+# make -j 4 test
+# make -j 4 runtest # this takes forever
+
+build/tools/caffe time --model=models/bvlc_alexnet/deploy.prototxt --gpu=0
+
+		TX1 Alexnet benchmarks
+		Batchsize = 10
+		with GPU
+		I1007 13:24:02.158314  6710 caffe.cpp:377] Average Forward pass: 171.171 ms.
+		I1007 13:24:02.158380  6710 caffe.cpp:379] Average Backward pass: 152.4 ms.
+		I1007 13:24:02.158437  6710 caffe.cpp:381] Average Forward-Backward: 323.99 ms.
+
+# if error, "libcudart.so.7.0: cannot open shared object file", do:
+#      sudo ldconfig /usr/local/cuda/lib
+# [see: http://qinhongwei.com/2016/05/08/how-to-install-caffe-on-NVIDIA-TX1/]
+#
+
+
+
+sudo apt-get --assume-yes install python-pip 
+sudo easy_install cython 
+
+# this was necessary after I didn't include all NVIDA visionworks packages in the install.
+# sudo apt-get --assume-yes install libfreetype6-dev
+
+# [takes a long time, is required for import caffe to work]
+sudo pip install -U scikit-image
+sudo pip install protobuf
+
+make pycaffe
+
+# add to .bashrc, at end:
+export PYTHONPATH=~/caffe/python:$PYTHONPATH 
+# at this point, caffe appears to work in python.
+
+
+
+############# install ROS ################
+# ROS   http://wiki.ros.org/indigo/Installation/UbuntuARM
+# not necessary: uncomment lines in /etc/apt/sources.list
+sudo update-locale LANG=C LANGUAGE=C LC_ALL=C LC_MESSAGES=POSIX
+sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu trusty main" > /etc/apt/sources.list.d/ros-latest.list'
+sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net --recv-key 0xB01FA116
+sudo apt-get update
+sudo apt-get install ros-indigo-desktop
+
+sudo apt-get install python-rosdep
+sudo rosdep init
+rosdep update
+
+echo "source /opt/ros/indigo/setup.bash" >> ~/.bashrc
+source ~/.bashrc
+
+###################
+
+ZED setup: note, ZED_SDK_Linux_JTX1_v1.1.0_32b_JP21.run works, v1.1.1_64b doesn't.
+
+test ZED with: /usr/local/zed/tools/ZED\ Explorer
+
+#################
+### Setup ROS ###
+#################
+
+Add to .bashrc: source /opt/ros/indigo/setup.bash
+
+$ mkdir -p ~/catkin_ws/src
+$ cd ~/catkin_ws/src
+$ catkin_init_workspace
+$ cd ~/catkin_ws/
+$ catkin_make
+
+Add to .bashrc: source ~/catkin_ws/devel/setup.bash
+
+#####################
+### Setup ZED ROS ###
+#####################
+
+$ sudo apt-get install libpcl-1.7-all ros-indigo-pcl-ros ros-indigo-image-view
+$ cd ~/catkin_ws/src
+$ git clone https://github.com/stereolabs/zed-ros-wrapper.git
+
+It may be necessary to do this: in zed-ros-wrapper/CMakeLists.txt put in:
+SET(CUDA_VERSION "7.0")
+
+$ cd ~/catkin_ws
+$ catkin_make
+
+Test that it works
+$ roslaunch zed_wrapper zed.launch
+$ rosrun image_view image_view image:=/camera/right/image_rect_color
+
+######################
+### Setup our code ###
+######################
+
+$ git clone https://github.com/rctn/bair_car.git
+$ roslaunch bair_car bair_car.launch use_zed:=true
+$ rosrun image_view image_view image:=/bair_car/zed/right/image_rect_color
+
+And rostopic echo all the topics to check
+
+###########################
+### Running experiments ###
+###########################
+
+Go into bair_car.launch and change the bagpath to where you want to record data to (e.g. flash drive)
+
+$ roslaunch bair_car bair_car.launch use_zed:=true record:=true
+
+
+
+######### prompt,e.g. #########
+PS1='Mr_Audi:\W\ $ '
+
+############## screen ########
+# http://www.howtogeek.com/howto/ubuntu/keep-your-ssh-session-running-when-you-disconnect/
+sudo apt-get install screen
+#
+# To disconnect (but leave the session running), Hit Ctrl + A and then Ctrl + D in immediate succession. You will see the message [detached]
+#
+# To reconnect to an already running session, screen -r
+##############
+
+####### sudo, no password #########
+# http://askubuntu.com/questions/147241/execute-sudo-without-password
+sudo visudo
+# add at or near end:
+<username> ALL=(ALL) NOPASSWD: ALL
+######
+
+
+
+########### SSH login without password, see: ############
+# http://www.linuxproblem.org/art_9.html
+# a@A:~> cat .ssh/id_rsa.pub | ssh b@B 'cat >> .ssh/authorized_keys'
+
+
+# play frames in folder
+mplayer -fps 26 mf://*.png
+
+# make git store password for an hour
+git config --global credential.helper "cache --timeout=3600"
+
+
+
+################# setting time from command line (for when in Tilden) ##############
+# https://codeghar.wordpress.com/2007/12/06/manage-time-in-ubuntu-through-command-line/
+Set Time
+To change time means to set a new time. To set time in Ubuntu (or any Linux), just run the following command
+sudo date newdatetimestring
+where newdatetimestring has to follow the format nnddhhmmyyyy.ss which is described below
+nn is a two digit month, between 01 to 12
+dd is a two digit day, between 01 and 31, with the regular rules for days according to month and year applying
+hh is two digit hour, using the 24-hour period so it is between 00 and 23
+mm is two digit minute, between 00 and 59
+yyyy is the year; it can be two digit or four digit: your choice. I prefer to use four digit years whenever I can for better clarity and less confusion
+ss is two digit seconds. Notice the period ‘.’ before the ss.
+Let’s say you want to set your computer’s new time to December 6, 2007, 22:43:55, then you would use:
+sudo date 120622432007.55
+########
+
+############# data collection shortcuts (smartphone login) #######
+#
+alias rhz='rostopic hz /bair_car/zed/left/image_rect_color'
+alias rls='ls -al /media/ubuntu/rosbags'
+alias rrm='rm catkin_ws/src/bair_car/rosbags/*'
+alias rlog='rm ~/.ros/log/*'
+alias rla='roslaunch bair_car bair_car.launch use_zed:=true record:=true'
+alias rlac='roslaunch bair_car bair_car.launch use_zed:=true record:=true caffe:=true'
+alias rgy='rostopic echo /bair_car/gyro'
+alias rgp='rostopic echo /bair_car/gps'
+alias rac='rostopic echo /bair_car/acc'
+alias rst='rostopic echo /bair_car/steer'
+alias rmo='rostopic echo /bair_car/motor'
+alias ren='rostopic echo /bair_car/encoder'
+alias rcd='cd /media/ubuntu/rosbags'
+alias ssd='sudo shutdown -h now'
+alias rcn='echo $COMPUTER_NAME'
+alias riv='rosrun image_view image_view image:=/bair_car/zed/right/image_rect_color'
+
+alias test_caffe='cd ~/caffe; build/tools/caffe time --model=models/bvlc_alexnet/deploy.prototxt --gpu=0'
+alias zede=
+
+#ln -s ~/kzpy3/teg2/bdd_car_versions/bdd_car_GPS2/bair_car/ bair_car
+######################## for .bashrc from MacBook #################
+#
+#echo "source ~/8August2016_common_aliases"
+#export DISPLAY=:0.0
+alias gacp="git add -u;git commit -m 'gacp';git push origin master"
+alias gckzpy3="git clone https://github.com/karlzipser/kzpy3.0.git"
+alias ipy="ipython --no-banner"
+export PYTHONPATH=~:$PYTHONPATH
+#export PYTHONPATH=~/kzpy3/caf/layers:$PYTHONPATH
+#export PYTHONPATH=~/kzpy3/caf2/layers:$PYTHONPATH
+export PYTHONSTARTUP=~/kzpy3/vis.py
+export PATH=~/kzpy3/scripts:$PATH
+export COMPUTER_NAME="Mr. ---"
+#
+######################################################
+
+
+
+git clone repoman@repo.eecs.berkeley.edu:projects/bdd/rc-car.git
+
+
+
+http://unix.stackexchange.com/questions/22367/where-are-networkmanagers-wifi-settings-stored
+ls /etc/NetworkManager/system-connections/
+
+
+set date over network:
+
+sudo date --set="$(ssh karlzipser@192.168.43.243 date)"
+
+
+http://wiki.ros.org/web_video_server
+
+
+
+
+
+
+
+PS1="Mr_Silver: \W$ " #"Mr_Blue_original_clone: \W$ "
+export PATH=/usr/local/cuda-7.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+export LD_LIBRARY_PATH=/usr/local/cuda-7.0/lib:
+export __GL_PERFMON_MODE=1
+
+source /opt/ros/indigo/setup.bash
+source ~/catkin_ws/devel/setup.bash
+source ~/kzpy3/teg2/bashrc
+
+
+if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
+  SESSION_TYPE=remote/ssh
+  echo "This is a remote/ssh login"
+        echo "sleep before rstat"
+        sleep 30
+  rstat
+# many other tests omitted
+else
+        echo "sleep before rla..."
+        sleep 30
+        rrm
+        rlog
+        rla
+#       (rla 3>&1 1>&2 2>&3 | grep -v "slMat2cvMat: mat type currently not supported 0 0") 3>&1 1>&2 2>&3
+
+fi
+
+
+sudo service network-manager restart
+
+sudo nmcli d wifi connect "AM_phone" password ""
+sudo rm -r kzpy3
+git clone https://github.com/karlzipser/kzpy3.1.git
+mv kzpy3.1 kzpy3
+git clone https://github.com/karlzipser/caffe_current.git
+
