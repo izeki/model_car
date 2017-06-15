@@ -12,6 +12,7 @@ alias rlab='(rla 3>&1 1>&2 2>&3 | grep -v "slMat2cvMat: mat type currently not s
 #alias rlac='roslaunch bair_car bair_car.launch use_zed:=true record:=true caffe:=true'
 #alias rgla='cd ~/kzpy3;git pull;cd;roslaunch bair_car bair_car.launch use_zed:=true record:=true'
 alias rgla='cd ~/model_car;git pull;cd;roslaunch bair_car bair_car.launch use_zed:=true record:=true'
+alias rglna='cd ~/model_car;git pull;cd;roslaunch bair_car bair_car.launch use_zed:=true record:=false'
 alias rgy='rostopic echo /bair_car/gyro'
 alias rgp='rostopic echo /bair_car/gps'
 alias rac='rostopic echo /bair_car/acc'
@@ -68,4 +69,4 @@ alias fixScreen='DISPLAY=:0 xrandr --output HDMI-0 --mode 1024x768'
 ##fi
 # ARUCO CODE PYTHON PATH CHANGE
 
-export PYTHONPATH=$PYTHONPATH:~/model_car
+export PYTHONPATH="$HOME/model_car:$PYTHONPATH"

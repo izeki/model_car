@@ -298,13 +298,16 @@ try:
 		if reload_timer.check():
 			#reload(run_params)
 			#from run_params import *
-			reload(kzpy3.teg2.car_run_params)
-			from kzpy3.teg2.car_run_params import *
+			#reload(kzpy3.teg2.car_run_params)
+			#from kzpy3.teg2.car_run_params import *
+			reload(model_car.car_run_params)
+			from model_car.car_run_params import *
 			model_name_pub.publish(std_msgs.msg.String(weights_file_path))
 			reload_timer.reset()
 
 		if git_pull_timer.check():
-			unix(opjh('kzpy3/kzpy3_git_pull.sh'))
+			#unix(opjh('kzpy3/kzpy3_git_pull.sh'))
+			unix(opjh('model_car/model_car_git_pull.sh'))
 			git_pull_timer.reset()
 
 except Exception as e:

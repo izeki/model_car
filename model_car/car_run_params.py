@@ -29,8 +29,8 @@ Caf = 0.0
 Racing = 0.0
 Location =  'rewrite_test' # 'local' #'Smyth_tape'
 
-solver_file_path = opjh("model_car/net_training/z2_color/solver_live.prototxt")
-weights_file_path = opjh("model_car/net_training/z2_color/z2_color.caffemodel")
+solver_file_path = opjh("model_car/model_car/net_training/z2_color/solver_live.prototxt")
+weights_file_path = opjh("model_car/model_car/net_training/z2_color/z2_color.caffemodel")
 #solver_file_path = opjh("kzpy3/caf5/z2_color/solver_live.prototxt")
 #weights_file_path = opjh("kzpy3/caf6/z2_color_more/z2_color_more.caffemodel")
 #weights_file_path = opjh("kzpy3/caf6/z2_color_more/z2_color_more_2.caffemodel")

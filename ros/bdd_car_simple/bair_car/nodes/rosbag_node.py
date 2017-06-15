@@ -30,7 +30,7 @@ if __name__ == '__main__':
     unix('mkdir  '+opj(bag_mv_folder,'.bair_car'))
 
     unix('scp -r /home/ubuntu/catkin_ws/src/bair_car ' + opj(bag_mv_folder,'.bair_car'))
-	unix('scp /home/ubuntu/net_training/z2_color/z2.caffemodel ' + opj(bag_mv_folder,'.caf'))
+    unix('scp /home/ubuntu/net_training/z2_color/z2.caffemodel ' + opj(bag_mv_folder,'.caf'))
     #unix('scp /home/ubuntu/kzpy3/caf3/z2/z2.caffemodel ' + opj(bag_mv_folder,'.caf'))
     
     assert(os.path.exists(bag_rec_folder))
