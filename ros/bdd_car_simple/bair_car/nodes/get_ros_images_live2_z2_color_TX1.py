@@ -9,7 +9,7 @@ try:
 	########################################################
 	#          CAFFE SETUP SECTION
 	import caffe
-	caffe.set_device(0)
+        caffe.set_device(0)
 	caffe.set_mode_gpu()
 	from model_car.utils import *
 	from model_car.data_analysis.data_parsing.get_data_from_bag_files import *
