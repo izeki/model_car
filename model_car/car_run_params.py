@@ -27,20 +27,11 @@ Play = 0.
 Furtive = 0.
 Caf = 0.0
 Racing = 0.0
+#meta_data_label = {'Direct'=Direct, 'Follow'=Follow, 'Play'=Play, 'Furtive'=Furtive, 'Caf'=Cafe, 'Racing'=Racing}
 Location =  'rewrite_test' # 'local' #'Smyth_tape'
 
 solver_file_path = opjh("model_car/model_car/net_training/z2_color/solver_live.prototxt")
 weights_file_path = opjh("model_car/model_car/net_training/z2_color/z2_color.caffemodel")
-#solver_file_path = opjh("kzpy3/caf5/z2_color/solver_live.prototxt")
-#weights_file_path = opjh("kzpy3/caf6/z2_color_more/z2_color_more.caffemodel")
-#weights_file_path = opjh("kzpy3/caf6/z2_color_more/z2_color_more_2.caffemodel")
-#weights_file_path = opjh("kzpy3/caf7/z2_color/z2_color_state_1_5_6_7_iter_4000000.caffemodel")
-#weights_file_path = opjh("kzpy3/caf7/z2_color/z2_color_state_1_5_6_7_iter_6000000.caffemodel")
-#weights_file_path = opjh("kzpy3/caf7/z2_color/z2_color_state_1_5_6_7_iter_10900000.caffemodel")
-#weights_file_path = opjh("kzpy3/caf7/z2_color/z2_color_state_1_5_6_7_iter_8000000.caffemodel")
-#weights_file_path = opjh("kzpy3/caf6/z2_color_more/z2_color_more_3.caffemodel")
-#weights_file_path = opjh("kzpy3/caf7/z2_color/solver_state_1_5_6_7_plus_extra_Smyth_racing_iter_400000.caffemodel")
-#weights_file_path = opjh("kzpy3/caf5/z2_color/z2_color.caffemodel")
 verbose = False
 use_caffe = True
 steer_gain = 1.0
