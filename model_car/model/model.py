@@ -281,7 +281,7 @@ def splittensor(axis=1, ratio_split=1, id_split=0, **kwargs):
 
 def conv2Dgroup(filters, kernel_size, strides, padding, activation, name, data_format, group=1, axis=1, **kwargs):
     def f(input):
-        return Merge([
+        return concatenate([
                          Conv2D(filters=filters // group, kernel_size=kernel_size, 
                                 strides=strides, padding=padding, activation=activation, 
                                 data_format=data_format, name=name+'_'+str(i)) (
@@ -289,7 +289,7 @@ def conv2Dgroup(filters, kernel_size, strides, padding, activation, name, data_f
                                          ratio_split=group,
                                          id_split=i)(input))
                          for i in range(group)
-                         ], mode='concat', concat_axis=axis)
+                         ], axis=axis, name=name)
 
     return f
 
