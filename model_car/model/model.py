@@ -279,7 +279,7 @@ def splittensor(axis=1, ratio_split=1, id_split=0, **kwargs):
     return Lambda(f, output_shape=lambda input_shape: g(input_shape), **kwargs)
 
 
-def conv2Dgroup(group=1, axis=1, filters, kernel_size, strides, padding, activation, name, data_format, **kwargs):
+def conv2Dgroup(filters, kernel_size, strides, padding, activation, name, data_format, group=1, axis=1, **kwargs):
     def f(input):
         return Merge([
                          Conv2D(filters // group, kernel_size, strides, padding, activation, data_format, name+'_'+i) (
