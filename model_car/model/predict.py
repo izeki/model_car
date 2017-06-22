@@ -1,5 +1,6 @@
 import numpy as np
 from model import get_model
+from keras.layers import Input
 
 def get_trained_model(weights_path, input_width=672, input_height=376):
     # Returns a model with loaded weights.
@@ -52,6 +53,7 @@ def forward_pass(trained_model, ZED_data, input_width, input_height,  meta_data_
     ZED_input[0,9,:,:]= ZED_data['ZED_data_left_frame2'][:,:,2]
     ZED_input[0,10,:,:]= ZED_data['ZED_data_right_frame1'][:,:,2]
     ZED_input[0,11,:,:]= ZED_data['ZED_data_right_frame2'][:,:,2]
+    
     
     meta_input = np.zeros(1,6, input_width, input_height)
     meta_input[0,0,:,:]= meta_data_label['Racing']
