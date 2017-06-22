@@ -20,7 +20,8 @@ try:
         if weights_file_path != None:
             print "loading " + weights_file_path
         solver = get_trained_model(weights_file_path)
-        print(solver.summary())
+        summary = solver.to_json
+        print(summary)
         return solver
     solver = setup_solver(weights_file_path)
     #
