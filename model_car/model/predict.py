@@ -16,6 +16,8 @@ def get_trained_model(weights_path, input_width=672, input_height=376):
         for layer in model.layers:
             if layer.name in weights_data.keys():
                 layer_weights = weights_data[layer.name]
+                if layer.name=='ip1':
+                    print layer_weights['weights'].shape
                 layer.set_weights((layer_weights['weights'],  layer_weights['biases']))
 
     def load_keras_weights():
