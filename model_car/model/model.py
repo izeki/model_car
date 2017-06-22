@@ -250,7 +250,7 @@ def eucl_dist_output_shape(shapes):
 
 def get_model(channel=3, meta_label=6, input_width=672, input_height=376, phase='train'):
     ZED_data = Input(shape=(channel*4,input_width, input_height), name='ZED_data')
-    metadata =  Input(shape=(meta_label, input_width, input_height), name='metadata')
+    metadata =  Input(shape=(meta_label, 26, 13), name='metadata')
     steer_motor_target_data = Input(shape=(1,20), name='steer_motor_target_data')    
     
     ZED_data_pool1 = AveragePooling2D(pool_size=(3, 3), strides=(2,2), padding='valid', data_format='channels_first', name='ZED_data_pool1')(ZED_data)
