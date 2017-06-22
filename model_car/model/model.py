@@ -203,7 +203,7 @@ def get_model(channel=3, meta_label=6, input_width=672, input_height=376, phase=
     conv2_pool = MaxPooling2D(pool_size=(3, 3), strides=(2,2), padding='valid', data_format='channels_first', name='conv1_pool')(conv2)
     
     ip1 = Dense(units=512, activation='relu', name='ip1')(conv2_pool)
-    ip2 = Dense(units=20, activation='relu', name='ip1')(ip1)
+    ip2 = Dense(units=20, activation='relu', name='ip2')(ip1)
     
     if phase == 'train':
         euclidean = Lambda(euclidean_distance, output_shape=eucl_dist_output_shape)([steer_motor_target_data, ip2])
