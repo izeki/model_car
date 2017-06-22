@@ -199,12 +199,12 @@ def get_model(channel=3, meta_label=6, input_width=672, input_height=376, phase=
     metadata =  Input(shape=(meta_label, input_width, input_height), name='metadata')
     steer_motor_target_data = Input(shape=(1,20), name='steer_motor_target_data')    
    
-    conv1 = Conv2D(filters=96, kernel_size=11, strides=(3,3), padding='valid', activation='relu', name='conv1')(ZED_data)
-    conv1_pool = MaxPooling2D(pool_size=(3, 3), strides=(2,2), padding='valid', name='conv1_pool')(conv1)
+    conv1 = Conv2D(filters=96, kernel_size=11, strides=(3,3), padding='valid', activation='relu', data_format='channels_first', name='conv1')(ZED_data)
+    conv1_pool = MaxPooling2D(pool_size=(3, 3), strides=(2,2), padding='valid', data_format='channels_first', name='conv1_pool')(conv1)
     
     conv1_metadata_concat = concatenate([ZED_data, metadata], axis=-3, name='conv1_metadata_concat')
-    conv2 = Conv2D(filters=256, kernel_size=3, strides=(2,2), padding='valid', activation='relu', name='conv2')(conv1_metadata_concat)
-    conv2_pool = MaxPooling2D(pool_size=(3, 3), strides=(2,2), padding='valid', name='conv1_pool')(conv2)
+    conv2 = Conv2D(filters=256, kernel_size=3, strides=(2,2), padding='valid', activation='relu', data_format='channels_first', name='conv2')(conv1_metadata_concat)
+    conv2_pool = MaxPooling2D(pool_size=(3, 3), strides=(2,2), padding='valid', data_format='channels_first', name='conv1_pool')(conv2)
     
     ip1 = Dense(units=512, activation='relu', name='ip1')(conv2_pool)
     ip2 = Dense(units=20, activation='relu', name='ip1')(ip1)
