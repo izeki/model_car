@@ -1,5 +1,5 @@
 from keras.models import Model
-from keras.layers import Input, BatchNormalization, AveragePooling2D, Conv2D, MaxPooling2D, Dense, ZeroPadding2D, concatenate
+from keras.layers import Input, BatchNormalization, AveragePooling2D, Conv2D, MaxPooling2D, Dense, ZeroPadding2D,  Reshape, concatenate
 from keras import regularizers
 from keras.layers.core import Lambda
 from keras.layers import Activation, Merge
