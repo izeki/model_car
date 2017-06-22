@@ -1,5 +1,5 @@
 from keras.models import Model
-from keras.layers import Input, BatchNormalization, AveragePooling2D, Conv2D, MaxPooling2D, Dense, concatenate
+from keras.layers import Input, BatchNormalization, AveragePooling2D, Conv2D, MaxPooling2D, Dense, ZeroPadding2D, concatenate
 from keras import regularizers
 from keras.layers.core import Lambda
 from keras.layers import Activation, Merge
@@ -296,23 +296,25 @@ def conv2Dgroup(filters, kernel_size, strides, padding, activation, name, data_f
 
 
 def get_model(channel=3, meta_label=6, input_width=672, input_height=376, phase='train'):
-    ZED_data = Input(shape=(channel*4,input_height, input_width), name='ZED_data')
-    metadata =  Input(shape=(meta_label, 13,  26), name='metadata')
+    ZED_data = Input(shape=(channel*4, input_height, input_width), name='ZED_data')
+    metadata =  Input(shape=(meta_label, 14, 26), name='metadata')
     steer_motor_target_data = Input(shape=(1,20), name='steer_motor_target_data')    
     
-    ZED_data_pool1 = AveragePooling2D(pool_size=(3, 3), strides=(2,2), padding='valid', data_format='channels_first', name='ZED_data_pool1')(ZED_data)
+    ZED_data_pad = ZeroPadding2D(padding=(1, 1), data_format='channels_first')(ZED_data)
+    ZED_data_pool1 = AveragePooling2D(pool_size=(3, 3), strides=(2,2), padding='valid', data_format='channels_first', name='ZED_data_pool1')(ZED_data_pad)
+    ZED_data_pool1 = ZeroPadding2D(padding=(1, 1), data_format='channels_first')(ZED_data_pool1)
     ZED_data_pool2 = AveragePooling2D(pool_size=(3, 3), strides=(2,2), padding='valid', data_format='channels_first', name='ZED_data_pool2')(ZED_data_pool1)
     ZED_data_pool2_scale = BatchNormalization(axis=1, name='ZED_data_pool2_scale')(ZED_data_pool2)
     
     conv1 = Conv2D(filters=96, kernel_size=11, strides=(3,3), padding='valid', activation='relu', data_format='channels_first', name='conv1')(ZED_data_pool2_scale)
+    conv1 = ZeroPadding2D(padding=(1, 0), data_format='channels_first')(conv1)
     conv1_pool = MaxPooling2D(pool_size=(3, 3), strides=(2,2), padding='valid', data_format='channels_first', name='conv1_pool')(conv1)
-    
     conv1_metadata_concat = concatenate([conv1_pool, metadata], axis=-3, name='conv1_metadata_concat')
     conv2 = conv2Dgroup(group=2, axis=-3, filters=256, kernel_size=3, strides=(2,2), padding='valid', activation='relu', data_format='channels_first', name='conv2')(conv1_metadata_concat)
+    conv2 = ZeroPadding2D(padding=(1, 1), data_format='channels_first')(conv2)
     conv2_pool = MaxPooling2D(pool_size=(3, 3), strides=(2,2), padding='valid', data_format='channels_first', name='conv2_pool')(conv2)
-    
     ip1 = Dense(units=512, activation='relu', name='ip1')(conv2_pool)
-    ip2 = Dense(units=20,  name='ip2')(ip1)
+    ip2 = Dense(units=20, name='ip2')(ip1)
     
     if phase == 'train':
         euclidean = Lambda(euclidean_distance, output_shape=eucl_dist_output_shape)([steer_motor_target_data, ip2])
