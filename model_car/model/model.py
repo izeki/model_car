@@ -289,7 +289,7 @@ def conv2Dgroup(filters, kernel_size, strides, padding, activation, name, data_f
                                          ratio_split=group,
                                          id_split=i)(input))
                          for i in range(group)
-                         ], axis=axis, name=name)
+                         ], axis=axis)
 
     return f
 
