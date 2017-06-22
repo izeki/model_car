@@ -296,7 +296,7 @@ def conv2Dgroup(filters, kernel_size, strides, padding, activation, name, data_f
 
 
 def get_model(channel=3, meta_label=6, input_width=672, input_height=376, phase='train'):
-    ZED_data = Input(shape=(channel*4,input_width, input_height), name='ZED_data')
+    ZED_data = Input(shape=(channel*4,input_height, input_width), name='ZED_data')
     metadata =  Input(shape=(meta_label, 26, 13), name='metadata')
     steer_motor_target_data = Input(shape=(1,20), name='steer_motor_target_data')    
     
