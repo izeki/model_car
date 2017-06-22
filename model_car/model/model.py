@@ -1,9 +1,9 @@
 from keras.models import Model
 from keras.layers import Input, BatchNormalization, AveragePooling2D, Conv2D, MaxPooling2D, Dense, concatenate
 from keras import regularizers
+from keras.layers.core import Lambda, Merge
 from keras.layers import Activation
-import keras as k
-
+from keras import backend as K
 
 """
 Karl's model car model:
@@ -238,7 +238,9 @@ layer {
 
 
 #### keras does not implement the EuclideanLoss layer...################################
-
+#
+#      https://github.com/fchollet/keras/blob/master/examples/mnist_siamese_graph.py
+#
 def euclidean_distance(vects):
     x, y = vects
     return K.sqrt(K.maximum(K.sum(K.square(x - y), axis=1, keepdims=True), K.epsilon()))
@@ -246,6 +248,49 @@ def euclidean_distance(vects):
 def eucl_dist_output_shape(shapes):
     shape1, shape2 = shapes
     return (shape1[0], 1)    
+
+### keras doesnot implement group convolution ######################################
+#
+#    https://github.com/heuritech/convnets-keras/blob/master/convnetskeras/convnets.py
+#
+
+def splittensor(axis=1, ratio_split=1, id_split=0, **kwargs):
+    def f(X):
+        div = X.shape[axis] // ratio_split
+
+        if axis == 0:
+            output = X[id_split * div:(id_split + 1) * div, :, :, :]
+        elif axis == 1:
+            output = X[:, id_split * div:(id_split + 1) * div, :, :]
+        elif axis == 2:
+            output = X[:, :, id_split * div:(id_split + 1) * div, :]
+        elif axis == 3:
+            output = X[:, :, :, id_split * div:(id_split + 1) * div]
+        else:
+            raise ValueError('This axis is not possible')
+
+        return output
+
+    def g(input_shape):
+        output_shape = list(input_shape)
+        output_shape[axis] = output_shape[axis] // ratio_split
+        return tuple(output_shape)
+
+    return Lambda(f, output_shape=lambda input_shape: g(input_shape), **kwargs)
+
+
+def conv2Dgroup(group=1, axis=1, filters, kernel_size, strides, padding, activation, name, data_format, **kwargs):
+    def f(input):
+        return Merge([
+                         Conv2D(filters // group, kernel_size, strides, padding, activation, data_format, name+'_'+i) (
+                             splittensor(axis=axis,
+                                         ratio_split=group,
+                                         id_split=i)(input))
+                         for i in range(group)
+                         ], mode='concat', concat_axis=axis)
+
+    return f
+
 
 
 def get_model(channel=3, meta_label=6, input_width=672, input_height=376, phase='train'):
@@ -261,7 +306,7 @@ def get_model(channel=3, meta_label=6, input_width=672, input_height=376, phase=
     conv1_pool = MaxPooling2D(pool_size=(3, 3), strides=(2,2), padding='valid', data_format='channels_first', name='conv1_pool')(conv1)
     
     conv1_metadata_concat = concatenate([conv1_pool, metadata], axis=-3, name='conv1_metadata_concat')
-    conv2 = Conv2D(filters=256, kernel_size=3, strides=(2,2), padding='valid', activation='relu', data_format='channels_first', name='conv2')(conv1_metadata_concat)
+    conv2 = conv2Dgroup(group=2, axis=-3, filters=256, kernel_size=3, strides=(2,2), padding='valid', activation='relu', data_format='channels_first', name='conv2')(conv1_metadata_concat)
     conv2_pool = MaxPooling2D(pool_size=(3, 3), strides=(2,2), padding='valid', data_format='channels_first', name='conv2_pool')(conv2)
     
     ip1 = Dense(units=512, activation='relu', name='ip1')(conv2_pool)
