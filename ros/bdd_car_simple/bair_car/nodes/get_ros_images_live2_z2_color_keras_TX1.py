@@ -8,7 +8,7 @@ try:
 
     ########################################################
     #          KARAS SETUP SECTION
-    from model_car.predict import get_trained_model, forward_pass
+    from model_car.model.predict import get_trained_model, forward_pass
     from model_car.utils import *
     from model_car.data_analysis.data_parsing.get_data_from_bag_files import *
     import cv2
