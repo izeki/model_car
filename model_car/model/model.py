@@ -310,11 +310,14 @@ def get_model(channel=3, meta_label=6, input_width=672, input_height=376, phase=
     conv1 = ZeroPadding2D(padding=(1, 0), data_format='channels_first')(conv1)
     conv1_pool = MaxPooling2D(pool_size=(3, 3), strides=(2,2), padding='valid', data_format='channels_first', name='conv1_pool')(conv1)
     conv1_metadata_concat = concatenate([conv1_pool, metadata], axis=-3, name='conv1_metadata_concat')
+    
     conv2 = conv2Dgroup(group=2, axis=-3, filters=256, kernel_size=3, strides=(2,2), padding='valid', activation='relu', data_format='channels_first', name='conv2')(conv1_metadata_concat)
     conv2 = ZeroPadding2D(padding=(1, 1), data_format='channels_first')(conv2)
     conv2_pool = MaxPooling2D(pool_size=(3, 3), strides=(2,2), padding='valid', data_format='channels_first', name='conv2_pool')(conv2)
-    ip1 = Dense(units=512, activation='relu', name='ip1')(conv2_pool)
-    ip2 = Dense(units=20, name='ip2')(ip1)
+    conv2_pool = Reshape((1,256*3*6))(conv2_pool)
+    
+    ip1 = Dense(units=512, activation='relu', use_bias=False, name='ip1')(conv2_pool)
+    ip2 = Dense(units=20, use_bias=False, name='ip2')(ip1)
     
     if phase == 'train':
         euclidean = Lambda(euclidean_distance, output_shape=eucl_dist_output_shape)([steer_motor_target_data, ip2])
