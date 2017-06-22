@@ -285,7 +285,7 @@ def conv2Dgroup(filters, kernel_size, strides, padding, activation, name, data_f
                          Conv2D(filters=filters // group, kernel_size=kernel_size, 
                                 strides=strides, padding=padding, activation=activation, 
                                 data_format=data_format, name=name+'_'+str(i)) (
-                             splittensor(axis=axis,
+                             splittensor(axis=1,
                                          ratio_split=group,
                                          id_split=i)(input))
                          for i in range(group)
