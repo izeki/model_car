@@ -254,8 +254,8 @@ def get_model(channel=3, meta_label=6, input_width=672, input_height=376, phase=
     steer_motor_target_data = Input(shape=(1,20), name='steer_motor_target_data')    
     
     ZED_data_pool1 = AveragePooling2D(pool_size=(3, 3), strides=(2,2), padding='valid', data_format='channels_first', name='ZED_data_pool1')(ZED_data)
-    ZED_data_pool2 = AveragePooling2D(pool_size=(3, 3), strides=(2,2), padding='valid', data_format='channels_first', name='ZED_data_pool1')(ZED_data_pool1)
-    ZED_data_pool2_scale = BatchNormalization(axis=1)(ZED_data_pool2)
+    ZED_data_pool2 = AveragePooling2D(pool_size=(3, 3), strides=(2,2), padding='valid', data_format='channels_first', name='ZED_data_pool2')(ZED_data_pool1)
+    ZED_data_pool2_scale = BatchNormalization(axis=1, name='ZED_data_pool2_scale')(ZED_data_pool2)
     
     conv1 = Conv2D(filters=96, kernel_size=11, strides=(3,3), padding='valid', activation='relu', data_format='channels_first', name='conv1')(ZED_data_pool2_scale)
     conv1_pool = MaxPooling2D(pool_size=(3, 3), strides=(2,2), padding='valid', data_format='channels_first', name='conv1_pool')(conv1)
