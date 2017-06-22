@@ -194,8 +194,8 @@ try:
                         r0 = right_list[-2]
                         r1 = right_list[-1]
                         
-                        ZED_data = {'ZED_data_left_frame1'=l0, 'ZED_data_left_frame2'=l1, 'ZED_data_right_frame1'=r0, 'ZED_data_right_frame2'=r1}
-                        meta_data_label = {'Direct'=Direct, 'Follow'=Follow, 'Play'=Play, 'Furtive'=Furtive, 'Caf'=Cafe, 'Racing'=Racing}
+                        ZED_data = {'ZED_data_left_frame1': l0, 'ZED_data_left_frame2': l1, 'ZED_data_right_frame1': r0, 'ZED_data_right_frame2': r1}
+                        meta_data_label = {'Direct': Direct, 'Follow': Follow, 'Play': Play, 'Furtive': Furtive, 'Caf': Cafe, 'Racing': Racing}
                         
                         [caf_steer, caf_motor] =forward_pass(solver, ZED_data, meta_data_label)
 
