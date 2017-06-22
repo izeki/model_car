@@ -1,8 +1,8 @@
 from keras.models import Model
 from keras.layers import Input, BatchNormalization, AveragePooling2D, Conv2D, MaxPooling2D, Dense, concatenate
 from keras import regularizers
-from keras.layers.core import Lambda, Merge
-from keras.layers import Activation
+from keras.layers.core import Lambda
+from keras.layers import Activation, Merge
 from keras import backend as K
 
 """
