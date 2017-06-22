@@ -256,7 +256,7 @@ def eucl_dist_output_shape(shapes):
 
 def splittensor(axis=1, ratio_split=1, id_split=0, **kwargs):
     def f(X):
-        div = X.shape[axis] // ratio_split
+        div = X.shape[axis].value // ratio_split
 
         if axis == 0:
             output = X[id_split * div:(id_split + 1) * div, :, :, :]
