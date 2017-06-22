@@ -15,7 +15,7 @@ try:
     os.chdir(home_path) # this is for the sake of the train_val.prototxt
     import model_car.car_run_params
     from model_car.car_run_params import *
-    weights_file_path = opjh('model_car/model/z2_color_tf.npy') #
+    weights_file_path = opjh('model_car/model_Car/model/z2_color_tf.npy') #
     def setup_solver(weights_file_path):
         if weights_file_path != None:
             print "loading " + weights_file_path
