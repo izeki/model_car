@@ -247,7 +247,6 @@ def eucl_dist_output_shape(shapes):
     shape1, shape2 = shapes
     return (shape1[0], 1)    
 
-def 
 
 def get_model(channel=3, meta_label=6, input_width=672, input_height=376, phase='train'):
     ZED_data = Input(shape=(channel*4,input_width, input_height), name='ZED_data')
