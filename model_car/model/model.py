@@ -190,13 +190,13 @@ def eucl_dist_output_shape(shapes):
     return (shape1[0], 1)    
 
 
-def get_model(batch=1, channel=3, meta_label=6, input_width=672, input_height=376, phase='train'):
-    ZED_data_left_frame1 = Input(shape=(batch, channel,input_width, input_height), name='ZED_data_left_frame1')
-    ZED_data_left_frame2 = Input(shape=(batch, channel,input_width, input_height), name='ZED_data_left_frame2')
-    ZED_data_right_frame1 = Input(shape=(batch, channel,input_width, input_height), name='ZED_data_right_frame1')
-    ZED_data_right_frame2 = Input(shape=(batch, channel,input_width, input_height), name='ZED_data_right_frame2')
+def get_model(channel=3, meta_label=6, input_width=672, input_height=376, phase='train'):
+    ZED_data_left_frame1 = Input(shape=(channel,input_width, input_height), name='ZED_data_left_frame1')
+    ZED_data_left_frame2 = Input(shape=(channel,input_width, input_height), name='ZED_data_left_frame2')
+    ZED_data_right_frame1 = Input(shape=(channel,input_width, input_height), name='ZED_data_right_frame1')
+    ZED_data_right_frame2 = Input(shape=(channel,input_width, input_height), name='ZED_data_right_frame2')
     ZED_data = concatenate([ZED_data_left_frame1, ZED_data_left_frame2, ZED_data_right_frame1, ZED_data_right_frame2], axis=-3, name='ZED_data')
-    metadata =  Input(shape=(batch, meta_label, input_width, input_height), name='metadata')
+    metadata =  Input(shape=(meta_label, input_width, input_height), name='metadata')
     steer_motor_target_data = Input(shape=(1,20), name='steer_motor_target_data')    
    
     conv1 = Conv2D(filters=96, kernel_size=11, strides=(3,3), padding='valid', activation='relu', name='conv1')(ZED_data)
