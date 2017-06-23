@@ -222,8 +222,6 @@ try:
                         caf_motor = int((caf_motor+caf_motor_previous)/2.0)
                         caf_motor_previous = caf_motor
 
-                        print '[{},{}]'.format(caf_steer, caf_motor)
-
                         if caf_motor > motor_freeze_threshold and np.array(encoder_list[0:3]).mean() > 1 and np.array(encoder_list[-3:]).mean()<0.2 and state_transition_time_s > 1:
                             freeze = True
 
@@ -239,7 +237,7 @@ try:
                         if state in [6,7]:
                             motor_cmd_pub.publish(std_msgs.msg.Int32(caf_motor))
 
-                        if verbose:
+                        if True #verbose:
                             print caf_motor,caf_steer,motor_gain,steer_gain,state
 
         else:
