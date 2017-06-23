@@ -7,7 +7,7 @@ def get_trained_model(weights_path, input_width=672, input_height=376):
     
     model = get_model(input_width=input_width,  input_height=input_height, phase='test')
     
-    dir(model)
+    print(dir(model))
     
     def load_tf_weights():
         """ Load pretrained weights converted from Caffe to TF. """
