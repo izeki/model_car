@@ -5,7 +5,7 @@ reed to run roslaunch first, e.g.,
 roslaunch bair_car bair_car.launch use_zed:=true record:=false
 """
 #try:
-
+if True:
     ########################################################
     #          KARAS SETUP SECTION
     from model_car.model.predict import get_trained_model, forward_pass
@@ -275,7 +275,7 @@ roslaunch bair_car bair_car.launch use_zed:=true record:=false
             git_pull_timer.reset()
 
 #except Exception as e:
- #   print("********** Exception ***********************",'red')
- #   print(e.message, e.args)
- #   rospy.signal_shutdown(d2s(e.message,e.args))
+#    print("********** Exception ***********************",'red')
+#    print(e.message, e.args)
+#    rospy.signal_shutdown(d2s(e.message,e.args))
 
