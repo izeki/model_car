@@ -7,7 +7,7 @@ def get_trained_model(weights_path, input_width=672, input_height=376):
     
     model = get_model(input_width=input_width,  input_height=input_height, phase='test')
     
-    w = np.array(model.get_layer('ZED_data_pool1').get_weights())
+    w = np.array(model.get_layer('conv1').get_weights())
     print(w.shape)
     
     def load_tf_weights():
