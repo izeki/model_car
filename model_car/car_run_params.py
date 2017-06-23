@@ -35,7 +35,7 @@ weights_file_path = opjh("model_car/model_car/net_training/z2_color/z2_color.caf
 verbose = False
 use_caffe = True
 steer_gain = 1.0
-motor_gain = 0.9
+motor_gain = 0.4
 gyro_freeze_threshold = 500
 acc_freeze_threshold_x = 12
 acc_freeze_threshold_y = 12
@@ -71,7 +71,7 @@ if computer_name == 'Mr_Teal':
 	#motor_gain = 1.0
 	pass
 if computer_name == 'Mr_Audi':
-	motor_gain = 0.7
+	#motor_gain = 1.0
 	pass
 if computer_name == 'Mr_Purple':
 	#motor_gain = 1.0
