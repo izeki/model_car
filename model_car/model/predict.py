@@ -41,7 +41,7 @@ def forward_pass(trained_model, ZED_data,  meta_data_label, input_width=672, inp
     # meta_data_label: the meta data label: meta_data_label = {'Direct'=Direct, 'Follow'=Follow, 'Play'=Play, 'Furtive'=Furtive, 'Caf'=Cafe, 'Racing'=Racing}
     
     # 2 frames each side
-    ZED_input = np.zeros(1, 12, input_width, input_height)
+    ZED_input = np.zeros((1, 12, input_width, input_height))
     ZED_input[0,0,:,:]= ZED_data['ZED_data_left_frame1'][:,:,0]
     ZED_input[0,1,:,:]= ZED_data['ZED_data_left_frame2'][:,:,0]
     ZED_input[0,2,:,:]= ZED_data['ZED_data_right_frame1'][:,:,0]
