@@ -207,7 +207,7 @@ try:
                         caf_motor = int((caf_motor-49.) * motor_gain + 49)
                         caf_steer = int((caf_steer-49.) * steer_gain + 49)
 
-
+                        print('[{},{}]', caf_steer, caf_motor)
 
                         if caf_motor > 99:
                             caf_motor = 99
