@@ -224,7 +224,7 @@ try:
 
                         if caf_motor > motor_freeze_threshold and np.array(encoder_list[0:3]).mean() > 1 and np.array(encoder_list[-3:]).mean()<0.2 and state_transition_time_s > 1:
                             freeze = True
-                        print caf_motor,caf_steer,motor_gain,steer_gain,state
+                        
                         if freeze:
                             print "######### FREEZE ###########"
                             caf_steer = 49
