@@ -32,7 +32,7 @@ def get_trained_model(weights_path, input_width=672, input_height=376):
 
     return model
 
-def forward_pass(trained_model, ZED_data, input_width, input_height,  meta_data_label):
+def forward_pass(trained_model, ZED_data,  meta_data_label, input_width=672, input_height=376):
     # Runs a forward pass to predict the out of servo and motor
     # Params:
     # trained_model: trained model from get_trained_model
