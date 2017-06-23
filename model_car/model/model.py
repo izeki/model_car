@@ -1,5 +1,5 @@
 from keras.models import Model
-from keras.layers import Input, BatchNormalization, AveragePooling2D, Conv2D, MaxPooling2D, Dense, ZeroPadding2D,  Reshape, concatenate
+from keras.layers import Input, BatchNormalization, AveragePooling2D, Conv2D, MaxPooling2D, Dense, ZeroPadding2D,  Flatten, concatenate
 from keras import regularizers
 from keras.layers.core import Lambda
 from keras.layers import Activation, Merge
@@ -314,7 +314,7 @@ def get_model(channel=3, meta_label=6, input_width=672, input_height=376, phase=
     conv2 = conv2Dgroup(group=2, axis=-3, filters=256, kernel_size=3, strides=(2,2), padding='valid', activation='relu', data_format='channels_first', name='conv2')(conv1_metadata_concat)
     conv2 = ZeroPadding2D(padding=(1, 1), data_format='channels_first')(conv2)
     conv2_pool = MaxPooling2D(pool_size=(3, 3), strides=(2,2), padding='valid', data_format='channels_first', name='conv2_pool')(conv2)
-    conv2_pool = Reshape((1,4608))(conv2_pool)
+    conv2_pool = Flatten()(conv2_pool)
     
     ip1 = Dense(units=512, activation='relu', use_bias=False, name='ip1')(conv2_pool)
     ip2 = Dense(units=20, use_bias=False, name='ip2')(ip1)
