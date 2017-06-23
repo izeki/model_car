@@ -15,7 +15,7 @@ def get_trained_model(weights_path, input_width=672, input_height=376):
 
         for layer in model.layers:
             if layer.name in weights_data.keys():
-                print(ayer.name) 
+                print(layer.name) 
                 layer_weights = weights_data[layer.name]
                 print(layer_weights['weights'].shape)
                 layer.set_weights((layer_weights['weights'],  layer_weights['biases']))
