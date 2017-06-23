@@ -207,7 +207,6 @@ try:
                         caf_motor = int((caf_motor-49.) * motor_gain + 49)
                         caf_steer = int((caf_steer-49.) * steer_gain + 49)
 
-                        print '[{},{}]'.format(caf_steer, caf_motor)
 
                         if caf_motor > 99:
                             caf_motor = 99
@@ -223,6 +222,7 @@ try:
                         caf_motor = int((caf_motor+caf_motor_previous)/2.0)
                         caf_motor_previous = caf_motor
 
+                        print '[{},{}]'.format(caf_steer, caf_motor)
 
                         if caf_motor > motor_freeze_threshold and np.array(encoder_list[0:3]).mean() > 1 and np.array(encoder_list[-3:]).mean()<0.2 and state_transition_time_s > 1:
                             freeze = True
