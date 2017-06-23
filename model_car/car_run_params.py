@@ -71,7 +71,7 @@ if computer_name == 'Mr_Teal':
 	#motor_gain = 1.0
 	pass
 if computer_name == 'Mr_Audi':
-	#motor_gain = 1.0
+	motor_gain = 0.7
 	pass
 if computer_name == 'Mr_Purple':
 	#motor_gain = 1.0
