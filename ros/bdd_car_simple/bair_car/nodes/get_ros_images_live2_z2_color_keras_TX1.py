@@ -22,8 +22,7 @@ if True:
         solver = get_trained_model(weights_file_path)
         return solver
     solver = setup_solver(weights_file_path)
-    summary = solver.to_json
-    print(summary)
+    solver.summary()
     #
     ########################################################
 

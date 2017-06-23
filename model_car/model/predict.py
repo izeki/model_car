@@ -12,7 +12,6 @@ def get_trained_model(weights_path, input_width=672, input_height=376):
 
         # 'latin1' enables loading .npy files created with python2
         weights_data = np.load(weights_path, encoding='latin1').item()
-
         for layer in model.layers:
             if layer.name in weights_data.keys():
                 print(layer.name) 
