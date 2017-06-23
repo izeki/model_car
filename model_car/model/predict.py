@@ -17,11 +17,11 @@ def get_trained_model(weights_path, input_width=672, input_height=376):
         weights_data = np.load(weights_path, encoding='latin1').item()
         for layer in model.layers:
             if layer.name in weights_data.keys():
-                print(layer.name) 
                 layer_weights = weights_data[layer.name]
-                print(layer_weights['weights'].shape)
-                layer.set_weights((layer_weights['weights'],  layer_weights['biases']))
-
+                if (layer.name=='ip1' or layer.name=='ip2'):
+                    layer.set_weights((layer_weights['weights']))
+                else
+                    layer.set_weights((layer_weights['weights'],  layer_weights['biases']))
     def load_keras_weights():
         """ Load a Keras checkpoint. """
         model.load_weights(weights_path)
