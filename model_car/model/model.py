@@ -9,15 +9,15 @@ from keras import backend as K
 Karl's model car model:
 name: "z2_color_4_layers"
 layer {
-	name: "steer_motor_target_data"
-	type: "DummyData"
-	top: "steer_motor_target_data"
-	dummy_data_param {
-		shape {
-			dim: 1
-			dim: 20
-		}
-	}
+    name: "steer_motor_target_data"
+    type: "DummyData"
+    top: "steer_motor_target_data"
+    dummy_data_param {
+        shape {
+            dim: 1
+            dim: 20
+        }
+    }
 }
 
 layer {
@@ -35,43 +35,43 @@ layer {
 }
 
 layer {
-	name: "ZED_data"
-	type: "DummyData"
-	top: "ZED_data"
-	dummy_data_param {
-		shape {
-			dim: 1
-			dim: 12
-			dim: 376
-			dim: 672
-		}
-	}
+    name: "ZED_data"
+    type: "DummyData"
+    top: "ZED_data"
+    dummy_data_param {
+        shape {
+            dim: 1
+            dim: 12
+            dim: 376
+            dim: 672
+        }
+    }
 }
 
 layer {
-	name: "ZED_data_pool1"
-	type: "Pooling"
-	bottom: "ZED_data" #"MVN" #
-	top: "ZED_data_pool1"
-	pooling_param {
-		pool: AVE
-		kernel_size: 3
-		stride: 2
-		pad: 0
-	}
+    name: "ZED_data_pool1"
+    type: "Pooling"
+    bottom: "ZED_data" #"MVN" #
+    top: "ZED_data_pool1"
+    pooling_param {
+        pool: AVE
+        kernel_size: 3
+        stride: 2
+        pad: 0
+    }
 }
 
 layer {
-	name: "ZED_data_pool2"
-	type: "Pooling"
-	bottom: "ZED_data_pool1"
-	top: "ZED_data_pool2"
-	pooling_param {
-		pool: AVE
-		kernel_size: 3
-		stride: 2
-		pad: 0
-	}
+    name: "ZED_data_pool2"
+    type: "Pooling"
+    bottom: "ZED_data_pool1"
+    top: "ZED_data_pool2"
+    pooling_param {
+        pool: AVE
+        kernel_size: 3
+        stride: 2
+        pad: 0
+    }
 }
 
 layer {
@@ -96,47 +96,47 @@ layer {
     }
   }
 }
-	
+    
 ###################### Convolutional Layer Set 'conv1' ######################
 #
 layer {
-	name: "conv1"
-	type: "Convolution"
-	bottom: "ZED_data_pool2_scale"
-	top: "conv1"
-	convolution_param {
-		num_output: 96
-		group: 1
-		kernel_size: 11
-		stride: 3
-		pad: 0
-		weight_filler {
-			type: "gaussian" 
-			std: 0.00001
-		}
-	}
+    name: "conv1"
+    type: "Convolution"
+    bottom: "ZED_data_pool2_scale"
+    top: "conv1"
+    convolution_param {
+        num_output: 96
+        group: 1
+        kernel_size: 11
+        stride: 3
+        pad: 0
+        weight_filler {
+            type: "gaussian" 
+            std: 0.00001
+        }
+    }
 }
-	
+    
 layer {
-	name: "conv1_relu"
-	type: "ReLU"
-	bottom: "conv1"
-	top: "conv1"
+    name: "conv1_relu"
+    type: "ReLU"
+    bottom: "conv1"
+    top: "conv1"
 }
-	
+    
 layer {
-	name: "conv1_pool"
-	type: "Pooling"
-	bottom: "conv1"
-	top: "conv1_pool"
-	pooling_param {
-		pool: MAX
-		kernel_size: 3
-		stride: 2
-		pad: 0
-	}
+    name: "conv1_pool"
+    type: "Pooling"
+    bottom: "conv1"
+    top: "conv1_pool"
+    pooling_param {
+        pool: MAX
+        kernel_size: 3
+        stride: 2
+        pad: 0
+    }
 }
-	
+    
 ############################################################
 
 layer {
@@ -155,84 +155,84 @@ layer {
 ###################### Convolutional Layer Set 'conv2' ######################
 #
 layer {
-	name: "conv2"
-	type: "Convolution"
-	bottom: "conv1_metadata_concat"
-	top: "conv2"
-	convolution_param {
-		num_output: 256
-		group: 2
-		kernel_size: 3
-		stride: 2
-		pad: 0
-		weight_filler {
-			type: "gaussian" 
-			std: 0.1
-		}
-	}
+    name: "conv2"
+    type: "Convolution"
+    bottom: "conv1_metadata_concat"
+    top: "conv2"
+    convolution_param {
+        num_output: 256
+        group: 2
+        kernel_size: 3
+        stride: 2
+        pad: 0
+        weight_filler {
+            type: "gaussian" 
+            std: 0.1
+        }
+    }
 }
-	
+    
 layer {
-	name: "conv2_relu"
-	type: "ReLU"
-	bottom: "conv2"
-	top: "conv2"
+    name: "conv2_relu"
+    type: "ReLU"
+    bottom: "conv2"
+    top: "conv2"
 }
-	
+    
 layer {
-	name: "conv2_pool"
-	type: "Pooling"
-	bottom: "conv2"
-	top: "conv2_pool"
-	pooling_param {
-		pool: MAX
-		kernel_size: 3
-		stride: 2
-		pad: 0
-	}
+    name: "conv2_pool"
+    type: "Pooling"
+    bottom: "conv2"
+    top: "conv2_pool"
+    pooling_param {
+        pool: MAX
+        kernel_size: 3
+        stride: 2
+        pad: 0
+    }
 }
-	
+    
 ############################################################
 
 
 ###################### IP Layer Set 'ip1' ######################
 #
 layer {
-	name: "ip1"
-	type: "InnerProduct"
-	bottom: "conv2_pool"
-	top: "ip1"
-	inner_product_param {
-		num_output: 512
-		weight_filler {
-			type: "xavier" 
-		}
-	}
+    name: "ip1"
+    type: "InnerProduct"
+    bottom: "conv2_pool"
+    top: "ip1"
+    inner_product_param {
+        num_output: 512
+        weight_filler {
+            type: "xavier" 
+        }
+    }
 }
-	
+    
 layer {
-	name: "ip1_relu"
-	type: "ReLU"
-	bottom: "ip1"
-	top: "ip1"
+    name: "ip1_relu"
+    type: "ReLU"
+    bottom: "ip1"
+    top: "ip1"
 }
-	
+    
 ############################################################
 
 
 ###################### IP Layer Set 'ip2' ######################
 #
 layer {
-	name: "ip2"
-	type: "InnerProduct"
-	bottom: "ip1"
-	top: "ip2"
-	inner_product_param {
-		num_output: 20
-		weight_filler {
-			type: "xavier" 
-		}
-	}
+    name: "ip2"
+    type: "InnerProduct"
+    bottom: "ip1"
+    top: "ip2"
+    inner_product_param {
+        num_output: 20
+        weight_filler {
+            type: "xavier" 
+        }
+    }
 }
 """
 
