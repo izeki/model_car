@@ -1,4 +1,4 @@
-# This is used to specifiy caffe mode and data file name information
+# This is used to specifiy AI mode and data file name information
 
 
 from model_car.utils import time_str
@@ -25,13 +25,12 @@ Direct = 1.
 Follow = 0.
 Play = 0.
 Furtive = 0.
-Caf = 0.0
+AI = 0.0
 Racing = 0.0
-#meta_data_label = {'Direct'=Direct, 'Follow'=Follow, 'Play'=Play, 'Furtive'=Furtive, 'Caf'=Cafe, 'Racing'=Racing}
+#meta_data_label = {'Direct'=Direct, 'Follow'=Follow, 'Play'=Play, 'Furtive'=Furtive, 'AI'=AI, 'Racing'=Racing}
 Location =  'rewrite_test' # 'local' #'Smyth_tape'
 
-solver_file_path = opjh("model_car/model_car/net_training/z2_color/solver_live.prototxt")
-weights_file_path = opjh("model_car/model_car/net_training/z2_color/z2_color.caffemodel")
+#weights_file_path = opjh("model_car/model_car/model/z2_color_tf.npy")
 verbose = False
 use_AI = True
 steer_gain = 1.0
@@ -108,8 +107,8 @@ if Follow == 1:
 
 model_name = solver_file_path.split('/')[-2]
 
-if Caf == 1:
-	foldername = foldername + 'caffe2_' + model_name +'_'
+if AI == 1:
+	foldername = foldername + 'AI_' + model_name +'_'
 
 foldername = foldername + task + '_'
 

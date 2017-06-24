@@ -57,15 +57,15 @@ volatile unsigned long int state_transition_time_ms = 0;
 // Some intial conditions, putting the system in lock state.
 volatile int state = STATE_LOCK;
 volatile int previous_state = 0;
-// Variable to receive caffe data and format it for output.
-unsigned long int caffe_last_int_read_time;
-int caffe_mode = -3;
-int caffe_servo_percent = 49;
-int caffe_motor_percent = 49;
-int caffe_servo_pwm_value = servo_null_pwm_value;
-int caffe_motor_pwm_value = motor_null_pwm_value;
-int caffe_last_written_servo_pwm_value = servo_null_pwm_value;
-int caffe_last_written_motor_pwm_value = motor_null_pwm_value;
+// Variable to receive AI data and format it for output.
+unsigned long int AI_last_int_read_time;
+int AI_mode = -3;
+int AI_servo_percent = 49;
+int AI_motor_percent = 49;
+int AI_servo_pwm_value = servo_null_pwm_value;
+int AI_motor_pwm_value = motor_null_pwm_value;
+int AI_last_written_servo_pwm_value = servo_null_pwm_value;
+int AI_last_written_motor_pwm_value = motor_null_pwm_value;
 // Values written to serial
 volatile int written_servo_pwm_value = servo_null_pwm_value;
 volatile int written_motor_pwm_value = motor_null_pwm_value;
@@ -237,13 +237,13 @@ void button_interrupt_service_routine(void) {
                 state_transition_time_ms = m/1000.0;
             }
         }
-        // Caffe steering, human on accelerator
+        // AI steering, human on accelerator
         else if (abs(button_pwm_value-BUTTON_C)<BUTTON_DELTA) {
             if (state == STATE_ERROR) return;
-            if (state != STATE_CAFFE_CAFFE_STEER_HUMAN_MOTOR && state != STATE_CAFFE_HUMAN_STEER_HUMAN_MOTOR &&
-                    state != STATE_CAFFE_CAFFE_STEER_CAFFE_MOTOR && state != STATE_CAFFE_HUMAN_STEER_CAFFE_MOTOR) {
+            if (state != STATE_AI_AI_STEER_HUMAN_MOTOR && state != STATE_AI_HUMAN_STEER_HUMAN_MOTOR &&
+                    state != STATE_AI_AI_STEER_AI_MOTOR && state != STATE_AI_HUMAN_STEER_AI_MOTOR) {
                 previous_state = state;
-                state = STATE_CAFFE_CAFFE_STEER_HUMAN_MOTOR;
+                state = STATE_AI_AI_STEER_HUMAN_MOTOR;
                 state_transition_time_ms = m/1000.0;
             }
         }
@@ -259,9 +259,9 @@ void button_interrupt_service_routine(void) {
                 motor_null_pwm_value = motor_pwm_value;
                 motor_max_pwm_value = motor_null_pwm_value;
                 motor_min_pwm_value = motor_null_pwm_value;
-                caffe_servo_pwm_value = servo_null_pwm_value;
-                caffe_motor_pwm_value = motor_null_pwm_value;
-                caffe_last_written_servo_pwm_value = servo_null_pwm_value;
+                AI_servo_pwm_value = servo_null_pwm_value;
+                AI_motor_pwm_value = motor_null_pwm_value;
+                AI_last_written_servo_pwm_value = servo_null_pwm_value;
             }
             if (servo_pwm_value > servo_max_pwm_value) {
                 servo_max_pwm_value = servo_pwm_value;
@@ -289,7 +289,7 @@ void button_interrupt_service_routine(void) {
 ////////////////////////////////////////
 //
 // Servo interrupt service routine. This would be very short except that the human can take
-// control from Caffe, and Caffe can take back control if steering left in neutral position.
+// control from AI, and AI can take back control if steering left in neutral position.
 void servo_interrupt_service_routine(void) {
     volatile unsigned long int m = micros();
     volatile unsigned long int dt = m - servo_prev_interrupt_time;
@@ -301,22 +301,22 @@ void servo_interrupt_service_routine(void) {
             servo.writeMicroseconds(servo_pwm_value);
             written_servo_pwm_value = servo_pwm_value;
         }
-        else if (state == STATE_CAFFE_HUMAN_STEER_HUMAN_MOTOR || state == STATE_CAFFE_HUMAN_STEER_CAFFE_MOTOR) {
-            // If steer is close to neutral, let Caffe take over.
+        else if (state == STATE_AI_HUMAN_STEER_HUMAN_MOTOR || state == STATE_AI_HUMAN_STEER_AI_MOTOR) {
+            // If steer is close to neutral, let AI take over.
             if (abs(servo_pwm_value-servo_null_pwm_value)<=30 ){
                 previous_state = state;
-                if (state == STATE_CAFFE_HUMAN_STEER_HUMAN_MOTOR) {
-                    state = STATE_CAFFE_CAFFE_STEER_HUMAN_MOTOR;
+                if (state == STATE_AI_HUMAN_STEER_HUMAN_MOTOR) {
+                    state = STATE_AI_AI_STEER_HUMAN_MOTOR;
                 } else {
-                    state = STATE_CAFFE_CAFFE_STEER_CAFFE_MOTOR;
+                    state = STATE_AI_AI_STEER_AI_MOTOR;
                 }
                 state_transition_time_ms = m/1000.0;
-                //servo.writeMicroseconds((caffe_servo_pwm_value+servo_pwm_value)/2);
+                //servo.writeMicroseconds((AI_servo_pwm_value+servo_pwm_value)/2);
             }
             else {
                 /* REMOVING this sensitivity stuff, it seems to mess everything up.
                 // twice as sensitive so can reach all steering angles
-                int adjusted_servo_pwm_value = 2*(servo_pwm_value - servo_null_pwm_value) + caffe_last_written_servo_pwm_value;
+                int adjusted_servo_pwm_value = 2*(servo_pwm_value - servo_null_pwm_value) + AI_last_written_servo_pwm_value;
                 adjusted_servo_pwm_value = min(adjusted_servo_pwm_value, servo_max_pwm_value);
                 adjusted_servo_pwm_value = max(adjusted_servo_pwm_value, servo_min_pwm_value);
                 servo.writeMicroseconds(adjusted_servo_pwm_value);
@@ -326,21 +326,21 @@ void servo_interrupt_service_routine(void) {
             }
         }
         // If human makes strong steer command, let human take over.
-        else if (state == STATE_CAFFE_CAFFE_STEER_HUMAN_MOTOR || state == STATE_CAFFE_CAFFE_STEER_CAFFE_MOTOR) {
+        else if (state == STATE_AI_AI_STEER_HUMAN_MOTOR || state == STATE_AI_AI_STEER_AI_MOTOR) {
             if (abs(servo_pwm_value-servo_null_pwm_value)>70) {
                 previous_state = state;
-                if (state == STATE_CAFFE_CAFFE_STEER_HUMAN_MOTOR) {
-                    state = STATE_CAFFE_HUMAN_STEER_HUMAN_MOTOR;
+                if (state == STATE_AI_AI_STEER_HUMAN_MOTOR) {
+                    state = STATE_AI_HUMAN_STEER_HUMAN_MOTOR;
                 } else {
-                    state = STATE_CAFFE_HUMAN_STEER_CAFFE_MOTOR;
+                    state = STATE_AI_HUMAN_STEER_AI_MOTOR;
                 }
                 state_transition_time_ms = m/1000.0;
                 //servo.writeMicroseconds(servo_pwm_value);     
             }
             else {
-                servo.writeMicroseconds(caffe_servo_pwm_value);
-                written_servo_pwm_value = caffe_servo_pwm_value;
-                caffe_last_written_servo_pwm_value = caffe_servo_pwm_value;
+                servo.writeMicroseconds(AI_servo_pwm_value);
+                written_servo_pwm_value = AI_servo_pwm_value;
+                AI_last_written_servo_pwm_value = AI_servo_pwm_value;
             }
         }
         else {
@@ -377,37 +377,37 @@ void motor_interrupt_service_routine(void) {
          motor.writeMicroseconds(motor_pwm_value);
          written_motor_pwm_value = motor_pwm_value;
         }
-        else if (state == STATE_CAFFE_HUMAN_STEER_HUMAN_MOTOR || state == STATE_CAFFE_CAFFE_STEER_HUMAN_MOTOR) {
+        else if (state == STATE_AI_HUMAN_STEER_HUMAN_MOTOR || state == STATE_AI_AI_STEER_HUMAN_MOTOR) {
             if (abs(motor_pwm_value - motor_null_pwm_value) <= 30) {
-                // If motor is close to neutral, let caffe take over
+                // If motor is close to neutral, let AI take over
                 previous_state = state;
-                if (state == STATE_CAFFE_HUMAN_STEER_HUMAN_MOTOR) {
-                    state = STATE_CAFFE_HUMAN_STEER_CAFFE_MOTOR;
+                if (state == STATE_AI_HUMAN_STEER_HUMAN_MOTOR) {
+                    state = STATE_AI_HUMAN_STEER_AI_MOTOR;
                 } else {
-                    state = STATE_CAFFE_CAFFE_STEER_CAFFE_MOTOR;
+                    state = STATE_AI_AI_STEER_AI_MOTOR;
                 }
             } else {
                 // TODO: multiply by 2?
-                int adjusted_motor_pwm_value = (motor_pwm_value - motor_null_pwm_value) + caffe_last_written_motor_pwm_value;
+                int adjusted_motor_pwm_value = (motor_pwm_value - motor_null_pwm_value) + AI_last_written_motor_pwm_value;
                 adjusted_motor_pwm_value = min(adjusted_motor_pwm_value, motor_max_pwm_value);
                 adjusted_motor_pwm_value = max(adjusted_motor_pwm_value, motor_min_pwm_value);
                 motor.writeMicroseconds(adjusted_motor_pwm_value);
                 written_motor_pwm_value = adjusted_motor_pwm_value;
             }
         }
-        else if (state == STATE_CAFFE_CAFFE_STEER_CAFFE_MOTOR || state == STATE_CAFFE_HUMAN_STEER_CAFFE_MOTOR) {
+        else if (state == STATE_AI_AI_STEER_AI_MOTOR || state == STATE_AI_HUMAN_STEER_AI_MOTOR) {
             if (abs(motor_pwm_value - motor_null_pwm_value) > 70) {
                 // If human makes strong motor command, let human take over
                 previous_state = state;
-                if (state == STATE_CAFFE_CAFFE_STEER_CAFFE_MOTOR) {
-                    state = STATE_CAFFE_CAFFE_STEER_HUMAN_MOTOR;
+                if (state == STATE_AI_AI_STEER_AI_MOTOR) {
+                    state = STATE_AI_AI_STEER_HUMAN_MOTOR;
                 } else {
-                    state = STATE_CAFFE_HUMAN_STEER_HUMAN_MOTOR;                
+                    state = STATE_AI_HUMAN_STEER_HUMAN_MOTOR;                
                 }
             } else {
-                motor.writeMicroseconds(caffe_motor_pwm_value);
-                written_motor_pwm_value = caffe_motor_pwm_value;
-                caffe_last_written_motor_pwm_value = caffe_motor_pwm_value;
+                motor.writeMicroseconds(AI_motor_pwm_value);
+                written_motor_pwm_value = AI_motor_pwm_value;
+                AI_last_written_motor_pwm_value = AI_motor_pwm_value;
             }        
         }
         else {
@@ -442,14 +442,14 @@ int check_for_error_conditions(void) {
         servo_prev_interrupt_time >= 0 &&
         motor_prev_interrupt_time >= 0 &&
         state_transition_time_ms >= 0 && 
-        safe_percent_range(caffe_servo_percent) &&
-        safe_percent_range(caffe_motor_percent) &&
+        safe_percent_range(AI_servo_percent) &&
+        safe_percent_range(AI_motor_percent) &&
         safe_percent_range(servo_percent) &&
         safe_percent_range(motor_percent) &&
-        safe_pwm_range(caffe_servo_pwm_value) &&
-        safe_pwm_range(caffe_motor_pwm_value) &&
-        caffe_last_int_read_time >= 0 &&
-        caffe_mode >= -3 && caffe_mode <= 9 &&
+        safe_pwm_range(AI_servo_pwm_value) &&
+        safe_pwm_range(AI_motor_pwm_value) &&
+        AI_last_int_read_time >= 0 &&
+        AI_mode >= -3 && AI_mode <= 9 &&
         state >= -1 && state <= 100 &&
         previous_state >= -1 && previous_state <= 100
         
@@ -490,37 +490,37 @@ int safe_percent_range(int p) {
 void loop() {
     check_for_error_conditions();
     motor_speed_limit_pwm_value = 0.5*(motor_max_pwm_value - motor_null_pwm_value) + motor_null_pwm_value;
-    // Try to read the "caffe_int" sent by the host system (there is a timeout on serial reads, so the Arduino
-    // doesn't wait long to get one -- in which case the caffe_int is set to zero.)
-    int caffe_int = Serial.parseInt();
-    // If it is received, decode it to yield three control values (i.e., caffe_mode, caffe_servo_percent, and caffe_motor_percent)
-    if (caffe_int > 0) {
-            caffe_last_int_read_time = micros()/1000;
-            caffe_mode = caffe_int/10000;
-            caffe_servo_percent = (caffe_int-caffe_mode*10000)/100;
-            caffe_motor_percent = (caffe_int-caffe_servo_percent*100-caffe_mode*10000);
-        } else if (caffe_int < 0) {
-            caffe_mode = caffe_int/10000;
+    // Try to read the "AI_int" sent by the host system (there is a timeout on serial reads, so the Arduino
+    // doesn't wait long to get one -- in which case the AI_int is set to zero.)
+    int AI_int = Serial.parseInt();
+    // If it is received, decode it to yield three control values (i.e., AI_mode, AI_servo_percent, and AI_motor_percent)
+    if (AI_int > 0) {
+            AI_last_int_read_time = micros()/1000;
+            AI_mode = AI_int/10000;
+            AI_servo_percent = (AI_int-AI_mode*10000)/100;
+            AI_motor_percent = (AI_int-AI_servo_percent*100-AI_mode*10000);
+        } else if (AI_int < 0) {
+            AI_mode = AI_int/10000;
     }
-    // Turn the caffe_servo_percent and caffe_motor_percent values from 0 to 99 values into PWM values that can be sent 
+    // Turn the AI_servo_percent and AI_motor_percent values from 0 to 99 values into PWM values that can be sent 
     // to ESC (motor) and servo.
-    if (caffe_mode > 0) {
-        if (caffe_servo_percent >= 49) {
-            caffe_servo_pwm_value = (caffe_servo_percent-49)/50.0 * (servo_max_pwm_value - servo_null_pwm_value) + servo_null_pwm_value;
+    if (AI_mode > 0) {
+        if (AI_servo_percent >= 49) {
+            AI_servo_pwm_value = (AI_servo_percent-49)/50.0 * (servo_max_pwm_value - servo_null_pwm_value) + servo_null_pwm_value;
         }
         else {
-            caffe_servo_pwm_value = (caffe_servo_percent - 50)/50.0 * (servo_null_pwm_value - servo_min_pwm_value) + servo_null_pwm_value;
+            AI_servo_pwm_value = (AI_servo_percent - 50)/50.0 * (servo_null_pwm_value - servo_min_pwm_value) + servo_null_pwm_value;
         }
-        if (caffe_motor_percent >= 49) {
-            caffe_motor_pwm_value = (caffe_motor_percent-49)/50.0 * (motor_max_pwm_value - motor_null_pwm_value) + motor_null_pwm_value;
+        if (AI_motor_percent >= 49) {
+            AI_motor_pwm_value = (AI_motor_percent-49)/50.0 * (motor_max_pwm_value - motor_null_pwm_value) + motor_null_pwm_value;
         }
         else {
-            caffe_motor_pwm_value = (caffe_motor_percent - 50)/50.0 * (motor_null_pwm_value - motor_min_pwm_value) + motor_null_pwm_value;
+            AI_motor_pwm_value = (AI_motor_percent - 50)/50.0 * (motor_null_pwm_value - motor_min_pwm_value) + motor_null_pwm_value;
         }
     }
     else {
-        caffe_servo_pwm_value = servo_null_pwm_value;
-        caffe_motor_pwm_value = motor_null_pwm_value;
+        AI_servo_pwm_value = servo_null_pwm_value;
+        AI_motor_pwm_value = motor_null_pwm_value;
     }
     // Compute command signal percents from signals from the handheld radio controller
     // to be sent to host computer, which doesn't bother with PWM values
@@ -561,15 +561,15 @@ void loop() {
         Serial.print(",");
         Serial.print(motor_max_pwm_value);
         Serial.print("],");
-        Serial.print(caffe_mode);
+        Serial.print(AI_mode);
         Serial.print(",");
-        Serial.print(caffe_servo_percent);
+        Serial.print(AI_servo_percent);
         Serial.print(",");
-        Serial.print(caffe_motor_percent);
+        Serial.print(AI_motor_percent);
         Serial.print(",");
-        Serial.print(caffe_servo_pwm_value);
+        Serial.print(AI_servo_pwm_value);
         Serial.print(",");
-        Serial.print(caffe_motor_pwm_value);
+        Serial.print(AI_motor_pwm_value);
         Serial.print(",");
         Serial.print(servo_percent);
         Serial.print(",");

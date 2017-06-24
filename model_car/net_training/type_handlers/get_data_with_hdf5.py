@@ -5,12 +5,12 @@ from model_car.vis import *
 
 
 """
-This should be pure data, no caffe code
+This should be pure data, no AI code
 """
 
 i_variables = ['state','steer','motor','run_','runs','run_labels','meta_path','rgb_1to4_path','B_','left_images','right_images','unsaved_labels']
 
-i_labels = ['mostly_caffe','mostly_human','aruco_ring','out1_in2','direct','home','furtive','play','racing','multicar','campus','night','Smyth','left','notes','local','Tilden','reject_run','reject_intervals','snow','follow','only_states_1_and_6_good']
+i_labels = ['mostly_AI','mostly_human','aruco_ring','out1_in2','direct','home','furtive','play','racing','multicar','campus','night','Smyth','left','notes','local','Tilden','reject_run','reject_intervals','snow','follow','only_states_1_and_6_good']
 not_direct_modes = ['out1_in2','left','furtive','play','racing','follow']
 
 for q in i_variables + i_labels:
@@ -84,13 +84,13 @@ def load_animate_hdf5(path,start_at_time=0):
             if s[n][state][i] == 1: # Full human control
                 bar_color = [0,0,255] # Blue
 
-            elif s[n][state][i] == 6: # Full Caffe model control
+            elif s[n][state][i] == 6: # Full AI model control
                 bar_color = [255,0,0] # Red
 
-            elif s[n][state][i] == 3: # Human motor, Caffe steer
+            elif s[n][state][i] == 3: # Human motor, AI steer
                 bar_color = [255,128,128] # Pink
 
-            elif s[n][state][i] == 5: # Caffe motor, human steer
+            elif s[n][state][i] == 5: # AI motor, human steer
                 bar_color = [255,255,0] # Yellow
 
             elif s[n][state][i] == 7: # Human motor, Human steer

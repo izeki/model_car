@@ -1,7 +1,7 @@
 <launch>
     <arg name="car_name" default="bair_car" />
     <arg name="use_zed" default="false" />
-    <arg name="use_caffe" default="false" />
+    <arg name="use_AI" default="false" />
     
     <arg name="record" default="false" />
     <arg name="bagpath" default="/media/ubuntu/rosbags" />
@@ -10,7 +10,7 @@
         <node name="run_arduino" pkg="bair_car" type="arduino_node.py" output="screen">
         </node>
 
-        <node name="run_caffe" pkg="bair_car" type="get_ros_images_live2_z2_color_keras_TX1.py" output="screen">  if="$(arg use_caffe)">
+        <node name="run_AI" pkg="bair_car" type="get_ros_images_live2_z2_color_keras_TX1.py" output="screen">  if="$(arg use_AI)">
         </node>
 
         <group ns="zed" if="$(arg use_zed)">        

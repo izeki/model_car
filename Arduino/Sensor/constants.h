@@ -5,10 +5,10 @@
 // States are reached by button presses or drive commands, except for error state.
 #define STATE_HUMAN_FULL_CONTROL            1
 #define STATE_LOCK                          2
-#define STATE_CAFFE_CAFFE_STEER_HUMAN_MOTOR 3
-#define STATE_CAFFE_HUMAN_STEER_HUMAN_MOTOR 5
-#define STATE_CAFFE_CAFFE_STEER_CAFFE_MOTOR 6
-#define STATE_CAFFE_HUMAN_STEER_CAFFE_MOTOR 7
+#define STATE_AI_AI_STEER_HUMAN_MOTOR 3
+#define STATE_AI_HUMAN_STEER_HUMAN_MOTOR 5
+#define STATE_AI_AI_STEER_AI_MOTOR 6
+#define STATE_AI_HUMAN_STEER_AI_MOTOR 7
 #define STATE_LOCK_CALIBRATE                4
 #define STATE_ERROR                         -1
 // Now for the sensors
@@ -40,7 +40,7 @@
 // These are used for different control states.
 #define BUTTON_A 1710 // Human in full control of driving
 #define BUTTON_B 1200 // Lock state
-#define BUTTON_C 964  // Caffe steering, human on accelerator
+#define BUTTON_C 964  // AI steering, human on accelerator
 #define BUTTON_D 850  // Calibration of steering and motor control ranges
 #define BUTTON_DELTA 50 // range around button value that is considered in that value
 //

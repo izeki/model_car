@@ -11,14 +11,14 @@ class Arduino:
 
     STATE_HUMAN_FULL_CONTROL            = 1
     STATE_LOCK                          = 2
-    STATE_CAFFE_CAFFE_STEER_HUMAN_MOTOR = 3
-    STATE_CAFFE_HUMAN_STEER_HUMAN_MOTOR = 5
+    STATE_AI_AI_STEER_HUMAN_MOTOR = 3
+    STATE_AI_HUMAN_STEER_HUMAN_MOTOR = 5
     STATE_LOCK_CALIBRATE                = 4
     STATE_ERROR                         = -1
     CONTROL_STATES = (STATE_HUMAN_FULL_CONTROL,
                       STATE_LOCK,
-                      STATE_CAFFE_CAFFE_STEER_HUMAN_MOTOR,
-                      STATE_CAFFE_HUMAN_STEER_HUMAN_MOTOR,
+                      STATE_AI_AI_STEER_HUMAN_MOTOR,
+                      STATE_AI_HUMAN_STEER_HUMAN_MOTOR,
                       STATE_LOCK_CALIBRATE,
                       STATE_ERROR)
     

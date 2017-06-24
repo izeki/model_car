@@ -164,12 +164,12 @@ try:
 
     t0 = time.time()
     time_step = Timer(1)
-    caffe_enter_timer = Timer(2)
+    AI_enter_timer = Timer(2)
     folder_display_timer = Timer(30)
     git_pull_timer = Timer(60)
     reload_timer = Timer(10)
-    caf_steer_previous = 49
-    caf_motor_previous = 49
+    AI_steer_previous = 49
+    AI_motor_previous = 49
     #verbose = False
     
     
@@ -178,11 +178,11 @@ try:
             
             if (previous_state not in [3,5,6,7]):
                 previous_state = state
-                caffe_enter_timer.reset()
-            if use_caffe:
-                if not caffe_enter_timer.check():
-                    #print caffe_enter_timer.check()
-                    print "waiting before entering caffe mode..."
+                AI_enter_timer.reset()
+            if use_AI:
+                if not AI_enter_timer.check():
+                    #print AI_enter_timer.check()
+                    print "waiting before entering AI mode..."
                     steer_cmd_pub.publish(std_msgs.msg.Int32(49))
                     motor_cmd_pub.publish(std_msgs.msg.Int32(49))
                     time.sleep(0.1)
@@ -195,55 +195,55 @@ try:
                         r1 = right_list[-1]
                         
                         ZED_data = {'ZED_data_left_frame1': l0, 'ZED_data_left_frame2': l1, 'ZED_data_right_frame1': r0, 'ZED_data_right_frame2': r1}
-                        meta_data_label = {'Direct': Direct, 'Follow': Follow, 'Play': Play, 'Furtive': Furtive, 'Caf': Caf, 'Racing': Racing}
+                        meta_data_label = {'Direct': Direct, 'Follow': Follow, 'Play': Play, 'Furtive': Furtive, 'AI': AI, 'Racing': Racing}
                         
-                        [caf_steer, caf_motor] =forward_pass(solver, ZED_data, meta_data_label)
+                        [AI_steer, AI_motor] =forward_pass(solver, ZED_data, meta_data_label)
 
                         """
-                        if caf_motor > 60:
-                            caf_motor = (caf_motor-60)/39.0*10.0 + 60
+                        if AI_motor > 60:
+                            AI_motor = (AI_motor-60)/39.0*10.0 + 60
                         """
 
-                        caf_motor = int((caf_motor-49.) * motor_gain + 49)
-                        caf_steer = int((caf_steer-49.) * steer_gain + 49)
+                        AI_motor = int((AI_motor-49.) * motor_gain + 49)
+                        AI_steer = int((AI_steer-49.) * steer_gain + 49)
 
 
 
-                        if caf_motor > 99:
-                            caf_motor = 99
-                        if caf_motor < 0:
-                            caf_motor = 0
-                        if caf_steer > 99:
-                            caf_steer = 99
-                        if caf_steer < 0:
-                            caf_steer = 0
+                        if AI_motor > 99:
+                            AI_motor = 99
+                        if AI_motor < 0:
+                            AI_motor = 0
+                        if AI_steer > 99:
+                            AI_steer = 99
+                        if AI_steer < 0:
+                            AI_steer = 0
 
-                        caf_steer = int((caf_steer+caf_steer_previous)/2.0)
-                        caf_steer_previous = caf_steer
-                        caf_motor = int((caf_motor+caf_motor_previous)/2.0)
-                        caf_motor_previous = caf_motor
+                        AI_steer = int((AI_steer+AI_steer_previous)/2.0)
+                        AI_steer_previous = AI_steer
+                        AI_motor = int((AI_motor+AI_motor_previous)/2.0)
+                        AI_motor_previous = AI_motor
 
 
-                        if caf_motor > motor_freeze_threshold and np.array(encoder_list[0:3]).mean() > 1 and np.array(encoder_list[-3:]).mean()<0.2 and state_transition_time_s > 1:
+                        if AI_motor > motor_freeze_threshold and np.array(encoder_list[0:3]).mean() > 1 and np.array(encoder_list[-3:]).mean()<0.2 and state_transition_time_s > 1:
                             freeze = True
 
                         if freeze:
                             print "######### FREEZE ###########"
-                            caf_steer = 49
-                            caf_motor = 49
+                            AI_steer = 49
+                            AI_motor = 49
 
                         freeze_cmd_pub.publish(std_msgs.msg.Int32(freeze))
 
                         if state in [3,6]:            
-                            steer_cmd_pub.publish(std_msgs.msg.Int32(caf_steer))
+                            steer_cmd_pub.publish(std_msgs.msg.Int32(AI_steer))
                         if state in [6,7]:
-                            motor_cmd_pub.publish(std_msgs.msg.Int32(caf_motor))
+                            motor_cmd_pub.publish(std_msgs.msg.Int32(AI_motor))
 
                         if verbose:
-                            print caf_motor,caf_steer,motor_gain,steer_gain,state
+                            print AI_motor,AI_steer,motor_gain,steer_gain,state
 
         else:
-            caffe_enter_timer.reset()
+            AI_enter_timer.reset()
             if state == 4:
                 freeze = False
             if state == 2:
