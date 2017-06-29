@@ -2,7 +2,13 @@ import numpy as np
 from model import get_model
 from keras.layers import Input
 
-def get_trained_model(weights_path, input_width=672, input_height=376):
+def get_trained_model(version, weights_file_path, input_width=672, input_height=376):
+    if version == 'version 1b':
+        return get_trained_model_1b(weights_path, input_width, input_height)
+    else:
+        assert(False)
+
+def get_trained_model_1b(weights_path, input_width=672, input_height=376):
     # Returns a model with loaded weights.
     
     model = get_model(input_width=input_width,  input_height=input_height, phase='test')
@@ -32,7 +38,15 @@ def get_trained_model(weights_path, input_width=672, input_height=376):
 
     return model
 
-def forward_pass(trained_model, ZED_data,  meta_data_label, input_width=672, input_height=376):
+
+def forward_pass(version, trained_model, ZED_data, meta_data_label, input_width=672, input_height=376):
+    if version == '1b':
+        return forward_pass_1b(trained_model, ZED_data, meta_data_label, input_width, input_height)
+    else:
+        return None
+
+
+def forward_pass_1b(trained_model, ZED_data,  meta_data_label, input_width=672, input_height=376):
     # Runs a forward pass to predict the out of servo and motor
     # Params:
     # trained_model: trained model from get_trained_model

@@ -1,9 +1,10 @@
 from model_car.utils import *
+from model_car.net_training import training_data_generator
 import model_car.net_training.type_handlers.Bag_File as Bag_File
 import cv2
 import h5py
 
-
+version = 'version 1b'
 working_path = sys.argv[1]
 dst_path = sys.argv[2]
 meta_dir = os.path.join(working_path,'meta')
@@ -51,26 +52,26 @@ def get_bag_names_dic(meta_dir,rgb_1to4_dir,to_ignore = ['xxx'],to_require=[''])
 
 
 
-if False:
-
-    BagFolder_dic = {}
-    bag_img_dic = {}
-
-
-    bn = 'direct_local_21Nov16_17h39m00s_Mr_Yellow/bair_car_2016-11-21-18-03-39_30.bag.pkl'
-    run_name = bn.split('/')[0]
-
-    bf = fname(bn)
-
-    cprint('loading '+opj(run_name,'Bag_Folder.pkl'),'yellow','on_red')
-    BagFolder_dic[run_name] = load_obj(opj(meta_dir,run_name,'Bag_Folder.pkl'))
-    bag_img_dic[bn] = Bag_File.load_images(opj(rgb_1to4_dir,bn),color_mode="rgb8",include_flip=True)
-    bag_names_dic[bn] == True
-
-    good_bag_timestamps = list(set(BagFolder_dic[run_name]['data']['good_start_timestamps']) & set(bag_img_dic[bn]['left'].keys()))
-    if len(good_bag_timestamps) < 100:
-        if verbose:
-            print(d2n('\t',bn,' len(good_bag_timestamps) < 100'))
+#if False:
+#
+#    BagFolder_dic = {}
+#    bag_img_dic = {}
+#
+#
+#    bn = 'direct_local_21Nov16_17h39m00s_Mr_Yellow/bair_car_2016-11-21-18-03-39_30.bag.pkl'
+#    run_name = bn.split('/')[0]
+#
+#    bf = fname(bn)
+#
+#    cprint('loading '+opj(run_name,'Bag_Folder.pkl'),'yellow','on_red')
+#    BagFolder_dic[run_name] = load_obj(opj(meta_dir,run_name,'Bag_Folder.pkl'))
+#    bag_img_dic[bn] = Bag_File.load_images(opj(rgb_1to4_dir,bn),color_mode="rgb8",include_flip=True)
+#    bag_names_dic[bn] == True
+#
+#    good_bag_timestamps = list(set(BagFolder_dic[run_name]['data']['good_start_timestamps']) & set(bag_img_dic[bn]['left'].keys()))
+#    if len(good_bag_timestamps) < 100:
+#        if verbose:
+#            print(d2n('\t',bn,' len(good_bag_timestamps) < 100'))
 
 
 
@@ -244,21 +245,6 @@ def visualize_data(data,dt=33,image_only=False):
         if cv2.waitKey(dt) & 0xFF == ord('q'):
             pass
 
-
-
-
-
-
-import caffe
-from model_car.caffe_net.Caffe_Net import *
-solver_file_path = os.path.join(os.path.expanduser("~"),"kzpy3/net_training/z2_color/solver.prototxt")
-version = 'version 1b'
-weights_file_mode = None
-weights_file_path = None
-caffe_net = Caffe_Net(solver_file_path,version,weights_file_mode,weights_file_path,False)
-
-
-
 # 
 # 
 # 
@@ -279,7 +265,7 @@ caffe_net = Caffe_Net(solver_file_path,version,weights_file_mode,weights_file_pa
 #         #grp['steer_motor_target_data']
 
 
-if True:
+def main():
 
     timer = Timer(30)
 
@@ -329,21 +315,24 @@ if True:
                             #print ts
                             data = get_data(run_name,bf,ts,BagFolder_dic,bag_img_dic,skip_bag_dic,NUM_STATE_ONE_STEPS)
                             if data != None:
-                                result = load_data_into_model(caffe_net.solver,version,data,flip,False,True)
-                                if result:
+                                result = training_data_generator(version, data, flip, show_data=False, camera_dropout=True)
+                                #result = load_data_into_model(caffe_net.solver,version,data,flip,False,True)
+                                if result != None:
                                     n = d2f('-',bn.replace('/','-'),ts,ctr,flip)
+                                    x_train = result['x_train']
+                                    y_train = result['y_train']
                                     if n not in solver_inputs:
                                         grp = solver_inputs.create_group(n)
-                                        grp['ZED_data_pool2'] = caffe_net.solver.net.blobs['ZED_data_pool2'].data[:,:,:,:].astype('uint8')
-                                        grp['metadata'] = caffe_net.solver.net.blobs['metadata'].data[:]
-                                        grp['steer_motor_target_data'] = caffe_net.solver.net.blobs['steer_motor_target_data'].data[:]
+                                        grp['ZED_input'] = x_train['ZED_input'][:,:,:,:].astype('uint8')
+                                        grp['metadata'] = x_train['metadata'][:]
+                                        grp['steer_motor_target_data'] = y_train['steer_motor_target_data'].data[:]
 
                                 if timer.check(): #mod(ctr,30)==0:#
                                     #solver_inputs.close()
                                     #solver_inputs = h5py.File(hdf5_filename)
                                     visualize_data(data)
-                                    if result:
-                                        visualize_solver_data(caffe_net.solver,version,flip)
+                                    if result != None:
+                                        visualize_solver_data(version, result, flip)
                                     cprint(d2s('ctr =',ctr,'rate =',dp(ctr/(time.time()-t0),1),'Hz','size =',dp(os.path.getsize(file_name)/10**12.,4),'TB'),'red','on_yellow') #ctr = 0
                                     cprint(d2s('timestamp percent =', 100*len(timestamps)/(1.*len(BagFolder_dic[run_name]['good_bag_timestamps'][bf]))),'green')
                                     timer.reset()
@@ -355,5 +344,6 @@ if True:
             cprint("********** Exception ***********************",'red')
             print(e.message, e.args)
                     
-
+if __name__ == "__main__":
+    main()
             

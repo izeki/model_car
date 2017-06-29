@@ -15,11 +15,12 @@ try:
     os.chdir(home_path) # this is for the sake of the train_val.prototxt
     import model_car.car_run_params
     from model_car.car_run_params import *
+    version = 'version 1b'
     weights_file_path = opjh('model_car/model_car/model/z2_color_tf.npy') #
     def setup_solver(weights_file_path):
         if weights_file_path != None:
             print "loading " + weights_file_path
-        solver = get_trained_model(weights_file_path)
+        solver = get_trained_model(version, weights_file_path)
         return solver
     solver = setup_solver(weights_file_path)
     solver.summary()
@@ -197,7 +198,7 @@ try:
                         ZED_data = {'ZED_data_left_frame1': l0, 'ZED_data_left_frame2': l1, 'ZED_data_right_frame1': r0, 'ZED_data_right_frame2': r1}
                         meta_data_label = {'Direct': Direct, 'Follow': Follow, 'Play': Play, 'Furtive': Furtive, 'AI': AI, 'Racing': Racing}
                         
-                        [AI_steer, AI_motor] =forward_pass(solver, ZED_data, meta_data_label)
+                        [AI_steer, AI_motor] =forward_pass(version, solver, ZED_data, meta_data_label)
 
                         """
                         if AI_motor > 60:
