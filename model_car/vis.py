@@ -18,7 +18,7 @@ if MacOSX:
 ###########
 '''
 e.g.
-from kzpy3.vis import *; kzpy_vis_test()
+from model_car.vis import *; model_car_vis_test()
 '''
 ################
 
@@ -38,7 +38,7 @@ PP,FF = plt.rcParams,'figure.figsize'
 
 #plt.figure(figsize=(6.5, 4))
 
-def kzpy_vis_test():
+def model_car_vis_test():
     img_dic = get_some_images()
     ppff = PP[FF]
     PP[FF] = 3,3
@@ -74,7 +74,7 @@ try:
         PIL.Image.fromarray(a).save(f, fmt)
         display(Image(data=f.getvalue()))
 except:
-    print("kzpy3.vis: PIL image display not imported.")
+    print("model_car.vis: PIL image display not imported.")
 
 def toolbar():
     plt.rcParams['toolbar'] = 'toolbar2'
@@ -98,7 +98,7 @@ def mi(
 
         from matrix:
 
-            from kzpy3.vis import *
+            from model_car.vis import *
             mi(np.random.rand(256,256),99,[1,1,1],'random matrix')
 
         from path:
