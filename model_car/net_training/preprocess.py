@@ -20,11 +20,11 @@ argument is the destination folder path for the pkl files. The third argument
 is the frame rate for testing the quality of the synchronization (default is 30 fps). 
 The preprocessed data is saved in the bag folder under
 
-    .preprocessed/left_image_bound_to_data.pkl
+    .preprocessed2/left_image_bound_to_data.pkl
 
 and
 
-    .preprocessed/preprocessed_data.pkl
+    .preprocessed2/preprocessed_data.pkl
 
 which is simply all the original timestamps and sensor readings but no image data.
 data preprocess
