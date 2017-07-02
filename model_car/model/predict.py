@@ -1,5 +1,5 @@
 import numpy as np
-from model import get_model
+from model import get_model, load_model_weight
 from keras.layers import Input
 
 def get_trained_model(version, weights_file_path, input_width=672, input_height=376):
@@ -11,36 +11,15 @@ def get_trained_model(version, weights_file_path, input_width=672, input_height=
 def get_trained_model_1b(weights_path, input_width=672, input_height=376):
     # Returns a model with loaded weights.
     
-    model = get_model(input_width=input_width,  input_height=input_height, phase='test')
+    model = get_model('version 1b', input_width=input_width,  input_height=input_height, phase='test')
     
-    def load_tf_weights():
-        """ Load pretrained weights converted from Caffe to TF. """
-
-        # 'latin1' enables loading .npy files created with python2
-        weights_data = np.load(weights_path, encoding='latin1').item()
-        for layer in model.layers:
-            if layer.name in weights_data.keys():
-                layer_weights = weights_data[layer.name]
-                if (layer.name=='ip1' or layer.name=='ip2'):
-                    layer.set_weights((layer_weights['weights'],))
-                else:
-                    layer.set_weights((layer_weights['weights'],  layer_weights['biases']))
-    def load_keras_weights():
-        """ Load a Keras checkpoint. """
-        model.load_weights(weights_path)
-
-    if weights_path.endswith('.npy'):
-        load_tf_weights()
-    elif weights_path.endswith('.hdf5'):
-        load_keras_weights()
-    else:
-        raise Exception("Unknown weights format.")
+    model = load_model_weight(model, weights_path)
 
     return model
 
 
 def forward_pass(version, trained_model, ZED_data, meta_data_label, input_width=672, input_height=376):
-    if version == '1b':
+    if version == 'version 1b':
         return forward_pass_1b(trained_model, ZED_data, meta_data_label, input_width, input_height)
     else:
         return None

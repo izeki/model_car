@@ -293,8 +293,8 @@ def conv2Dgroup(filters, kernel_size, strides, padding, activation, name, data_f
 
     return f
 
-def get_model(version, channel, meta_label, input_width, input_height, phase):
-    if version == '1b':
+def get_model(version, channel=3, meta_label=6, input_width=672, input_height=376, phase='train'):
+    if version == 'version 1b':
         return get_model_1b(channel, meta_label, input_width, input_height, phase)
     else:
         assert(False)
@@ -302,7 +302,7 @@ def get_model(version, channel, meta_label, input_width, input_height, phase):
 def get_model_1b(channel=3, meta_label=6, input_width=672, input_height=376, phase='train'):
     ZED_data = Input(shape=(channel*4, input_height, input_width), name='ZED_data')
     metadata =  Input(shape=(meta_label, 14, 26), name='metadata')
-    steer_motor_target_data = Input(shape=(1,20), name='steer_motor_target_data')    
+    #steer_motor_target_data = Input(shape=(1,20), name='steer_motor_target_data')    
     
     ZED_data_pad = ZeroPadding2D(padding=(1, 1), data_format='channels_first')(ZED_data)
     ZED_data_pool1 = AveragePooling2D(pool_size=(3, 3), strides=(2,2), padding='valid', data_format='channels_first', name='ZED_data_pool1')(ZED_data_pad)
@@ -323,15 +323,41 @@ def get_model_1b(channel=3, meta_label=6, input_width=672, input_height=376, pha
     ip1 = Dense(units=512, activation='relu', use_bias=False, name='ip1')(conv2_pool)
     ip2 = Dense(units=20, use_bias=False, name='ip2')(ip1)
     
-    if phase == 'train':
-        euclidean = Lambda(euclidean_distance, output_shape=eucl_dist_output_shape)([steer_motor_target_data, ip2])
+    #if phase == 'train':
+    #    euclidean = Lambda(euclidean_distance, output_shape=eucl_dist_output_shape)([steer_motor_target_data, ip2])
     
     if phase == 'train':
-        model = Model(inputs=[ZED_data, metadata, steer_motor_target_data], outputs=euclidean) 
+        model = Model(inputs=[ZED_data, metadata], outputs=ip2) 
+        #model = Model(inputs=[ZED_data, metadata, steer_motor_target_data], outputs=euclidean) 
     elif phase == 'test':
         model = Model(inputs=[ZED_data, metadata], outputs=ip2) 
     else:
         model = None
+    return model
+
+def load_model_weight(model, weights_path):    
+    def load_tf_weights():
+        """ Load pretrained weights converted from Caffe to TF. """
+
+        # 'latin1' enables loading .npy files created with python2
+        weights_data = np.load(weights_path, encoding='latin1').item()
+        for layer in model.layers:
+            if layer.name in weights_data.keys():
+                layer_weights = weights_data[layer.name]
+                if (layer.name=='ip1' or layer.name=='ip2'):
+                    layer.set_weights((layer_weights['weights'],))
+                else:
+                    layer.set_weights((layer_weights['weights'],  layer_weights['biases']))
+    def load_keras_weights():
+        """ Load a Keras checkpoint. """
+        model.load_weights(weights_path)
+
+    if weights_path.endswith('.npy'):
+        load_tf_weights()
+    elif weights_path.endswith('.hdf5'):
+        load_keras_weights()
+    else:
+        raise Exception("Unknown weights format.")
     return model
     
     

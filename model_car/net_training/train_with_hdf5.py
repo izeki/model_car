@@ -1,10 +1,7 @@
 from model_car.vis import *
+from model_car.model.model import *
 import model_car.net_training.type_handlers.get_data_with_hdf5 as get_data_with_hdf5
-import caffe
 
-REPO = 'kzpy3'
-TEG = 'teg9'
-CAF = 'caf8'
 DISPLAY = True
 
 ignore = ['reject_run','left','out1_in2','Smyth','racing'] # runs with these labels are ignored
@@ -13,66 +10,30 @@ use_states = [1]
 rate_timer_interval = 5.
 print_timer = Timer(5)
 
-source_data_path = sys.argv[1]
-caffe_model_path = sys.argv[2]
-
-if True:
-    MODEL = 'z2_color'
-    print(MODEL)
-    bair_car_data_path = source_data_path # '/media/karlzipser/ExtraDrive4/bair_car_data_new_28April2017'#opjD('bair_car_data_new')
-    #weights_file_path =  most_recent_file_in_folder(opjD(fname(opjh(REPO,CAF,MODEL))))
-    weights_file_path = caffe_model_path
-    N_FRAMES = 2 # how many timesteps with images.
-    N_STEPS = 10 # how many timestamps with non-image data
-    gpu = 0
-
-if False:
-    MODEL = 'z2_color_small_ip1'
-    print(MODEL)
-    bair_car_data_path = opjD('bair_car_data_Main_Dataset') # '/media/karlzipser/ExtraDrive4/bair_car_data_new_28April2017'#opjD('bair_car_data_new')
-    weights_file_path =  most_recent_file_in_folder(opjD(fname(opjh(REPO,CAF,MODEL))),['caffemodel'])
-    N_FRAMES = 2 # how many timesteps with images.
-    N_STEPS = 10 # how many timestamps with non-image data
-    gpu = 1
 
 
-if False:
-    MODEL = 'z3_color'
-    print(MODEL)
-    bair_car_data_path = opjD('bair_car_data_Main_Dataset') # '/media/karlzipser/ExtraDrive4/bair_car_data_new_28April2017'#opjD('bair_car_data_new')
-    weights_file_path = most_recent_file_in_folder(opjD(fname(opjh(REPO,CAF,MODEL))),['caffemodel'])
-    #weights_file_path = opj('caffe_models/z3_color_iter_14600000.caffemodel')
-    N_FRAMES = 3 # how many timesteps with images.
-    N_STEPS = 30 # how many timestamps with non-image data
-    gpu = 1
-
-
-if False:
-    MODEL = 'z1_color'
-    print(MODEL)
-    bair_car_data_path = opjD('bair_car_data_Main_Dataset') # '/media/karlzipser/ExtraDrive4/bair_car_data_new_28April2017'#opjD('bair_car_data_new')
-    weights_file_path = most_recent_file_in_folder(opjD(fname(opjh(REPO,CAF,MODEL))),['caffemodel'])
-    N_FRAMES = 1 # how many timesteps with images.
-    N_STEPS = 10 # how many timestamps with non-image data
-    gpu = 1
-
-
-if gpu >= 0:
-    caffe.set_device(gpu)
-    caffe.set_mode_gpu()
-
-import_str = "import REPO.CAF.MODEL.solver as Solver"
-import_str = import_str.replace("REPO",REPO)
-import_str = import_str.replace("CAF",CAF)
-import_str = import_str.replace("MODEL",MODEL)
-exec(import_str)
-
+################## Setup Keras ####################################
+from keras import optimizers
+MODEL = 'z2_color'
+version = 'version 1b'
+bair_car_data_path = opjD(sys.argv[1]) # '/media/karlzipser/ExtraDrive4/bair_car_data_new_28April2017'#opjD('bair_car_data_new')
+#weights_file_path =  most_recent_file_in_folder(opjD(fname(opjh(REPO,CAF,MODEL))))
+weights_file_path = opjD(sys.argv[2]) #weights_file_path = opjD('model_car/model_car/model/z2_color_tf.npy') 
+N_FRAMES = 2 # how many timesteps with images.
+N_STEPS = 10 # how many timestamps with non-image data
+gpu = 0
+model = get_model(version, phase='train')    
 if weights_file_path:
-    print(d2s("Copying weights from",weights_file_path,"to",Solver.solver))
-    Solver.solver.net.copy_from(weights_file_path)
+    print(d2s("Copying weights from",weights_file_path)
+    model = load_model_weight(model, weights_file_path)
 else:
-    print(d2s("No weights loaded to",Solver.solver))
-time.sleep(5)
+    print("No weights loaded to")
+model.compile(loss = 'mean_squared_error',
+                              optimizer = optimizers.SGD(lr = 0.01,  momentum = 0.001, decay = 0.000001, nesterov = True),
+                              metrics=['accuracy'])          
+time.sleep(5)              
+##############################################################    
+
 
 hdf5_runs_path = opj(bair_car_data_path,'hdf5/runs')
 hdf5_segment_metadata_path = opj(bair_car_data_path,'hdf5/segment_metadata')
@@ -149,20 +110,52 @@ if DISPLAY:
     plt.hist(array(high_steer)[:,2],bins=range(0,100))
     figure(1)
 
-while True:
-
-    for b in range(Solver.batch_size):
-        data = None
-        while data == None:
-            data = get_data_considering_high_low_steer()
-        Solver.put_data_into_model(data,Solver.solver,b)
-
-    Solver.solver.step(1)
+while True:    
+    data = get_data_considering_high_low_steer()    
+    # put data into model
+    input_height = data['left'][0].shape[0]
+    input_width =  data['left'][0].shape[1]          
+    ZED_input = np.zeros((1, 12, input_height, input_width))
+    ctr = 0
+	for c in range(3):
+		for camera in ['left','right']:
+			for t in range(2):
+				solver.net.blobs['ZED_data_pool2'].data[b,ctr,:,:] = data[camera][t][:,:,c]
+				ctr += 1
+    meta_input = np.zeros((1,6, 14, 26))
+	Racing = 0
+	Caf = 0
+	Follow = 0
+	Direct = 0
+	Play = 0
+	Furtive = 0
+	if data['labels']['racing']:
+		Racing = 1.0
+	if data['states'][0] == 6:
+		Caf = 1.0
+	if data['labels']['follow']:
+		Follow = 1.0
+	if data['labels']['direct']:
+		Direct = 1.0
+	if data['labels']['play']:
+		Play = 1.0
+	if data['labels']['furtive']:
+		Furtive = 1.0
+    meta_input[0,0,:,:]= Racing
+    meta_input[0,1,:,:]= Caf
+    meta_input[0,2,:,:]= Follow
+    meta_input[0,3,:,:]= Direct
+    meta_input[0,4,:,:]= Play
+    meta_input[0,5,:,:]= Furtive
+    steer_motor_target_data = np.zeros((1,20))
+    steer_motor_target_data[0][0:10] = data['steer'][-10:]/99.
+    steer_motor_target_data[0][10:] = data['motor'][-10:]/99.
+    step_loss = model.train_on_batch({'ZED_input': ZED_input, 'metadata':meta_input}, {'ip2': steer_motor_target_data})
     if not DISPLAY:
         if print_timer.check():
-            print(Solver.solver.net.blobs['metadata'].data[-1,:,5,5])
-            print(array_to_int_list(Solver.solver.net.blobs['steer_motor_target_data'].data[-1,:][:]))
-            print(array_to_int_list(Solver.solver.net.blobs['ip2'].data[-1,:][:]))
+            print(meta_input[0,:,14,26])
+            print(array_to_int_list(steer_motor_target_data[0,:]))
+            print(array_to_int_list(model.layer['ip2'].output[0,:]))
             print_timer.reset()
 
     if DISPLAY:
@@ -172,9 +165,8 @@ while True:
             print(d2s('rate =',dp(rate_ctr/rate_timer_interval,2),'Hz'))
             rate_timer.reset()
             rate_ctr = 0
-        a = Solver.solver.net.blobs['steer_motor_target_data'].data[0,:] - Solver.solver.net.blobs['ip2'].data[0,:]
-        loss.append(np.sqrt(a * a).mean())
-        if len(loss) >= 10000/Solver.batch_size:
+        loss.append(step_loss)
+        if len(loss) >= 10000:
             loss10000.append(array(loss[-10000:]).mean())
             loss = []
             figure('loss');clf()
@@ -183,16 +175,16 @@ while True:
             print(d2s('loss10000 =',loss10000[-1]))
         if print_timer.check():
 
-            print(Solver.solver.net.blobs['metadata'].data[-1,:,5,5])
+            print(meta_input[0,:,14,26])
 
-            cprint(array_to_int_list(Solver.solver.net.blobs['steer_motor_target_data'].data[-1,:][:]),'green','on_red')
-            cprint(array_to_int_list(Solver.solver.net.blobs['ip2'].data[-1,:][:]),'red','on_green')
+            cprint(array_to_int_list(steer_motor_target_data[0,:]),'green','on_red')
+            cprint(array_to_int_list(model.layer['ip2'].output[0,:]),'red','on_green')
             
             figure('steer')
             clf()
             
-            t = Solver.solver.net.blobs['steer_motor_target_data'].data[-1,:]
-            o = Solver.solver.net.blobs['ip2'].data[-1,:]
+            t = steer_motor_target_data[0,:]
+            o = model.layer['ip2'].output[0,:]
             ylim(-0.05,1.05);xlim(0,len(t))
             plot([-1,60],[0.49,0.49],'k');plot(o,'og'); plot(t,'or'); plt.title(data['name'])
             

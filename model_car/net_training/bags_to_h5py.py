@@ -1,5 +1,5 @@
 from model_car.utils import *
-from model_car.net_training import training_data_generator
+from model_car.net_training.training_data_generator_alt import training_data_generator
 import model_car.net_training.type_handlers.Bag_File as Bag_File
 import cv2
 import h5py

@@ -9,15 +9,15 @@ This
 
 Interactive data viewer for model car project.
 
-Change path with SP(), i.e., function_set_paths()
+Change path with SP(), i.e., function_set_paths(), set bair_car_data_path first.
 
 e.g., in ipython type:
 
-from kzpy3.teg7.interactive import *
+from model_car.net_training.interactive import *
 
 or from command line type:
 
-python kzpy3/teg7/interactive.py
+python model_car/net_training/interactive.py
 
 Then type:
 
@@ -133,7 +133,7 @@ def function_set_paths(p=opj(bair_car_data_path)):
     global_dict[run_] = global_dict[runs][0]
     cprint('meta_path = '+global_dict[meta_path])
 
-
+# show the state distribution
 def function_current_run():
     """
     function_current_run()
@@ -219,7 +219,7 @@ def function_set_label(k,v=True):
         global_dict[run_labels][global_dict[run_]][m] = v
     save_obj(global_dict[run_labels],opj(bair_car_data_path,'run_labels','run_labels_'+time_str()+'.pkl'))
 
-
+# set the Bag_Folder.pkl for the current run
 def function_set_run(j):
     """
     function_set_run()
@@ -668,31 +668,18 @@ if __name__ == '__main__':
     bair_car_data_path = sys.argv[1]
     HE = function_help    
     SP = function_set_paths
-    SP()    
+    #SP()    
     LR = function_list_runs
-    LR()
+    #LR()
     ST = function_set_plot_time_range        
     AR = function_animate
     RL = function_run_loop
     A5 = load_animate_hdf5
-    HE()
+    #HE()
     RL()
-
-
-"""
-if False:
-    for i in range(160):
-        function_set_run(i)
-        function_set_label(only_states_1_and_6_good,True)
-
-
-if False:
-    if True: # This needs to be made more general!
-        for i in range(65): #[18,19,20,21,23,24,26,27,28,29]:#range(21):
-            function_save_hdf5(i,flip=False)
-            function_save_hdf5(flip=True)
-
-if True:
+    
+    #TODO separate the process below to a new file
+    """
     for i in range(len(global_dict[runs])):
         
         if global_dict[run_labels][global_dict[runs][i]][reject_run] == False:
@@ -700,63 +687,45 @@ if True:
             function_save_hdf5(i,flip=False)
             function_save_hdf5(flip=True)
     
-    if True:
-        hdf5s = sgg(opj(bair_car_data_path,'hdf5/runs/*.hdf5'))
-        ctr = 0
-        for h in hdf5s:
-            ctr += 1
-            print ctr
-            load_hdf5_steer_hist(h,opj(bair_car_data_path,'hdf5','segment_metadata'))
+    hdf5s = sgg(opj(bair_car_data_path,'hdf5/runs/*.hdf5'))
+    ctr = 0
+    for h in hdf5s:
+        ctr += 1
+        print ctr
+        load_hdf5_steer_hist(h,opj(bair_car_data_path,'hdf5','segment_metadata'))
+
+    run_codes = {}
+    steer_hists = sgg(opj(bair_car_data_path,'hdf5/segment_metadata/*.state_hist_list.pkl'))
+    ctr = 0
+    combined = []
+    for s in steer_hists:
+        o = load_obj(s)
+        run_codes[ctr] = fname(s).replace('.state_hist_list.pkl','')
+        print ctr,run_codes[ctr]
+        #for j in range(len(o)):
+        #    o[j][3] = ctr
+        #    combined.append(o[j])
+        ctr += 1
+    #save_obj(combined,opjD('combined'))
+    save_obj(run_codes,opj(bair_car_data_path,'hdf5/segment_metadata/run_codes'))
+
+    low_steer = []
+    high_steer = []
+    low_steer_files = sgg(opj(bair_car_data_path,'hdf5/segment_metadata/*.low_steer.pkl'))
+    ctr = 0
+    for s in low_steer_files:
+        print (ctr,s)
+        q = load_obj(s)
+        for i in range(len(q)):
+            q[i].append(ctr)
+        low_steer += q
+        q = load_obj(s.replace('.low_steer.','.high_steer.'))
+        for i in range(len(q)):
+            q[i].append(ctr)
+        high_steer += q
+        ctr += 1
+    save_obj(low_steer,opj(bair_car_data_path,'hdf5/segment_metadata/low_steer'))
+    save_obj(high_steer,opj(bair_car_data_path,'hdf5/segment_metadata/high_steer'))    
+    """
 
 
-
-    if True:
-
-        if True:
-            run_codes = {}
-            steer_hists = sgg(opj(bair_car_data_path,'hdf5/segment_metadata/*.state_hist_list.pkl'))
-            ctr = 0
-            combined = []
-            for s in steer_hists:
-                o = load_obj(s)
-                run_codes[ctr] = fname(s).replace('.state_hist_list.pkl','')
-                print ctr,run_codes[ctr]
-                #for j in range(len(o)):
-                #    o[j][3] = ctr
-                #    combined.append(o[j])
-                ctr += 1
-            #save_obj(combined,opjD('combined'))
-            save_obj(run_codes,opj(bair_car_data_path,'hdf5/segment_metadata/run_codes'))
-
-
-        if True:
-            low_steer = []
-            high_steer = []
-            low_steer_files = sgg(opj(bair_car_data_path,'hdf5/segment_metadata/*.low_steer.pkl'))
-            ctr = 0
-            for s in low_steer_files:
-                print (ctr,s)
-                q = load_obj(s)
-                for i in range(len(q)):
-                    q[i].append(ctr)
-                low_steer += q
-                q = load_obj(s.replace('.low_steer.','.high_steer.'))
-                for i in range(len(q)):
-                    q[i].append(ctr)
-                high_steer += q
-                ctr += 1
-            save_obj(low_steer,opj(bair_car_data_path,'hdf5/segment_metadata/low_steer'))
-            save_obj(high_steer,opj(bair_car_data_path,'hdf5/segment_metadata/high_steer'))
-
-
-if False:
-    for l in global_dict[run_labels]:
-        print global_dict[run_labels][l]['reject_run']
-        if global_dict[run_labels][l]['reject_run'] == False:
-            global_dict[run_labels][l][aruco_ring] = True
-            global_dict[run_labels][l][direct] = True
-if False:
-    for i in range(len(global_dict[runs])):
-        if global_dict[run_labels][global_dict[runs][i]][reject_run] == True:
-            print i
-"""
