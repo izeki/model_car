@@ -4,7 +4,7 @@ from keras.layers import Input
 
 def get_trained_model(version, weights_file_path, input_width=672, input_height=376):
     if version == 'version 1b':
-        return get_trained_model_1b(weights_path, input_width, input_height)
+        return get_trained_model_1b(weights_file_path, input_width, input_height)
     else:
         assert(False)
 

@@ -4,7 +4,7 @@ from keras import regularizers
 from keras.layers.core import Lambda
 from keras.layers import Activation, Merge
 from keras import backend as K
-
+import numpy as np
 """
 Karl's model car model:
 name: "z2_color_4_layers"

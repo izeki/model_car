@@ -105,7 +105,7 @@ foldername = ''
 if Follow == 1:
 	foldername = 'follow_'
 
-model_name = solver_file_path.split('/')[-2]
+model_name = 'z2_color'#solver_file_path.split('/')[-2]
 
 if AI == 1:
 	foldername = foldername + 'AI_' + model_name +'_'
