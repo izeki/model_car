@@ -51,7 +51,7 @@ def forward_pass_1b(trained_model, ZED_data,  meta_data_label, input_width=672, 
     
     meta_input = np.zeros((1,6, 14, 26))
     meta_input[0,0,:,:]= meta_data_label['Racing']
-    meta_input[0,1,:,:]= meta_data_label['Caf']
+    meta_input[0,1,:,:]= meta_data_label['AI']
     meta_input[0,2,:,:]= meta_data_label['Follow']
     meta_input[0,3,:,:]= meta_data_label['Direct']
     meta_input[0,4,:,:]= meta_data_label['Play']

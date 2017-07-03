@@ -124,7 +124,7 @@ while True:
 				ctr += 1
     meta_input = np.zeros((1,6, 14, 26))
 	Racing = 0
-	Caf = 0
+	AI = 0
 	Follow = 0
 	Direct = 0
 	Play = 0
@@ -132,7 +132,7 @@ while True:
 	if data['labels']['racing']:
 		Racing = 1.0
 	if data['states'][0] == 6:
-		Caf = 1.0
+		AI = 1.0
 	if data['labels']['follow']:
 		Follow = 1.0
 	if data['labels']['direct']:
@@ -142,7 +142,7 @@ while True:
 	if data['labels']['furtive']:
 		Furtive = 1.0
     meta_input[0,0,:,:]= Racing
-    meta_input[0,1,:,:]= Caf
+    meta_input[0,1,:,:]= AI
     meta_input[0,2,:,:]= Follow
     meta_input[0,3,:,:]= Direct
     meta_input[0,4,:,:]= Play

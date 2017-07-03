@@ -240,7 +240,7 @@ try:
                         if state in [6,7]:
                             motor_cmd_pub.publish(std_msgs.msg.Int32(AI_motor))
 
-                        if verbose:
+                        if True: #verbose:
                             print AI_motor,AI_steer,motor_gain,steer_gain,state
 
         else:
