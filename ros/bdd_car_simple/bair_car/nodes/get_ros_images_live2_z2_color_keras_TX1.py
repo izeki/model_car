@@ -241,7 +241,8 @@ try:
                             motor_cmd_pub.publish(std_msgs.msg.Int32(AI_motor))
 
                         if True: #verbose:
-                            print AI_motor,AI_steer,motor_gain,steer_gain,state
+                            print("{},{},{},{}".format(AI_motor,AI_steer,motor_gain,steer_gain,state))
+                            #print AI_motor,AI_steer,motor_gain,steer_gain,state
 
         else:
             AI_enter_timer.reset()
