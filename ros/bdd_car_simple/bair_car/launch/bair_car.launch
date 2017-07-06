@@ -10,7 +10,7 @@
         <node name="run_arduino" pkg="bair_car" type="arduino_node.py" output="screen">
         </node>
 
-        <node name="run_AI" pkg="bair_car" type="get_ros_images_live2_z2_color_keras_TX1.py" output="screen">  if="$(arg use_AI)">
+        <node name="run_AI" pkg="bair_car" type="get_ros_images_live2_z2_color_keras_TX1.py" output="screen" if="$(arg use_AI)">
         </node>
 
         <group ns="zed" if="$(arg use_zed)">        
@@ -53,7 +53,8 @@
         </group>
         
     </group>
-
+    
+    
     <node name="rosbag_node" pkg="bair_car" type="rosbag_node.py" output="screen"
      args="$(find bair_car)/rosbags $(arg bagpath)" respawn="true" if="$(arg record)">
     </node>
