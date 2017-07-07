@@ -219,7 +219,7 @@ def get_data(run_name,bf,rt,BagFolder_dic,bag_img_dic,skip_bag_dic,NUM_STATE_ONE
             
         except:
             skip_bag_dic[bn] = True; return None
-     except Exception as e:
+    except Exception as e:
         cprint("********** Exception ***********************",'red')
         print(e.message, e.args)
         skip_bag_dic[bn] = True; return None
@@ -296,6 +296,7 @@ def main():
                 hdf5_runs_dic[previous_run_name].close()
             previous_run_name = run_name
         file_name = os.path.join(dst_path,'hdf5','runs',run_name + '.hdf5')
+        unix('mkdir -p '+os.path.join(dst_path,'hdf5','runs'))
         if run_name not in hdf5_runs_dic:
             hdf5_runs_dic[run_name] = h5py.File(file_name)
         solver_inputs = hdf5_runs_dic[run_name]
@@ -324,8 +325,8 @@ def main():
                                     if n not in solver_inputs:
                                         grp = solver_inputs.create_group(n)
                                         grp['ZED_input'] = x_train['ZED_input'][:,:,:,:].astype('uint8')
-                                        grp['metadata'] = x_train['metadata'][:]
-                                        grp['steer_motor_target_data'] = y_train['steer_motor_target_data'].data[:]
+                                        grp['meta_input'] = x_train['meta_input'][:]
+                                        grp['steer_motor_target_data'] = y_train['steer_motor_target_data'][:]
 
                                 if timer.check(): #mod(ctr,30)==0:#
                                     #solver_inputs.close()
@@ -339,7 +340,7 @@ def main():
     hdf5_runs_dic[previous_run_name].close()
     for r in hdf5_runs_dic.keys():
         try:
-             hdf5_runs_dic[r].close()
+            hdf5_runs_dic[r].close()
         except Exception as e:
             cprint("********** Exception ***********************",'red')
             print(e.message, e.args)

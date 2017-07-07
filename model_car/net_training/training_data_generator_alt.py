@@ -1,8 +1,7 @@
 import numpy as np
 from model_car.vis import *
 from model_car.model.predict import *
-
-mport cv2
+import cv2
 blue = [0,0,0.8]
 blue_green = [0,0.5,0.5]
 
@@ -205,7 +204,7 @@ def training_data_generator_1b(data,flip,show_data=False, camera_dropout=False):
                 target_data += data['motor'][:10]
                 #mi(data['left'][0][:,:,:],'left')
                 #mi(data['right'][0][:,:,:],'right')
-                _, _, im_h, im_w = data['left'][0].shape
+                im_h, im_w, _ = data['left'][0].shape
                 ZED_input = np.zeros((1, 12, im_h, im_w))
                 meta_input = np.zeros((1,6, 14, 26))
                 steer_motor_target_data = np.zeros((1,20))                
@@ -475,7 +474,7 @@ def visualize_data_model_version_2(data_set, flip):
     x_train = data_set['x_train']
     y_train = data_set['y_train']
     
-"""
+    """
     TODO: load model and plot the prediction output against the training target
     figure(figure_caption+'_')
     clf()
@@ -485,7 +484,7 @@ def visualize_data_model_version_2(data_set, flip):
     plot(solver.net.blobs['ip2'].data[0,:30],'bo-')
     plot(solver.net.blobs['ip2'].data[0,30:60],'bx-')
     plot(solver.net.blobs['ip2'].data[0,60:],'b')
-"""    
+    """    
     r = 3
     for i in range(3):
 

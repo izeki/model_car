@@ -78,9 +78,9 @@ while True: # Training
         x_train = {}
         y_train = {}
         x_train['ZED_input'] = solver_inputs[k]['ZED_input']/255.-0.5
-        x_train['metadata'] = solver_inputs[k]['metadata']
+        x_train['meta_input'] = solver_inputs[k]['meta_input']
         y_train['steer_motor_target_data'] = solver_inputs[k]['steer_motor_target_data']
-        step_loss = model.train_on_batch({'ZED_data':x_train['ZED_input'], 'metadata':x_train['metadata']}, {'ip2': y_train['steer_motor_target_data']})
+        step_loss = model.train_on_batch({'ZED_input':x_train['ZED_input'], 'meta_input':x_train['meta_input']}, {'ip2': y_train['steer_motor_target_data']})
         loss.append(step_loss)
         steer.append([y_train['steer_motor_target_data'][0,9],model.layer['ip2'].output[0,9]])
         motor.append([y_train['steer_motor_target_data'][10,19],model.layer['ip2'].output[10,19]])
@@ -114,9 +114,9 @@ if False: # Testing
         x_train = {}
         y_train = {}
         x_train['ZED_input'] = solver_inputs[k]['ZED_input']/255.-0.5
-        x_train['metadata'] = solver_inputs[k]['metadata']
+        x_train['meta_input'] = solver_inputs[k]['meta_input']
         y_train['steer_motor_target_data'] = solver_inputs[k]['steer_motor_target_data']
-        step_loss = model.train_on_batch({'ZED_data':x_train['ZED_input'], 'metadata':x_train['metadata']}, {'ip2': y_train['steer_motor_target_data']})
+        step_loss = model.train_on_batch({'ZED_input':x_train['ZED_input'], 'meta_input':x_train['meta_input']}, {'ip2': y_train['steer_motor_target_data']})
         loss.append(step_loss)
         steer.append([y_train['steer_motor_target_data'][0,9],model.layer['ip2'].output[0,9]])
         motor.append([y_train['steer_motor_target_data'][0,19],model.layer['ip2'].output[0,19]])

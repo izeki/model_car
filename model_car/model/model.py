@@ -300,8 +300,8 @@ def get_model(version, channel=3, meta_label=6, input_width=672, input_height=37
         assert(False)
 
 def get_model_1b(channel=3, meta_label=6, input_width=672, input_height=376, phase='train'):
-    ZED_data = Input(shape=(channel*4, input_height, input_width), name='ZED_data')
-    metadata =  Input(shape=(meta_label, 14, 26), name='metadata')
+    ZED_data = Input(shape=(channel*4, input_height, input_width), name='ZED_input')
+    metadata =  Input(shape=(meta_label, 14, 26), name='meta_input')
     #steer_motor_target_data = Input(shape=(1,20), name='steer_motor_target_data')    
     
     ZED_data_pad = ZeroPadding2D(padding=(1, 1), data_format='channels_first')(ZED_data)

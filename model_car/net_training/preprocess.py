@@ -33,7 +33,7 @@ data preprocess
 
 """
 
-def main(bag_folders_src_location, ,bag_folders_dst, NUM_STATE_ONE_STEPS):
+def main(bag_folders_src_location, bag_folders_dst, NUM_STATE_ONE_STEPS):
     bag_folders_src = opj(bag_folders_src_location,'new' )
     bag_folders_dst_rgb1to4_path = opj(bag_folders_dst,'rgb_1to4')
     bag_folders_dst_meta_path = opj(bag_folders_dst,'meta')
@@ -57,6 +57,7 @@ def main(bag_folders_src_location, ,bag_folders_dst, NUM_STATE_ONE_STEPS):
                 cprint(d2s('Bagfile',b,'has size',bag_size,'which is below full size.'),'red')
                 unix('mv '+b+' '+b+'.too_small')
         mtimes = sorted(mtimes)
+        print(mtimes)
         run_duration = mtimes[-1]-mtimes[0]
         print run_duration
         assert(run_duration/60./60. < 3.) # If clock set incorrectly, this can change during run leading to year-long intervals
@@ -90,4 +91,4 @@ if __name__ == "__main__":
     bag_folders_dst = sys.argv[2]
     NUM_STATE_ONE_STEPS = int(sys.argv[3])
     assert(is_number(NUM_STATE_ONE_STEPS))
-    main(bag_folders_src_location, ,bag_folders_dst, NUM_STATE_ONE_STEPS)
+    main(bag_folders_src_location, bag_folders_dst, NUM_STATE_ONE_STEPS)

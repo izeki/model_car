@@ -12,8 +12,6 @@ def load_images(bag_file_path,color_mode="rgb8",include_flip=True):
     
     topic_name_map = {}
     
-    bag_handler = Bagfile_Handler(bag_file_path,['/bair_car/zed/left/image_rect_color','/bair_car/zed/right/image_rect_color'])
-    
     topic_name_map['/bair_car/zed/left/image_rect_color'] = 'left'
     topic_name_map['/bair_car/zed/right/image_rect_color'] = 'right'
 
@@ -27,6 +25,7 @@ def load_images(bag_file_path,color_mode="rgb8",include_flip=True):
         assert(False)
 
     if not PKL:
+        bag_handler = Bagfile_Handler(bag_file_path,['/bair_car/zed/left/image_rect_color','/bair_car/zed/right/image_rect_color'])
         for side in sides:
             bag_img_dic[side] = {}
         

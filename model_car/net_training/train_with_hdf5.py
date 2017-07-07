@@ -120,7 +120,7 @@ while True:
 	for c in range(3):
 		for camera in ['left','right']:
 			for t in range(2):
-				solver.net.blobs['ZED_data_pool2'].data[b,ctr,:,:] = data[camera][t][:,:,c]
+				ZED_input[0,ctr,:,:] = data[camera][t][:,:,c]
 				ctr += 1
     meta_input = np.zeros((1,6, 14, 26))
 	Racing = 0
@@ -150,7 +150,7 @@ while True:
     steer_motor_target_data = np.zeros((1,20))
     steer_motor_target_data[0][0:10] = data['steer'][-10:]/99.
     steer_motor_target_data[0][10:] = data['motor'][-10:]/99.
-    step_loss = model.train_on_batch({'ZED_input': ZED_input, 'metadata':meta_input}, {'ip2': steer_motor_target_data})
+    step_loss = model.train_on_batch({'ZED_input': ZED_input, 'meta_input':meta_input}, {'ip2': steer_motor_target_data})
     if not DISPLAY:
         if print_timer.check():
             print(meta_input[0,:,14,26])
