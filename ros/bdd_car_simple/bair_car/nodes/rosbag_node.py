@@ -26,7 +26,7 @@ if __name__ == '__main__':
     bag_mv_folder = opj(bag_mv_folder,foldername)
 
     unix('mkdir '+bag_mv_folder)
-    unix('mkdir  '+opj(bag_mv_folder,'.caf'))
+    unix('mkdir  '+opj(bag_mv_folder,'.AI'))
     unix('mkdir  '+opj(bag_mv_folder,'.bair_car'))
 
     unix('scp -r /home/ubuntu/catkin_ws/src/bair_car ' + opj(bag_mv_folder,'.bair_car'))
