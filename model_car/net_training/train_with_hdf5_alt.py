@@ -37,13 +37,13 @@ model.compile(loss = 'mean_squared_error',
                               optimizer = optimizers.SGD(lr = 0.01,  momentum = 0.001, decay = 0.000001, nesterov = True),
                               metrics=['accuracy'])
 model.summary()
-##############################################################
+
 
 def get_layer_output(model, layer_index, model_input, training_flag = True):
     get_outputs = K.function([model.layers[0].input, model.layers[9].input, K.learning_phase()], [model.layers[layer_index].output])
     layer_outputs = get_outputs([model_input[0], model_input[1], training_flag])[0]
     return layer_outputs
-
+##############################################################
 
 runs_folder = sys.argv[1]#runs_folder = '/media/karlzipser/ExtraDrive1/caffe_runs'
 run_names = sorted(gg(opj(runs_folder,'*.hdf5')),key=natural_keys)

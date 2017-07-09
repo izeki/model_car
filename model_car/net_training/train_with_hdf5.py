@@ -31,7 +31,12 @@ else:
 model.compile(loss = 'mean_squared_error',
                               optimizer = optimizers.SGD(lr = 0.01,  momentum = 0.001, decay = 0.000001, nesterov = True),
                               metrics=['accuracy'])          
-time.sleep(5)              
+time.sleep(5)
+          
+def get_layer_output(model, layer_index, model_input, training_flag = True):
+    get_outputs = K.function([model.layers[0].input, model.layers[9].input, K.learning_phase()], [model.layers[layer_index].output])
+    layer_outputs = get_outputs([model_input[0], model_input[1], training_flag])[0]
+    return layer_outputs          
 ##############################################################    
 
 
@@ -151,11 +156,12 @@ while True:
     steer_motor_target_data[0][0:10] = data['steer'][-10:]/99.
     steer_motor_target_data[0][10:] = data['motor'][-10:]/99.
     step_loss = model.train_on_batch({'ZED_input': ZED_input, 'meta_input':meta_input}, {'ip2': steer_motor_target_data})
+    steer_motor_out = get_layer_output(model, 20, [ZED_input, meta_input])      
     if not DISPLAY:
         if print_timer.check():
             print(meta_input[0,:,14,26])
             print(array_to_int_list(steer_motor_target_data[0,:]))
-            print(array_to_int_list(model.layer['ip2'].output[0,:]))
+            print(array_to_int_list(steer_motor_out[0,:]))
             print_timer.reset()
 
     if DISPLAY:
@@ -165,7 +171,7 @@ while True:
             print(d2s('rate =',dp(rate_ctr/rate_timer_interval,2),'Hz'))
             rate_timer.reset()
             rate_ctr = 0
-        loss.append(step_loss)
+        loss.append(step_loss[0])
         if len(loss) >= 10000:
             loss10000.append(array(loss[-10000:]).mean())
             loss = []
@@ -178,13 +184,13 @@ while True:
             print(meta_input[0,:,14,26])
 
             cprint(array_to_int_list(steer_motor_target_data[0,:]),'green','on_red')
-            cprint(array_to_int_list(model.layer['ip2'].output[0,:]),'red','on_green')
+            cprint(array_to_int_list(steer_motor_out[0,:]),'red','on_green')
             
             figure('steer')
             clf()
             
             t = steer_motor_target_data[0,:]
-            o = model.layer['ip2'].output[0,:]
+            o = steer_motor_out[0,:]
             ylim(-0.05,1.05);xlim(0,len(t))
             plot([-1,60],[0.49,0.49],'k');plot(o,'og'); plot(t,'or'); plt.title(data['name'])
             
