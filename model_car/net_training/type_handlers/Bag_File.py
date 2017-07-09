@@ -54,10 +54,10 @@ def save_images(bag_file_src_path,bag_file_dst_path):
         return
     
     bag_img_dic = load_images(bag_file_src_path,color_mode="rgb8",include_flip=False)
-    for side in bag_img_dic:
-        for t in bag_img_dic[side]:
-            img = bag_img_dic[side][t]
-            bag_img_dic[side][t] = cv2.resize(img,None,fx=0.25,fy=0.25,interpolation=cv2.INTER_AREA)
+    #for side in bag_img_dic:
+    #    for t in bag_img_dic[side]:
+    #        img = bag_img_dic[side][t]
+    #        bag_img_dic[side][t] = cv2.resize(img,None,fx=0.25,fy=0.25,interpolation=cv2.INTER_AREA)
     print "Bag_File.load_images:: saving " + os.path.join(bag_file_dst_path)
     save_obj(bag_img_dic,os.path.join(bag_file_dst_path))
 

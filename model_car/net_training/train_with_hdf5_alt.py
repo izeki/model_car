@@ -24,17 +24,26 @@ def plot_performance(steer,motor,loss1000):
     plt.ylabel(dp(np.corrcoef(s[:,0],s[:,1])[0,1],2))
 
 ################## Setup Keras ####################################
+from keras import backend as K
 from keras import optimizers
 #solver_file_path = opjh("model_car/net_training/z2_color/solver.prototxt")
 version = 'version 1b'
+solver_file_path = 'z2_color_' + version
 #weights_file_mode = 'most recent' #'this one' #None #'most recent' #'this one'  #None #'most recent'
-weights_file_path = opjD('model_car/model_car/model/z2_color_tf.npy') #opjD('z2_color_long_train_21_Jan2017') #None #opjh('kzpy3/caf6/z2_color/z2_color.caffemodel') #None #'/home/karlzipser/Desktop/z2_color' # None #opjD('z2_color')
+weights_file_path = opjD('/home/bdd/git/model_car/model_car/model/z2_color_tf.npy') #opjD('z2_color_long_train_21_Jan2017') #None #opjh('kzpy3/caf6/z2_color/z2_color.caffemodel') #None #'/home/karlzipser/Desktop/z2_color' # None #opjD('z2_color')
 model = get_model(version, phase='train')
 model = load_model_weight(model, weights_file_path)
 model.compile(loss = 'mean_squared_error',
                               optimizer = optimizers.SGD(lr = 0.01,  momentum = 0.001, decay = 0.000001, nesterov = True),
                               metrics=['accuracy'])
+model.summary()
 ##############################################################
+
+def get_layer_output(model, layer_index, model_input, training_flag = True):
+    get_outputs = K.function([model.layers[0].input, model.layers[9].input, K.learning_phase()], [model.layers[layer_index].output])
+    layer_outputs = get_outputs([model_input[0], model_input[1], training_flag])[0]
+    return layer_outputs
+
 
 runs_folder = sys.argv[1]#runs_folder = '/media/karlzipser/ExtraDrive1/caffe_runs'
 run_names = sorted(gg(opj(runs_folder,'*.hdf5')),key=natural_keys)
@@ -72,18 +81,22 @@ id_timer = Timer(3*T)
 #TODO: Add training iteration
 while True: # Training
     random.shuffle(ks)
+    print('metrics: {}'.format(model.metrics_names))
     for k in ks:
         hdf5_filename = keys[k]
         solver_inputs = solver_inputs_dic[hdf5_filename]
         x_train = {}
         y_train = {}
-        x_train['ZED_input'] = solver_inputs[k]['ZED_input']/255.-0.5
-        x_train['meta_input'] = solver_inputs[k]['meta_input']
-        y_train['steer_motor_target_data'] = solver_inputs[k]['steer_motor_target_data']
+        x_train['ZED_input'] = solver_inputs[k]['ZED_input'][:]/255.-0.5
+        x_train['meta_input'] = solver_inputs[k]['meta_input'][:]
+        y_train['steer_motor_target_data'] = solver_inputs[k]['steer_motor_target_data'][:]
         step_loss = model.train_on_batch({'ZED_input':x_train['ZED_input'], 'meta_input':x_train['meta_input']}, {'ip2': y_train['steer_motor_target_data']})
-        loss.append(step_loss)
-        steer.append([y_train['steer_motor_target_data'][0,9],model.layer['ip2'].output[0,9]])
-        motor.append([y_train['steer_motor_target_data'][10,19],model.layer['ip2'].output[10,19]])
+        steer_motor_out = get_layer_output(model, 20, [x_train['ZED_input'], x_train['meta_input']])
+        loss.append(step_loss[0])
+        print('steer_motor_out[0,9]:{}'.format(steer_motor_out[0,9]))
+        #print('model.layers[20].output:{}'.format(model.layers[20].output[0,9]))
+        steer.append([y_train['steer_motor_target_data'][0,9],steer_motor_out[0,9]])
+        motor.append([y_train['steer_motor_target_data'][0,19],steer_motor_out[0,19]])
         if len(loss) >= 1000:
 			loss1000.append(array(loss[-1000:]).mean())
 			loss = []
@@ -94,6 +107,7 @@ while True: # Training
         if id_timer.check():
             cprint(solver_file_path,'blue','on_yellow')
             id_timer.reset()
+    break
 pass    
 
 """
@@ -113,13 +127,13 @@ if False: # Testing
         solver_inputs = solver_inputs_dic[hdf5_filename]
         x_train = {}
         y_train = {}
-        x_train['ZED_input'] = solver_inputs[k]['ZED_input']/255.-0.5
-        x_train['meta_input'] = solver_inputs[k]['meta_input']
-        y_train['steer_motor_target_data'] = solver_inputs[k]['steer_motor_target_data']
+        x_train['ZED_input'] = solver_inputs[k]['ZED_input'][:]/255.-0.5
+        x_train['meta_input'] = solver_inputs[k]['meta_input'][:]
+        y_train['steer_motor_target_data'] = solver_inputs[k]['steer_motor_target_data'][:]
         step_loss = model.train_on_batch({'ZED_input':x_train['ZED_input'], 'meta_input':x_train['meta_input']}, {'ip2': y_train['steer_motor_target_data']})
-        loss.append(step_loss)
-        steer.append([y_train['steer_motor_target_data'][0,9],model.layer['ip2'].output[0,9]])
-        motor.append([y_train['steer_motor_target_data'][0,19],model.layer['ip2'].output[0,19]])
+        loss.append(step_loss[0])
+        steer.append([y_train['steer_motor_target_data'][0,9],model.layers[20].output[0,9]])
+        motor.append([y_train['steer_motor_target_data'][0,19],model.layers[20].output[0,19]])
         if len(loss) >= 1000:
 			loss1000.append(array(loss[-1000:]).mean())
 			loss = []
