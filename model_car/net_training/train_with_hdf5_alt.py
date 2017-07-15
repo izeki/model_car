@@ -78,8 +78,11 @@ T = 6
 timer = Timer(T)
 id_timer = Timer(3*T)
 
+iteration = 50000
+i_time = 1
+
 #TODO: Add training iteration
-while True: # Training
+while i_time <= iteration: # Training
     random.shuffle(ks)
     print('metrics: {}'.format(model.metrics_names))
     for k in ks:
@@ -96,7 +99,7 @@ while True: # Training
         motor_out = steer_motor_out[0,19]
         loss.append(step_loss[0])
         #print('steer_motor_out: {}'.format(steer_motor_out[0,19]))
-        print('steer_motor_target:({},{}), steer_motor_out:({},{})'.format(y_train['steer_motor_target_data'][0,9], y_train['steer_motor_target_data'][0,19], steer_out, motor_out))
+        #print('steer_motor_target:({},{}), steer_motor_out:({},{})'.format(y_train['steer_motor_target_data'][0,9], y_train['steer_motor_target_data'][0,19], steer_out, motor_out))
         steer.append([y_train['steer_motor_target_data'][0,9],steer_motor_out[0,9]])
         motor.append([y_train['steer_motor_target_data'][0,19],steer_motor_out[0,19]])
         if len(loss) >= 1000:
@@ -109,7 +112,12 @@ while True: # Training
         if id_timer.check():
             cprint(solver_file_path,'blue','on_yellow')
             id_timer.reset()
-    break
+    if i_time % 10000 == 0:
+        # save snapshot model
+        model.save(opj(runs_folder, solver_file_path+'_'+str(i_time)+'.hdf5'))
+    i_time = i_time + 1
+cprint('saving model.....','blue','on_yellow')
+model.save(opj(runs_folder, solver_file_path+'_final.hdf5'))
 pass    
 
 """
