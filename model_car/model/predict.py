@@ -57,7 +57,7 @@ def forward_pass_1b(trained_model, ZED_data,  meta_data_label, input_width=672, 
     meta_input[0,4,:,:]= meta_data_label['Play']
     meta_input[0,5,:,:]= meta_data_label['Furtive']
     
-    print("ZED_input:{}".formate(ZED_input))
+    print("ZED_input:{}".format(ZED_input))
     
     # single sample prediction
     prediction = trained_model.predict_on_batch({'ZED_data':ZED_input, 'metadata':meta_input})
