@@ -1,3 +1,5 @@
+
+
 /*
 Code written for Arduino Uno.
 
@@ -13,6 +15,7 @@ in the percent signals, whereas absolute values of the PWM can vary for various 
 24 April 2016
 */
 #include "constants.h"
+
 #include "PinChangeInterrupt.h" // Adafruit library
 #include <Servo.h> // Arduino library
 
@@ -217,8 +220,8 @@ void button_interrupt_service_routine(void) {
 	// 4. Turning steering wheel clockwise until the LED stop flashing.
 	// 5. Power off the transmitter to complete the setting.
 	// Uncomment the following two lines to check the pwm values in the terminal. Comment these lines after the calibration.
-	// Serial.println(button_pwm_value);
-	// delay(10);
+	//Serial.println(button_pwm_value);
+	//delay(10);
 	
         if (abs(button_pwm_value-BUTTON_A)<BUTTON_DELTA) {
             if (state == STATE_ERROR) return;
@@ -538,7 +541,8 @@ void loop() {
     }
 
     // Comment the debug messages and servo/motor outpus to do the calibration for the pwm values. Uncomment the lines after calibration.
-    int debug = true;
+    
+    int debug = false;
     if (debug) {
         Serial.print("(");
         Serial.print(state);
@@ -612,7 +616,7 @@ void loop() {
         digitalWrite(PIN_LED_OUT, LOW);
         delay(100);
     }
-
+    
     encoder_loop();
 }
 

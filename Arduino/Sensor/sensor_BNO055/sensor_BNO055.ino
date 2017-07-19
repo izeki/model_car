@@ -346,10 +346,10 @@ void loop() {
     updateAccValues();
     updateGyroValues();
     updateOrientation();
-    updateHeadings();
+    ////updateHeadings();
     printAccValues();
     printGyroValues();
-    //printHeadings();
+    ////printHeadings();
     printOrientation();
     /*
     sensors_event_t event;
