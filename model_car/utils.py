@@ -15,11 +15,13 @@ from __future__ import division  # 1/2 == 0.5, not 0
 ####################################
 # exception format:
 if False:
+    import sys, traceback
     try:
         pass
     except Exception as e:
         print("********** Exception ***********************")
-        print(e.message, e.args)
+        traceback.print_exc(file=sys.stdout)
+#        print(e.message, e.args)
 #
 ####################################
 

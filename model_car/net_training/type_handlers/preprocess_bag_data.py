@@ -1,6 +1,7 @@
 from model_car.utils import *
 import rospy
 import rosbag
+import sys, traceback
 
 ############## topics, not necessarily original rosbag names ###################
 #
@@ -82,7 +83,9 @@ def preprocess_bag_data(bag_folder_path,bagfile_range=[]):
                 t = round(m.timestamp.to_time(),3)
                 A['right_image'][t] = 'z' # placeholder for ctr
         except Exception as e:
-            print e.message, e.args
+            cprint("********** Exception ***********************",'red')
+            traceback.print_exc(file=sys.stdout)
+            #print e.message, e.args
 
 
     for img in ['left_image','right_image']:

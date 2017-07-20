@@ -4,6 +4,8 @@ from keras import regularizers
 from keras.layers.core import Lambda
 from keras.layers import Activation, Merge
 from keras import backend as K
+from keras.engine import Layer, InputSpec
+from keras import initializers, regularizers, constraints
 import numpy as np
 """
 Karl's model car model:
@@ -293,6 +295,73 @@ def conv2Dgroup(filters, kernel_size, strides, padding, activation, name, data_f
 
     return f
 
+### keras doesnot implement Scale layer######################################################
+#
+#  https://flyyufelix.github.io/2017/03/23/caffe-to-keras.html
+#
+
+class Scale(Layer):
+    '''Learns a set of weights and biases used for scaling the input data.
+    '''
+    def __init__(self,  
+                        axis=-1, 
+                        momentum = 0.9, 
+                        beta_initializer ='zero', 
+                        gamma_initializer='one', 
+                        beta_regularizer=None,
+                        gamma_regularizer=None,
+                        beta_constraint=None,
+                        gamma_constraint=None,
+                        **kwargs):
+        self.momentum = momentum
+        self.axis = axis
+        self.beta_initializer = initializers.get(beta_initializer)
+        self.gamma_initializer = initializers.get(gamma_initializer)
+        self.beta_regularizer = regularizers.get(beta_regularizer)
+        self.gamma_regularizer = regularizers.get(gamma_regularizer)
+        self.beta_constraint = constraints.get(beta_constraint)
+        self.gamma_constraint = constraints.get(gamma_constraint)
+        super(Scale, self).__init__(**kwargs)
+
+    def build(self, input_shape):
+        dim = input_shape[self.axis]
+        if dim is None:
+            raise ValueError('Axis ' + str(self.axis) + ' of '
+                             'input tensor should have a defined dimension '
+                             'but the layer received an input with shape ' +
+                            str(input_shape) + '.')
+        self.input_spec = InputSpec(ndim=len(input_shape),
+                                                    axes={self.axis: dim})
+        
+        shape = (dim,)
+        self.gamma = self.add_weight(shape=shape,
+                                                        name='gamma',
+                                                        initializer=self.gamma_initializer,
+                                                        regularizer=self.gamma_regularizer,
+                                                        constraint=self.gamma_constraint)
+
+        self.beta = self.add_weight(shape=shape,
+                                                        name='beta',
+                                                        initializer=self.beta_initializer,
+                                                        regularizer=self.beta_regularizer,
+                                                        constraint=self.beta_constraint)
+
+    def call(self, inputs, mask=None):
+        input_shape = K.int_shape(inputs)
+        # Prepare broadcasting shape.
+        broadcast_shape = [1] * len(input_shape)
+        broadcast_shape[self.axis] = input_shape[self.axis]
+
+        out = K.reshape(self.gamma, broadcast_shape) * inputs + K.reshape(self.beta, broadcast_shape)
+        return out
+
+    def get_config(self):
+        config = {"momentum": self.momentum, "axis": self.axis}
+        base_config = super(Scale, self).get_config()
+        return dict(list(base_config.items()) + list(config.items()))
+
+
+
 def get_model(version, channel=3, meta_label=6, input_width=672, input_height=376, phase='train'):
     if version == 'version 1b':
         return get_model_1b(channel, meta_label, input_width, input_height, phase)
@@ -308,7 +377,8 @@ def get_model_1b(channel=3, meta_label=6, input_width=672, input_height=376, pha
     ZED_data_pool1 = AveragePooling2D(pool_size=(3, 3), strides=(2,2), padding='valid', data_format='channels_first', name='ZED_data_pool1')(ZED_data_pad)
     ZED_data_pool1 = ZeroPadding2D(padding=(1, 1), data_format='channels_first')(ZED_data_pool1)
     ZED_data_pool2 = AveragePooling2D(pool_size=(3, 3), strides=(2,2), padding='valid', data_format='channels_first', name='ZED_data_pool2')(ZED_data_pool1)
-    ZED_data_pool2_scale = BatchNormalization(axis=1, name='ZED_data_pool2_scale')(ZED_data_pool2)
+    #ZED_data_pool2_scale = BatchNormalization(axis=1, name='ZED_data_pool2_scale')(ZED_data_pool2)
+    ZED_data_pool2_scale = Scale(axis=1, name='ZED_data_pool2_scale')(ZED_data_pool2)
     
     conv1 = Conv2D(filters=96, kernel_size=11, strides=(3,3), padding='valid', activation='relu', data_format='channels_first', name='conv1')(ZED_data_pool2_scale)
     conv1 = ZeroPadding2D(padding=(1, 0), data_format='channels_first')(conv1)

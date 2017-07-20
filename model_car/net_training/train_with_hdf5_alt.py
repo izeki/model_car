@@ -1,6 +1,7 @@
 from model_car.vis import *
 from model_car.model.model import *
 import h5py
+import sys, traceback
 
 def plot_performance(steer,motor,loss1000):
     figure('loss1000')
@@ -11,7 +12,7 @@ def plot_performance(steer,motor,loss1000):
     plt.xlabel(solver_file_path)
     figure('steer')
     clf()
-
+    
     s1000 = steer[-(min(len(steer),10000)):]
     s = array(s1000)
     plot(s[:,0],s[:,1],'o')
@@ -45,7 +46,7 @@ def get_layer_output(model, layer_index, model_input, training_flag = True):
     return layer_outputs
 ##############################################################
 
-runs_folder = sys.argv[1]#runs_folder = '/media/karlzipser/ExtraDrive1/caffe_runs'
+runs_folder = sys.argv[1]#runs_folder = '~/Desktop/tmp/hdf5/runs'
 run_names = sorted(gg(opj(runs_folder,'*.hdf5')),key=natural_keys)
 solver_inputs_dic = {}
 keys = {}
@@ -61,7 +62,8 @@ for hdf5_filename in run_names:
             k_ctr += 1
     except Exception as e:
         cprint("********** Exception ***********************",'red')
-        print(e.message, e.args)
+        traceback.print_exc(file=sys.stdout)
+        #print(e.message, e.args)
 
 ks = keys.keys()
 
@@ -78,7 +80,7 @@ T = 6
 timer = Timer(T)
 id_timer = Timer(3*T)
 
-iteration = 50000
+iteration = 1
 i_time = 1
 
 #TODO: Add training iteration
@@ -86,6 +88,7 @@ while i_time <= iteration: # Training
     random.shuffle(ks)
     print('metrics: {}'.format(model.metrics_names))
     for k in ks:
+        #print('--{}--'.format(k))
         hdf5_filename = keys[k]
         solver_inputs = solver_inputs_dic[hdf5_filename]
         x_train = {}
@@ -95,31 +98,36 @@ while i_time <= iteration: # Training
         y_train['steer_motor_target_data'] = solver_inputs[k]['steer_motor_target_data'][:]
         step_loss = model.train_on_batch({'ZED_input':x_train['ZED_input'], 'meta_input':x_train['meta_input']}, {'ip2': y_train['steer_motor_target_data']})
         steer_motor_out = get_layer_output(model, 20, [x_train['ZED_input'], x_train['meta_input']])
-        steer_out = steer_motor_out[0,9]
-        motor_out = steer_motor_out[0,19]
-        loss.append(step_loss[0])
+        #steer_out = steer_motor_out[0,9]
+        #motor_out = steer_motor_out[0,19]        
+        #loss.append(step_loss[0])
         #print('steer_motor_out: {}'.format(steer_motor_out[0,19]))
         #print('steer_motor_target:({},{}), steer_motor_out:({},{})'.format(y_train['steer_motor_target_data'][0,9], y_train['steer_motor_target_data'][0,19], steer_out, motor_out))
-        steer.append([y_train['steer_motor_target_data'][0,9],steer_motor_out[0,9]])
-        motor.append([y_train['steer_motor_target_data'][0,19],steer_motor_out[0,19]])
-        if len(loss) >= 1000:
-			loss1000.append(array(loss[-1000:]).mean())
-			loss = []
+        #steer.append([y_train['steer_motor_target_data'][0,9],steer_motor_out[0,9]])
+        #motor.append([y_train['steer_motor_target_data'][0,19],steer_motor_out[0,19]])
+        #if len(loss) >= 1000:
+		#	loss1000.append(array(loss[-1000:]).mean())
+		#	loss = []
         ctr += 1
-        if timer.check():
-            plot_performance(steer,motor,loss1000)
-            timer.reset()
+        #if timer.check():
+            #print('Check performace loss1000:{}\n'.format(len(loss1000)))
+            #if len(loss1000) > 0:
+            #    plot_performance(steer,motor,loss1000)
+        #    timer.reset()
+        print('-------------------------------------{}-----------------------------------------------'.format(ctr))
         if id_timer.check():
             cprint(solver_file_path,'blue','on_yellow')
             id_timer.reset()
+    #print('++++++++++++++++++++++++++++++++++++++++++++++++++++')
     if i_time % 10000 == 0:
         # save snapshot model
         model.save(opj(runs_folder, solver_file_path+'_'+str(i_time)+'.hdf5'))
     i_time = i_time + 1
 cprint('saving model.....','blue','on_yellow')
-model.save(opj(runs_folder, solver_file_path+'_final.hdf5'))
-pass    
+#model.save(opj(runs_folder, solver_file_path+'_final.hdf5'))
+#print('++++++++++++++++++++++++++++++++++++++++++++++++++++')
 
+pass
 """
 
 figure('loss')

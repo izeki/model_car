@@ -5,6 +5,7 @@ import model_car.net_training.type_handlers.Bag_Folder as Bag_Folder
 import model_car.net_training.type_handlers.Bag_File as Bag_File
 from model_car.net_training.type_handlers.preprocess_Bag_Folders import get_preprocess_dir_name_info as get_preprocess_dir_name_info
 import cv2
+import sys, traceback
 
 
 NUM_STATE_ONE_STEPS = 30
@@ -127,7 +128,8 @@ def bag_file_loader_thread(BF_dic,BF_dic_keys_weights,delay_before_delete,loaded
 
             else: #except Exception as e:
                 cprint("THREAD:: ********** Exception ***********************",'red')
-                print(e.message, e.args)
+                traceback.print_exc(file=sys.stdout)
+                #print(e.message, e.args)
 
 verbose = False
 save_get_data_timer = Timer(60)

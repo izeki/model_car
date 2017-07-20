@@ -1,5 +1,5 @@
 from model_car.utils import *
-
+import sys, traceback
 import matplotlib
 try:
     import cv2
@@ -427,7 +427,8 @@ def frames_to_video_with_ffmpeg(input_dir,output_path,img_range=(),rate=30):
         success = True
     except Exception as e:
         print "'avconv did not work.' ***************************************"
-        print e.message, e.args
+        traceback.print_exc(file=sys.stdout)
+        #print e.message, e.args
         print "***************************************"
     if not success:
         try:
@@ -436,7 +437,8 @@ def frames_to_video_with_ffmpeg(input_dir,output_path,img_range=(),rate=30):
             success = True
         except Exception as e:
             print "'ffmeg did not work.' ***************************************"
-            print e.message, e.args
+            traceback.print_exc(file=sys.stdout)
+            #print e.message, e.args
             print "***************************************"
     if success:
         print('frames_to_video_with_ffmpeg() had success with ' + frames_folder)

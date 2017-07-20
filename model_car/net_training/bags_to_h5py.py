@@ -1,10 +1,10 @@
 from model_car.utils import *
 from model_car.vis import *
-from model_car.net_training.training_data_generator_alt import training_data_generator
+from model_car.net_training.training_data_generator_alt import training_data_generator, visualize_data_model_version
 import model_car.net_training.type_handlers.Bag_File as Bag_File
 import cv2
 import h5py
-
+import sys, traceback
 version = 'version 1b'
 working_path = sys.argv[1]
 dst_path = sys.argv[2]
@@ -222,7 +222,8 @@ def get_data(run_name,bf,rt,BagFolder_dic,bag_img_dic,skip_bag_dic,NUM_STATE_ONE
             skip_bag_dic[bn] = True; return None
     except Exception as e:
         cprint("********** Exception ***********************",'red')
-        print(e.message, e.args)
+        traceback.print_exc(file=sys.stdout)
+        #print(e.message, e.args)
         skip_bag_dic[bn] = True; return None
         
     return data
@@ -245,7 +246,7 @@ def visualize_data(data,dt=33,image_only=False):
         cv2.imshow('right',cv2.cvtColor(data['left'][i],cv2.COLOR_RGB2BGR))
         if cv2.waitKey(dt) & 0xFF == ord('q'):
             pass
-
+    
 # 
 # 
 # 
@@ -292,10 +293,12 @@ def main():
         bf = fname(bn)
 
         run_name = bn.split('/')[0]
-        if run_name != previous_run_name:
-            if previous_run_name != 'nothing':
-                hdf5_runs_dic[previous_run_name].close()
-            previous_run_name = run_name
+        
+        #if run_name != previous_run_name:
+        #    if previous_run_name != 'nothing':
+        #        hdf5_runs_dic[previous_run_name].close()
+        #    previous_run_name = run_name
+        
         file_name = os.path.join(dst_path,'hdf5','runs',run_name + '.hdf5')
         unix('mkdir -p '+os.path.join(dst_path,'hdf5','runs'))
         if run_name not in hdf5_runs_dic:
@@ -332,20 +335,22 @@ def main():
                                 if timer.check(): #mod(ctr,30)==0:#
                                     #solver_inputs.close()
                                     #solver_inputs = h5py.File(hdf5_filename)
-                                    visualize_data(data)
+                                    #visualize_data(data)
                                     if result != None:
                                         visualize_data_model_version(version, result, flip)
                                     cprint(d2s('ctr =',ctr,'rate =',dp(ctr/(time.time()-t0),1),'Hz','size =',dp(os.path.getsize(file_name)/10**12.,4),'TB'),'red','on_yellow') #ctr = 0
                                     cprint(d2s('timestamp percent =', 100*len(timestamps)/(1.*len(BagFolder_dic[run_name]['good_bag_timestamps'][bf]))),'green')
                                     timer.reset()
-    hdf5_runs_dic[previous_run_name].close()
+    #hdf5_runs_dic[previous_run_name].close()
     for r in hdf5_runs_dic.keys():
         try:
+            cprint("----------closing file {} -------------------".format(r), 'red')
             hdf5_runs_dic[r].close()
         except Exception as e:
             cprint("********** Exception ***********************",'red')
-            print(e.message, e.args)
+            traceback.print_exc(file=sys.stdout)
                     
 if __name__ == "__main__":
     main()
+    print('------------------------------finished bag to hdf5 conversion-----------------------')
             

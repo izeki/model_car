@@ -3,6 +3,7 @@ from model_car.net_training.type_handlers.Bag_File import *
 from model_car.progress import *
 from model_car.vis import *
 import os
+import sys, tracback
 
 """
 This
@@ -430,7 +431,7 @@ def function_animate(t0,t1):
                     img = global_dict[left_images][t]
                 except Exception as e:
                     cprint("********** Exception ***********************",'red')
-                    print(e.message, e.args)
+                    traceback.print_exc(file=sys.stdout)
                 #print state_one_g_t_zero_dict[t]
                 if state_one_g_t_zero_dict[t] < 1:#t not in B['good_timestamps_to_raw_timestamps_indicies__dic']:
                     #img[:,:,0] = img[:,:,1]
@@ -459,7 +460,8 @@ def function_run_loop():
             eval(command)
         except Exception as e:
             cprint("********** Exception ***********************",'red')
-            print(e.message, e.args)
+            traceback.print_exc(file=sys.stdout)
+            #print(e.message, e.args)
 
 
 
@@ -661,7 +663,8 @@ def load_hdf5_steer_hist(path,dst_path):
         save_obj(state_hist_list,opj(dst_path,fname(path).replace('hdf5','state_hist_list.pkl')))
     except Exception as e:
         cprint("********** load_hdf5_steer_hist Exception ***********************",'red')
-        print(e.message, e.args)
+        traceback.print_exc(file=sys.stdout)
+        #print(e.message, e.args)
 
 
 if __name__ == '__main__':

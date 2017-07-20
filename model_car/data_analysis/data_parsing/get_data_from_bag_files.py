@@ -46,6 +46,7 @@ from model_car.vis import *
 #import rospy
 #import rosbag
 import cv2
+import sys, traceback
 #import cv_bridge
 #bridge = cv_bridge.CvBridge()
 
@@ -138,7 +139,8 @@ class Bag_Folder:
         try:
             data = self.bag_file.get_data(self.left_image_bound_to_data, target_topics, num_data_steps, num_frames)
         except Exception, e:
-            print e 
+            traceback.print_exc(file=sys.stdout)
+            #print e 
             print "***************************************"
             data = None
 
@@ -176,7 +178,8 @@ class Bair_Car_Data:
 
             data = self.bag_folder.get_data(target_topics, num_data_steps, num_frames)
         except Exception, e:
-            print e 
+            #print e 
+            traceback.print_exc(file=sys.stdout)
             print "***************************************"
             data = None
 

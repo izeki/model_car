@@ -180,7 +180,7 @@ def visualize_data_model_version_1(data_set,flip):
         #print(img.min(),img.max())
         apply_rect_to_img(img,steer,0,99,steer_rect_color,steer_rect_color,0.9,0.1,center=True,reverse=True,horizontal=True)
         apply_rect_to_img(img,motor,0,99,steer_rect_color,steer_rect_color,0.9,0.1,center=True,reverse=True,horizontal=False)
-        mi(img,layer_to_use,img_title=d2s(x_train['metadata'][0,:,0,0]))
+        mi(img,layer_to_use,img_title=d2s(x_train['meta_input'][0,:,0,0]))
 
         pause(0.001)
         #cv2.imshow('left',cv2.cvtColor((255*img).astype(np.uint8),cv2.COLOR_RGB2BGR))#.astype('uint8')
@@ -335,7 +335,7 @@ def visualize_data_model_version_1b(data_set,flip):
         #apply_rect_to_img(img,steer,0,99,steer_rect_color,steer_rect_color,0.9,0.1,center=True,reverse=True,horizontal=True)
         #apply_rect_to_img(img,motor,0,99,steer_rect_color,steer_rect_color,0.9,0.1,center=True,reverse=True,horizontal=False)
         figure(figure_caption,figsize=(4,2))
-        mi(img,figure_caption,img_title=d2s(x_train['metadata'][0,:,0,0],flip))
+        mi(img,figure_caption,img_title=d2s(x_train['meta_input'][0,:,0,0],flip))
         #print solver.net.blobs['steer_motor_target_data'].data[:]
         pause(0.0001)
 
@@ -508,7 +508,7 @@ def visualize_data_model_version_2(data_set, flip):
             steer_rect_color = blue
         #apply_rect_to_img(img,steer,0,99,steer_rect_color,steer_rect_color,0.9,0.1,center=True,reverse=True,horizontal=True)
         #apply_rect_to_img(img,motor,0,99,steer_rect_color,steer_rect_color,0.9,0.1,center=True,reverse=True,horizontal=False)
-        mi(img,layer_to_use,img_title=d2s(x_train['metadata'][0,:,0,0],flip))
+        mi(img,layer_to_use,img_title=d2s(x_train['meta_input'][0,:,0,0],flip))
 
 
         pause(0.001)

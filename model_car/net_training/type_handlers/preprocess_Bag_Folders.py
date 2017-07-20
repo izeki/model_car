@@ -1,4 +1,5 @@
 from model_car.vis import *
+import sys, traceback
 import model_car.net_training.type_handlers.Bag_Folder as Bag_Folder
 
 def preprocess_Bag_Folders(bag_folders_path_meta_path,bag_folders_path_rgb1to4_path,NUM_STATE_ONE_STEPS=30,graphics=False,accepted_states=[1],pkl_name='Bag_Folder.pkl'):
@@ -55,7 +56,8 @@ def preprocess_Bag_Folders(bag_folders_path_meta_path,bag_folders_path_rgb1to4_p
 
         except Exception as e:
             cprint("********** Exception ***********************",'red')
-            print(e.message, e.args)            
+            traceback.print_exc(file=sys.stdout)
+            #print(e.message, e.args)            
 
 
 
