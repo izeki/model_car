@@ -98,13 +98,13 @@ while i_time <= iteration: # Training
         y_train['steer_motor_target_data'] = solver_inputs[k]['steer_motor_target_data'][:]
         step_loss = model.train_on_batch({'ZED_input':x_train['ZED_input'], 'meta_input':x_train['meta_input']}, {'ip2': y_train['steer_motor_target_data']})
         steer_motor_out = get_layer_output(model, 20, [x_train['ZED_input'], x_train['meta_input']])
-        #steer_out = steer_motor_out[0,9]
-        #motor_out = steer_motor_out[0,19]        
-        #loss.append(step_loss[0])
+        steer_out = steer_motor_out[0,9]
+        motor_out = steer_motor_out[0,19]        
+        loss.append(step_loss[0])
         #print('steer_motor_out: {}'.format(steer_motor_out[0,19]))
         #print('steer_motor_target:({},{}), steer_motor_out:({},{})'.format(y_train['steer_motor_target_data'][0,9], y_train['steer_motor_target_data'][0,19], steer_out, motor_out))
-        #steer.append([y_train['steer_motor_target_data'][0,9],steer_motor_out[0,9]])
-        #motor.append([y_train['steer_motor_target_data'][0,19],steer_motor_out[0,19]])
+        steer.append([y_train['steer_motor_target_data'][0,9],steer_motor_out[0,9]])
+        motor.append([y_train['steer_motor_target_data'][0,19],steer_motor_out[0,19]])
         #if len(loss) >= 1000:
 		#	loss1000.append(array(loss[-1000:]).mean())
 		#	loss = []
