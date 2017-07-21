@@ -105,9 +105,9 @@ while i_time <= iteration: # Training
         #print('steer_motor_target:({},{}), steer_motor_out:({},{})'.format(y_train['steer_motor_target_data'][0,9], y_train['steer_motor_target_data'][0,19], steer_out, motor_out))
         steer.append([y_train['steer_motor_target_data'][0,9],steer_motor_out[0,9]])
         motor.append([y_train['steer_motor_target_data'][0,19],steer_motor_out[0,19]])
-        #if len(loss) >= 1000:
-		#	loss1000.append(array(loss[-1000:]).mean())
-		#	loss = []
+        if len(loss) >= 1000:
+			loss1000.append(array(loss[-1000:]).mean())
+			loss = []
         ctr += 1
         #if timer.check():
             #print('Check performace loss1000:{}\n'.format(len(loss1000)))
