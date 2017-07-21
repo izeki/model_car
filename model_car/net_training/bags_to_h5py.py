@@ -335,7 +335,7 @@ def main():
                                 if timer.check(): #mod(ctr,30)==0:#
                                     #solver_inputs.close()
                                     #solver_inputs = h5py.File(hdf5_filename)
-                                    #visualize_data(data)
+                                    visualize_data(data)
                                     if result != None:
                                         visualize_data_model_version(version, result, flip)
                                     cprint(d2s('ctr =',ctr,'rate =',dp(ctr/(time.time()-t0),1),'Hz','size =',dp(os.path.getsize(file_name)/10**12.,4),'TB'),'red','on_yellow') #ctr = 0
