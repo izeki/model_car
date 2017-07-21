@@ -108,7 +108,7 @@ while i_time <= iteration: # Training
         if len(loss) >= 1000:
             loss1000.append(array(loss[-1000:]).mean())
             loss = None
-			loss = []
+            loss = []
         ctr += 1
         #if timer.check():
             #print('Check performace loss1000:{}\n'.format(len(loss1000)))
