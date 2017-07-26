@@ -7,10 +7,12 @@ import std_msgs.msg
 
 from model_car.car_run_params import foldername
 
+time.sleep(3)
+
 def terminate_process_and_children(p):
     import psutil
     process = psutil.Process(p.pid)
-    for sub_process in process.get_children(recursive=True):
+    for sub_process in process.children(recursive=True):
         sub_process.send_signal(signal.SIGINT)
     p.wait()  # we wait for children to terminate
     p.terminate()
@@ -21,10 +23,10 @@ if __name__ == '__main__':
     
 
     assert(len(sys.argv) >= 3)
-
+    #print('argv:{}'.format(sys.argv))
     car_name = sys.argv[1]
     bag_base_folder = sys.argv[2]  # "/media/ubuntu/rosbags"
-    rosbag_args = sys.argv[3] # 
+    rosbag_args = ''.join(' ' + str(e) for e in sys.argv[3:-3]) # 
     bag_rec_folder = opj(bag_base_folder,foldername)
 
     unix('mkdir '+bag_rec_folder)
@@ -37,6 +39,7 @@ if __name__ == '__main__':
     assert(os.path.exists(bag_rec_folder))
     
     # start rosbag record process
+    print('rosbag record --split --size=1024 -b 2048 --lz4 -o {} {}'.format(car_name, rosbag_args))
     rosbag_process = subprocess.Popen('rosbag record --split --size=1024 -b 2048 --lz4 -o {} {}'.format(car_name, rosbag_args), stdin=subprocess.PIPE, shell=True, cwd=bag_rec_folder)
 
     rate = rospy.Rate(1)    

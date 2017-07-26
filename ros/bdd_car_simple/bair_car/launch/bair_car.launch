@@ -54,58 +54,11 @@
         
     </group>
     
-    <!--
-    <node name="rosbag_node" pkg="bair_car" type="rosbag_node.py" output="screen"
-     args="$(find bair_car)/rosbags $(arg bagpath)" respawn="true" if="$(arg record)">
-    </node>
-    -->
     <arg name="rosbag_args"
-     value="/$(arg car_name)/cmd/motor 
-            /$(arg car_name)/cmd/state
-            /$(arg car_name)/cmd/steer
-            /$(arg car_name)/cmd/freeze
-            /$(arg car_name)/encoder
-            /$(arg car_name)/gps
-            /$(arg car_name)/gyro
-            /$(arg car_name)/gyro_heading
-            /$(arg car_name)/acc
-            /$(arg car_name)/motor
-            /$(arg car_name)/sonar
-            /$(arg car_name)/state
-            /$(arg car_name)/steer
-            /$(arg car_name)/GPS2_hour
-            /$(arg car_name)/GPS2_min
-            /$(arg car_name)/GPS2_sec
-            /$(arg car_name)/GPS2_day
-            /$(arg car_name)/GPS2_mon
-            /$(arg car_name)/GPS2_yr
-            /$(arg car_name)/GPS2_fix
-            /$(arg car_name)/GPS2_qual
-            /$(arg car_name)/GPS2_lat
-            /$(arg car_name)/GPS2_long
-            /$(arg car_name)/GPS2_speed
-            /$(arg car_name)/GPS2_angle
-            /$(arg car_name)/GPS2_alt
-            /$(arg car_name)/GPS2_sat
-            /$(arg car_name)/camera_heading
-            /$(arg car_name)/zed/depth/camera_info 
-            /$(arg car_name)/zed/depth/image_rect_color 
-            /$(arg car_name)/zed/left/camera_info 
-            /$(arg car_name)/zed/left/image_rect_color 
-            /$(arg car_name)/zed/right/camera_info 
-            /$(arg car_name)/zed/right/image_rect_color
-            /$(arg car_name)/left_right
-            /$(arg car_name)/model_name" />
+     value="/$(arg car_name)/cmd/motor /$(arg car_name)/cmd/state /$(arg car_name)/cmd/steer /$(arg car_name)/cmd/freeze /$(arg car_name)/encoder /$(arg car_name)/gps /$(arg car_name)/gyro /$(arg car_name)/gyro_heading /$(arg car_name)/acc /$(arg car_name)/motor /$(arg car_name)/sonar /$(arg car_name)/state /$(arg car_name)/steer /$(arg car_name)/GPS2_hour /$(arg car_name)/GPS2_min /$(arg car_name)/GPS2_sec /$(arg car_name)/GPS2_day /$(arg car_name)/GPS2_mon /$(arg car_name)/GPS2_yr /$(arg car_name)/GPS2_fix /$(arg car_name)/GPS2_qual /$(arg car_name)/GPS2_lat /$(arg car_name)/GPS2_long /$(arg car_name)/GPS2_speed /$(arg car_name)/GPS2_angle /$(arg car_name)/GPS2_alt /$(arg car_name)/GPS2_sat /$(arg car_name)/camera_heading /$(arg car_name)/zed/depth/camera_info /$(arg car_name)/zed/depth/image_rect_color /$(arg car_name)/zed/left/camera_info /$(arg car_name)/zed/left/image_rect_color /$(arg car_name)/zed/right/camera_info /$(arg car_name)/zed/right/image_rect_color /$(arg car_name)/left_right /$(arg car_name)/model_name"/>
     
     <node name="rosbag_record_node" pkg="bair_car" type="rosbag_record_node.py" output="screen"
      args="$(arg car_name) $(arg bagpath) $(arg rosbag_args)" respawn="true" if="$(arg record)">
     </node>
     
-    <!--
-    <node pkg="rosbag" type="record" name="rosbag_record_all"
-          args="--split --size=1024 -b 2048 --lz4 -o $(find bair_car)/rosbags/$(arg car_name) $(arg rosbag_args)"
-          respawn="false"
-          if="$(arg record)" >
-    </node>
-    -->
 </launch>
