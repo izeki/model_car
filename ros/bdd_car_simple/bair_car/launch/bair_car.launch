@@ -54,11 +54,10 @@
         
     </group>
     
-    
     <node name="rosbag_node" pkg="bair_car" type="rosbag_node.py" output="screen"
      args="$(find bair_car)/rosbags $(arg bagpath)" respawn="true" if="$(arg record)">
     </node>
-    
+
     <arg name="rosbag_args"
      value="/$(arg car_name)/cmd/motor 
             /$(arg car_name)/cmd/state

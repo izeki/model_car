@@ -33,6 +33,8 @@ alias rstat='python ~/model_car/rosstatus.py'
 alias test_caffe='cd ~/caffe; build/tools/caffe time --model=models/bvlc_alexnet/deploy.prototxt --gpu=0'
 alias zed_explorer='/usr/local/zed/tools/ZED\ Explorer'
 # sudo vi /etc/hosts # to edit hosts
+alias speedup='echo bdd_path123 | sudo -S ~/jetson_clocks.sh'
+alias setswap='echo bdd_path123 | sudo -S ~/git/postFlashTX1/createSwapfile.sh -d /media/ubuntu/rosbags/ -s 8'
 alias mrsil='ssh ubuntu@Mr_Silver'
 alias mryel='ssh ubuntu@Mr_Yellow'
 alias mrblu='ssh ubuntu@Mr_Blue'
@@ -40,7 +42,6 @@ alias mrora='ssh ubuntu@Mr_Orange'
 alias mrtea='ssh ubuntu@Mr_Teal'
 alias mrbla='ssh ubuntu@Mr_Black'
 alias mrwhi='ssh ubuntu@Mr_White'
-
 alias ssh_date='sudo date --set="$(ssh karlzipser@192.168.1.16 date)"'
 alias fixScreen='DISPLAY=:0 xrandr --output HDMI-0 --mode 1024x768'
 
