@@ -20,7 +20,7 @@ except KeyError:
 ####################### general car settings ################
 #
 for i in range(5):
-	print('*************' + computer_name + '***********')
+    print('*************' + computer_name + '***********')
 Direct = 1.
 Follow = 0.
 Play = 0.
@@ -47,41 +47,45 @@ motor_freeze_threshold = 60
 ####################### specific car settings ################
 #
 if computer_name == 'Mr_Orange':
-	#motor_gain = 1.0
-	pass
+    #motor_gain = 1.0
+    pass
 if computer_name == 'Mr_Silver':
-	#motor_gain = 1.0
-	pass
+    #motor_gain = 1.0
+    pass
 if computer_name == 'Mr_Blue':
-	motor_gain = 1.0
-	motor_freeze_threshold = 65
-	pass
+    motor_gain = 1.0
+    motor_freeze_threshold = 65
+    pass
 if computer_name == 'Mr_Yellow':
-	#motor_gain = 0.9
-	pass
+    #motor_gain = 0.9
+    pass
 if computer_name == 'Mr_Black':
-	#motor_gain = 1.0
-	pass
+    #motor_gain = 1.0
+    pass
 if computer_name == 'Mr_White':
-	#motor_gain = 1.0
-	pass
+    #motor_gain = 1.0
+    pass
 
 if computer_name == 'Mr_Teal':
-	#motor_gain = 1.0
-	pass
+    #motor_gain = 1.0
+    pass
 if computer_name == 'Mr_Audi':
-	motor_gain = 1.0
+    motor_gain = 1.0
     motor_freeze_threshold = 70
-	pass
+    gyro_freeze_threshold = 1000
+    acc_freeze_threshold_x = 100
+    acc_freeze_threshold_y = 100
+    acc_freeze_threshold_z = 100
+    pass
 if computer_name == 'Mr_Purple':
-	#motor_gain = 1.0
-	pass
+    #motor_gain = 1.0
+    pass
 if computer_name == 'Mr_LightBlue':
-	#motor_gain = 1.0
-	pass
+    #motor_gain = 1.0
+    pass
 if computer_name == 'Mr_Blue_Original':
-	motor_gain = 0.5
-	pass
+    motor_gain = 0.5
+    pass
 
 
 #
@@ -89,27 +93,27 @@ if computer_name == 'Mr_Blue_Original':
 # motor_gain = 1.0 # override individual settings
 
 if Direct == 1:
-	task = 'direct'
+    task = 'direct'
 elif Play == 1:
-	task = 'play'
+    task = 'play'
 elif Follow == 1:
-	task = 'follow'
+    task = 'follow'
 elif Furtive == 1:
-	task = 'furtive'
+    task = 'furtive'
 elif Racing == 1:
-	task = 'racing'
+    task = 'racing'
 else:
-	assert(False)
+    assert(False)
 
 
 foldername = ''
 if Follow == 1:
-	foldername = 'follow_'
+    foldername = 'follow_'
 
 model_name = 'z2_color'#solver_file_path.split('/')[-2]
 
 if AI == 1:
-	foldername = foldername + 'AI_' + model_name +'_'
+    foldername = foldername + 'AI_' + model_name +'_'
 
 foldername = foldername + task + '_'
 
