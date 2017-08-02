@@ -34,7 +34,8 @@ if __name__ == '__main__':
     unix('mkdir  '+opj(bag_rec_folder,'.bair_car'))
 
     unix('scp -r /home/ubuntu/catkin_ws/src/bair_car ' + opj(bag_rec_folder,'.bair_car'))
-    unix('scp /home/ubuntu/model_car/model_car/model/z2_color_tf.npy ' + opj(bag_rec_folder,'.AI'))
+    #unix('scp /home/ubuntu/model_car/model_car/model/z2_color_tf.npy ' + opj(bag_rec_folder,'.AI'))
+    unix('scp /home/ubuntu/model_car/model_car/model/z2_color_version_1b_final_run56652.hdf5' + opj(bag_rec_folder,'.AI'))
     
     assert(os.path.exists(bag_rec_folder))
     
