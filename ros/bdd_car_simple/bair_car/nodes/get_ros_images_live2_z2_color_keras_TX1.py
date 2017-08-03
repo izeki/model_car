@@ -16,7 +16,7 @@ try:
     import model_car.car_run_params
     from model_car.car_run_params import *
     version = 'version 1b'
-    weights_file_path = opjh('model_car/model_car/model/z2_color_tf.npy') #
+    #weights_file_path = opjh('model_car/model_car/model/z2_color_tf.npy') #
     weights_file_path = opjh('model_car/model_car/model/z2_color_version_1b_final.hdf5') #
     def setup_solver(weights_file_path):
         if weights_file_path != None:
@@ -176,6 +176,7 @@ try:
     
     
     while not rospy.is_shutdown():
+        #state = 3 
         if state in [3,5,6,7]:
             
             if (previous_state not in [3,5,6,7]):
@@ -206,6 +207,7 @@ try:
                             AI_motor = (AI_motor-60)/39.0*10.0 + 60
                         """
 
+                         
                         AI_motor = int((AI_motor-49.) * motor_gain + 49)
                         AI_steer = int((AI_steer-49.) * steer_gain + 49)
 
@@ -224,11 +226,12 @@ try:
                         AI_steer_previous = AI_steer
                         AI_motor = int((AI_motor+AI_motor_previous)/2.0)
                         AI_motor_previous = AI_motor
-
+                        
 
                         if AI_motor > motor_freeze_threshold and np.array(encoder_list[0:3]).mean() > 1 and np.array(encoder_list[-3:]).mean()<0.2 and state_transition_time_s > 1:
                             freeze = True
 
+                        
                         if freeze:
                             print "######### FREEZE ###########"
                             AI_steer = 49
@@ -236,10 +239,12 @@ try:
 
                         freeze_cmd_pub.publish(std_msgs.msg.Int32(freeze))
 
+                        
                         if state in [3,6]:            
                             steer_cmd_pub.publish(std_msgs.msg.Int32(AI_steer))
                         if state in [6,7]:
                             motor_cmd_pub.publish(std_msgs.msg.Int32(AI_motor))
+
 
                         if True: #verbose:
                             print("{},{},{},{}".format(AI_motor,AI_steer,motor_gain,steer_gain,state))

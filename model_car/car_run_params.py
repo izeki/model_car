@@ -73,9 +73,9 @@ if computer_name == 'Mr_Audi':
     motor_gain = 1.0
     motor_freeze_threshold = 70
     gyro_freeze_threshold = 1000
-    acc_freeze_threshold_x = 100
-    acc_freeze_threshold_y = 100
-    acc_freeze_threshold_z = 100
+    acc_freeze_threshold_x = 50
+    acc_freeze_threshold_y = 50
+    acc_freeze_threshold_z = 50
     pass
 if computer_name == 'Mr_Purple':
     #motor_gain = 1.0
