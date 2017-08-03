@@ -17,7 +17,7 @@ try:
     from model_car.car_run_params import *
     version = 'version 1b'
     weights_file_path = opjh('model_car/model_car/model/z2_color_tf.npy') #
-    weights_file_path = opjh('model_car/model_car/model/z2_color_version_1b_final_run56652.hdf5') #
+    weights_file_path = opjh('model_car/model_car/model/z2_color_version_1b_final.hdf5') #
     def setup_solver(weights_file_path):
         if weights_file_path != None:
             print "loading " + weights_file_path
