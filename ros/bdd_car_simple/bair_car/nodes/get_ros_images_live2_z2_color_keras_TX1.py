@@ -207,7 +207,7 @@ try:
                             AI_motor = (AI_motor-60)/39.0*10.0 + 60
                         """
 
-                         
+                        
                         AI_motor = int((AI_motor-49.) * motor_gain + 49)
                         AI_steer = int((AI_steer-49.) * steer_gain + 49)
 
@@ -239,13 +239,14 @@ try:
 
                         freeze_cmd_pub.publish(std_msgs.msg.Int32(freeze))
 
-                        
+                         
                         if state in [3,6]:            
                             steer_cmd_pub.publish(std_msgs.msg.Int32(AI_steer))
+                        
                         if state in [6,7]:
                             motor_cmd_pub.publish(std_msgs.msg.Int32(AI_motor))
 
-
+                        
                         if True: #verbose:
                             print("{},{},{},{}".format(AI_motor,AI_steer,motor_gain,steer_gain,state))
                             #print AI_motor,AI_steer,motor_gain,steer_gain,state

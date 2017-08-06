@@ -24,7 +24,8 @@ def init(bag_folders_path_meta_path,bag_folders_rgb_1to4_path, left_image_bound_
 
     if 'acc' not in an_element(BF['left_image_bound_to_data']):
         for ts in BF['left_image_bound_to_data']:
-            BF['left_image_bound_to_data'][ts]['acc'] = [0.,9.8,0.]
+            #BF['left_image_bound_to_data'][ts]['acc'] = [0.,9.8,0.] #MMA8451
+            BF['left_image_bound_to_data'][ts]['acc'] = [0., 0., 9.8] #BNO055
     BF['data'] = {}
     BF['data']['raw_timestamps'] = sorted(BF['left_image_bound_to_data'].keys())
 
@@ -237,7 +238,7 @@ def _is_timestamp_valid_data(BF,t,accepted_states=[1]):
     state = BF['left_image_bound_to_data'][t]['state']
     motor = BF['left_image_bound_to_data'][t]['motor']
     steer = BF['left_image_bound_to_data'][t]['steer']
-    if state not in accepted_states: #[1]:#[1,3,5,6,7]: Disallowing caffe states altogether
+    if state not in accepted_states: #[1]:#[1,3,5,6,7]: Disallowing AI states altogether
         valid = False
     if motor < 53: # i.e., there must be at least a slight forward motor command 
         valid = False
