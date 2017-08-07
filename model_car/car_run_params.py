@@ -71,11 +71,11 @@ if computer_name == 'Mr_Teal':
     pass
 if computer_name == 'Mr_Audi':
     motor_gain = 1.0
-    motor_freeze_threshold = 70
+    motor_freeze_threshold = 65
     gyro_freeze_threshold = 1000
-    acc_freeze_threshold_x = 50
-    acc_freeze_threshold_y = 50
-    acc_freeze_threshold_z = 50
+    acc_freeze_threshold_x = 20
+    acc_freeze_threshold_y = 20
+    acc_freeze_threshold_z = 20
     pass
 if computer_name == 'Mr_Purple':
     #motor_gain = 1.0

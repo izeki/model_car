@@ -11,8 +11,10 @@ class Arduino:
 
     STATE_HUMAN_FULL_CONTROL            = 1
     STATE_LOCK                          = 2
-    STATE_AI_AI_STEER_HUMAN_MOTOR = 3
-    STATE_AI_HUMAN_STEER_HUMAN_MOTOR = 5
+    STATE_AI_AI_STEER_HUMAN_MOTOR       = 3
+    STATE_AI_HUMAN_STEER_HUMAN_MOTOR    = 5
+    STATE_AI_AI_STEER_AI_MOTOR          = 6
+    STATE_AI_HUMAN_STEER_AI_MOTOR       = 7
     STATE_LOCK_CALIBRATE                = 4
     STATE_ERROR                         = -1
     CONTROL_STATES = (STATE_HUMAN_FULL_CONTROL,
@@ -79,6 +81,8 @@ class Arduino:
         self.cmd_motor_sub = rospy.Subscriber('cmd/motor', std_msgs.msg.Int32,
                                               callback=self._cmd_motor_callback)
         self.cmd_signal_sub = rospy.Subscriber('/signals', std_msgs.msg.Int32,
+                                              callback=self._cmd_signal_callback)
+        self.cmd_signals_sub = rospy.Subscriber('/left_right', std_msgs.msg.Int32,
                                               callback=self._cmd_signal_callback)
         self.cmd_steer_queue = Queue.Queue()
         self.cmd_motor_queue = Queue.Queue()
@@ -166,9 +170,14 @@ class Arduino:
                 ### publish ROS
                 self.state_pub.publish(std_msgs.msg.Int32(info['state']))
                 self.steer_pub.publish(std_msgs.msg.Int32(info['steer']))
+                # examine turning direction
+                if info['steer'] > 49: #right turn
+                    self.signals_pub.publish(std_msgs.msg.Int32(3))
+                else if info['steer'] < 49: #left turn
+                    self.signals_pub.publish(std_msgs.msg.Int32(2))
                 self.motor_pub.publish(std_msgs.msg.Int32(info['motor']))
                 self.encoder_pub.publish(std_msgs.msg.Float32(info['encoder']))
-                self.state_transition_time_s_pub.publish(std_msgs.msg.Int32(info['state_transition_time_s']))
+                self.state_transition_time_s_pub.publish(std_msgs.msg.Int32(info['state_transition_time_s']))                
                
                 ### write servos serial
                 write_to_servos = False
@@ -266,14 +275,23 @@ class Arduino:
                     print "self."+name+"_pub.publish(std_msgs.msg."+typ+"(data["+str(ctr)+"]))" 
                     ctr += 1   
                 """
-
+                    
                 # Signal to send to signals Arduino
-                signals_ser_str = d2n('(',10*self.info_state + self.signal,')')
-                #print signals_ser_str    
-                #print(d2n('(',self.signal,')'))
-                self.ser_signals.write(signals_ser_str)
-                ### print stuff
-                # print servos_tuple
+                write_to_signals = False
+                for var, queue in (('cmd_signal', self.cmd_signal_queue)):
+                    if not queue.empty():
+                        write_to_signals = True
+                        info[var] = queue.get()
+                        
+                if write_to_signals:                    
+                    signals_ser_int = 10*info['state'] + info['cmd_signal']
+                    signals_ser_str = '( {0}) '.format(signals_ser_int)
+                    #signals_ser_str = d2n('(',10*self.info_state + self.signal,')')
+                    #print signals_ser_str    
+                    #print(d2n('(',self.signal,')'))
+                    self.ser_signals.write(signals_ser_str)
+                    ### print stuff
+                    # print servos_tuple                
 
             except Exception as e:
                 pass

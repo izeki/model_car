@@ -206,6 +206,9 @@ try:
                         if AI_motor > 60:
                             AI_motor = (AI_motor-60)/39.0*10.0 + 60
                         """
+                        
+                        if AI_motor > 50:
+                            AI_motor = (AI_motor-50)/39.0*10.0 + 50
 
                         
                         AI_motor = int((AI_motor-49.) * motor_gain + 49)

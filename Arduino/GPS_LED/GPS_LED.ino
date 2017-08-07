@@ -250,7 +250,7 @@ int button_D_state = LOW;
 
 static const uint8_t PROGMEM
     left_bmp[] =
-    { B10000000,
+    {   B10000000,
         B10000000,
         B10000000,
         B10000000,
@@ -259,7 +259,7 @@ static const uint8_t PROGMEM
         B10000000,
         B10000000 },
     right_bmp[] =
-    { B00000001,
+    {   B00000001,
         B00000001,
         B00000001,
         B00000001,
@@ -268,7 +268,7 @@ static const uint8_t PROGMEM
         B00000001,
         B00000001 },    
     one_bmp[] =
-    { B00000000,
+    {   B00000000,
         B00011000,
         B00111000,
         B00011000,
@@ -277,7 +277,7 @@ static const uint8_t PROGMEM
         B00111100,
         B00000000 },
      two_bmp[] =
-    { B00000000,
+    {   B00000000,
         B00011110,
         B00110110,
         B01101100,
@@ -286,7 +286,7 @@ static const uint8_t PROGMEM
         B01111110,
         B00000000 },
         three_bmp[] =
-    { B00000000,
+    {   B00000000,
         B00111100,
         B01100110,
         B00011100,
@@ -295,7 +295,7 @@ static const uint8_t PROGMEM
         B00111100,
         B00000000 },
         four_bmp[] =
-    { B00000000,
+    {   B00000000,
         B00001110,
         B00011110,
         B00110110,
@@ -303,14 +303,41 @@ static const uint8_t PROGMEM
         B00000110,
         B00000110,
         B00000000 },
+        five_bmp[] =
+    {   B00000000,
+        B01111110,
+        B01100000,
+        B01100000,
+        B01111110,
+        B00000110,
+        B01111110,
+        B00000000 },
+        six_bmp[] =
+    {   B00000000,
+        B00111000,
+        B01100000,
+        B01100000,
+        B01111110,
+        B01100110,
+        B01111110,
+        B00000000 },
+        seven_bmp[] =
+    {   B00000000,
+        B01111110,
+        B01100110,
+        B00001100,
+        B00011000,
+        B00011000,
+        B00011000,
+        B00000000 },
     saving_data_bmp[] =
-    { B00000000,
-        B00000000,
-        B00000000,
-        B00000000,
-        B00000000,
-        B00000000,
-        B00000000,
+    {   B01111110,
+        B01100000,
+        B00110000,
+        B00011000,
+        B00001100,
+        B00000110,
+        B00000110,
         B01111110 };
 
 void left_turn() {
@@ -345,6 +372,24 @@ void four() {
     matrix.writeDisplay();
     matrix.blinkRate(1);
 
+}
+void five() {
+    //matrix.clear();
+    matrix.drawBitmap(0, 0, five_bmp, 8, 8, LED_YELLOW);
+    matrix.writeDisplay();
+    matrix.blinkRate(0);
+}
+void six() {
+    //matrix.clear();
+    matrix.drawBitmap(0, 0, six_bmp, 8, 8, LED_YELLOW);
+    matrix.writeDisplay();
+    matrix.blinkRate(0);
+}
+void seven() {
+    //matrix.clear();
+    matrix.drawBitmap(0, 0, seven_bmp, 8, 8, LED_YELLOW);
+    matrix.writeDisplay();
+    matrix.blinkRate(0);
 }
 void save_data() {
     matrix.drawBitmap(0, 0, saving_data_bmp, 8, 8, LED_YELLOW);
@@ -428,16 +473,16 @@ void LED_loop() {
     }
 */
     
-    if (sig_data == 2) {
+    if (sig_data == 1) {
         save_data();
         //digitalWrite(led_DATA, HIGH);
     }
-    else {
-        //digitalWrite(led_DATA, LOW);
-    }
-
-    if (sig_data == 3) {
+    else if (sig_data == 2) {
         left_turn();
+        //digitalWrite(led_DATA, HIGH);
+    }
+    else if (sig_data == 3) {
+        right_turn();
         //digitalWrite(led_DATA, HIGH);
     }
     if (sig_state == 4) {
@@ -457,7 +502,7 @@ void LED_loop() {
         digitalWrite(led_STATE_3, HIGH);
         digitalWrite(led_STATE_4, LOW);
         */
-    }
+    }/*
     else if (sig_state > 4) {
         three();
         /*
@@ -465,8 +510,35 @@ void LED_loop() {
         digitalWrite(led_STATE_2, HIGH);
         digitalWrite(led_STATE_3, HIGH);
         digitalWrite(led_STATE_4, LOW);
+        /
+    }*/
+    else if (sig_state == 5) {
+        five();
+        /*
+        digitalWrite(led_STATE_1, HIGH);
+        digitalWrite(led_STATE_2, HIGH);
+        digitalWrite(led_STATE_3, HIGH);
+        digitalWrite(led_STATE_4, LOW);
         */
     }
+    else if (sig_state == 6) {
+        six();
+        /*
+        digitalWrite(led_STATE_1, HIGH);
+        digitalWrite(led_STATE_2, HIGH);
+        digitalWrite(led_STATE_3, HIGH);
+        digitalWrite(led_STATE_4, LOW);
+        */
+    }
+    else if (sig_state == 7) {
+        seven();
+        /*
+        digitalWrite(led_STATE_1, HIGH);
+        digitalWrite(led_STATE_2, HIGH);
+        digitalWrite(led_STATE_3, HIGH);
+        digitalWrite(led_STATE_4, LOW);
+        */
+    }/*/
     else if (sig_state == 2) {
         two();
         /*
