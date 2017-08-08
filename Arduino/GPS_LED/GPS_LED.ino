@@ -175,7 +175,7 @@ void loop()                                         // run over and over again
 
 
 
- 
+
         Serial.print("('GPS2',");
         Serial.print(GPS.hour, DEC);
         Serial.print(',');
@@ -213,6 +213,7 @@ void loop()                                         // run over and over again
             Serial.print((int)GPS.satellites);
         Serial.println(")");
         }
+
     }
     LED_loop();
 }
@@ -331,13 +332,13 @@ static const uint8_t PROGMEM
         B00011000,
         B00000000 },
     saving_data_bmp[] =
-    {   B01111110,
-        B01100000,
-        B00110000,
-        B00011000,
-        B00001100,
-        B00000110,
-        B00000110,
+    {   B00000000,
+        B00000000,
+        B00000000,
+        B00000000,
+        B00000000,
+        B00000000,
+        B00000000,
         B01111110 };
 
 void left_turn() {
@@ -502,7 +503,8 @@ void LED_loop() {
         digitalWrite(led_STATE_3, HIGH);
         digitalWrite(led_STATE_4, LOW);
         */
-    }/*
+    }
+    /*
     else if (sig_state > 4) {
         three();
         /*
@@ -511,7 +513,8 @@ void LED_loop() {
         digitalWrite(led_STATE_3, HIGH);
         digitalWrite(led_STATE_4, LOW);
         /
-    }*/
+    }
+    */
     else if (sig_state == 5) {
         five();
         /*
@@ -538,7 +541,7 @@ void LED_loop() {
         digitalWrite(led_STATE_3, HIGH);
         digitalWrite(led_STATE_4, LOW);
         */
-    }/*/
+    }
     else if (sig_state == 2) {
         two();
         /*
@@ -557,6 +560,7 @@ void LED_loop() {
         digitalWrite(led_STATE_4, LOW);
         */
     }
+
 /*
         Serial.print("(");
         Serial.print(I);
@@ -569,12 +573,13 @@ void LED_loop() {
         Serial.print(",");
         Serial.print(sig_left_right);
         Serial.print(",");
-         Serial.print(sig_data);
-        Serial.print(button_A_state);
-        Serial.print(",");
-        Serial.print(button_B_state);        
+        Serial.print(sig_data);
+        //Serial.print(button_A_state);
+        //Serial.print(",");
+        //Serial.print(button_B_state);        
         Serial.println(")");
-*/     
+*/
+
     delay(10);
 }
 

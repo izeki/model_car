@@ -173,7 +173,7 @@ class Arduino:
                 # examine turning direction
                 if info['steer'] > 49: #right turn
                     self.signals_pub.publish(std_msgs.msg.Int32(3))
-                else if info['steer'] < 49: #left turn
+                elif info['steer'] < 49: #left turn
                     self.signals_pub.publish(std_msgs.msg.Int32(2))
                 self.motor_pub.publish(std_msgs.msg.Int32(info['motor']))
                 self.encoder_pub.publish(std_msgs.msg.Float32(info['encoder']))
@@ -277,16 +277,16 @@ class Arduino:
                 """
                     
                 # Signal to send to signals Arduino
-                write_to_signals = False
-                for var, queue in (('cmd_signal', self.cmd_signal_queue)):
-                    if not queue.empty():
-                        write_to_signals = True
-                        info[var] = queue.get()
-                        
+                #write_to_signals = False
+                write_to_signals = True
+                #for var, queue in (('cmd_signal', self.cmd_signal_queue)):
+                #    if not queue.empty():
+                #        write_to_signals = True
+                #        info[var] = queue.get()
                 if write_to_signals:                    
-                    signals_ser_int = 10*info['state'] + info['cmd_signal']
-                    signals_ser_str = '( {0}) '.format(signals_ser_int)
-                    #signals_ser_str = d2n('(',10*self.info_state + self.signal,')')
+                    #signals_ser_int = 10*info['state'] + info['cmd_signal']
+                    #signals_ser_str = '( {0}) '.format(signals_ser_int)
+                    signals_ser_str = d2n('(',10*self.info_state + self.signal,')')
                     #print signals_ser_str    
                     #print(d2n('(',self.signal,')'))
                     self.ser_signals.write(signals_ser_str)

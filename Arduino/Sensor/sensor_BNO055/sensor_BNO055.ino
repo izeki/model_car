@@ -332,7 +332,7 @@ void printGyroValues() {
 
 void printOrientation() {
     Serial.print("(");
-    Serial.print("head");
+    Serial.print("'head'");
     Serial.print(",");
     Serial.print(orientation[0]);
     Serial.print(",");
