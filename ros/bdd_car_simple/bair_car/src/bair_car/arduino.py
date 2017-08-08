@@ -20,7 +20,9 @@ class Arduino:
     CONTROL_STATES = (STATE_HUMAN_FULL_CONTROL,
                       STATE_LOCK,
                       STATE_AI_AI_STEER_HUMAN_MOTOR,
+                      STATE_AI_AI_STEER_AI_MOTOR,
                       STATE_AI_HUMAN_STEER_HUMAN_MOTOR,
+                      STATE_AI_HUMAN_STEER_AI_MOTOR,
                       STATE_LOCK_CALIBRATE,
                       STATE_ERROR)
     
@@ -171,10 +173,10 @@ class Arduino:
                 self.state_pub.publish(std_msgs.msg.Int32(info['state']))
                 self.steer_pub.publish(std_msgs.msg.Int32(info['steer']))
                 # examine turning direction
-                if info['steer'] > 49: #right turn
-                    self.signals_pub.publish(std_msgs.msg.Int32(3))
-                elif info['steer'] < 49: #left turn
+                if info['steer'] > 49: #left turn
                     self.signals_pub.publish(std_msgs.msg.Int32(2))
+                elif info['steer'] < 49: #right turn
+                    self.signals_pub.publish(std_msgs.msg.Int32(3))
                 self.motor_pub.publish(std_msgs.msg.Int32(info['motor']))
                 self.encoder_pub.publish(std_msgs.msg.Float32(info['encoder']))
                 self.state_transition_time_s_pub.publish(std_msgs.msg.Int32(info['state_transition_time_s']))                

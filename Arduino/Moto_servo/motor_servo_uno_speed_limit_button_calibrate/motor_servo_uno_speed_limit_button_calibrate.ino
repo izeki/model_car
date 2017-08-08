@@ -390,12 +390,15 @@ void motor_interrupt_service_routine(void) {
                     state = STATE_AI_AI_STEER_AI_MOTOR;
                 }
             } else {
+                /*
                 // TODO: multiply by 2?
                 int adjusted_motor_pwm_value = (motor_pwm_value - motor_null_pwm_value) + AI_last_written_motor_pwm_value;
                 adjusted_motor_pwm_value = min(adjusted_motor_pwm_value, motor_max_pwm_value);
                 adjusted_motor_pwm_value = max(adjusted_motor_pwm_value, motor_min_pwm_value);
                 motor.writeMicroseconds(adjusted_motor_pwm_value);
                 written_motor_pwm_value = adjusted_motor_pwm_value;
+                */
+                motor.writeMicroseconds(motor_pwm_value);                
             }
         }
         else if (state == STATE_AI_AI_STEER_AI_MOTOR || state == STATE_AI_HUMAN_STEER_AI_MOTOR) {
