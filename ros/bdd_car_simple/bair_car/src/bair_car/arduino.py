@@ -20,7 +20,9 @@ class Arduino:
     CONTROL_STATES = (STATE_HUMAN_FULL_CONTROL,
                       STATE_LOCK,
                       STATE_AI_AI_STEER_HUMAN_MOTOR,
+                      STATE_AI_AI_STEER_AI_MOTOR,
                       STATE_AI_HUMAN_STEER_HUMAN_MOTOR,
+                      STATE_AI_HUMAN_STEER_AI_MOTOR,
                       STATE_LOCK_CALIBRATE,
                       STATE_ERROR)
     
