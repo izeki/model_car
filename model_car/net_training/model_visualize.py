@@ -13,7 +13,7 @@ version = 'version 1b'
 solver_file_path = 'z2_color_' + version
 #weights_file_mode = 'most recent' #'this one' #None #'most recent' #'this one'  #None #'most recent'
 #weights_file_path = opjD('/home/bdd/git/model_car/model_car/model/z2_color_tf.npy') #opjD('z2_color_long_train_21_Jan2017') #None #opjh('kzpy3/caf6/z2_color/z2_color.caffemodel') #None #'/home/karlzipser/Desktop/z2_color' # None #opjD('z2_color')
-weights_file_path = opjD('/home/eralien/output_hdf5/z2_color_version_1b_final_run131140.hdf5')
+weights_file_path = opjD('/home/bdd/Desktop/output_hdf5/hdf5/runs/z2_color_version_1b_final.hdf5')
 model = get_model(version, phase='train')
 model = load_model_weight(model, weights_file_path)
 model.compile(loss = 'mean_squared_error',
@@ -23,7 +23,7 @@ model.compile(loss = 'mean_squared_error',
 
 ZED_input = {}
 meta_input = {}
-hdf5_filename = '/media/eralien/4TB_rosbag1/output_hdf5/08Aug/hdf5/runs/20.hdf5' #runs_folder = '~/Desktop/tmp/hdf5/runs'
+hdf5_filename = '/home/bdd/Desktop/output_hdf5/hdf5/runs/17.hdf5' #runs_folder = '~/Desktop/tmp/hdf5/runs'
 hdf5_content = h5py.File(hdf5_filename, 'r')
 print hdf5_filename
 kk = hdf5_content.keys()
@@ -57,18 +57,19 @@ for k in kk:
         # print(pre_steer)
         # bar_len = int(20+pre_steer[9])
         # img = cv2.rectangle(img, (100, 20), (101, 60), (48, 156, 245), -1)
-        img = cv2.rectangle(img, (200, 40), (200 - 2 * int(pre_steer) + 49 * 2, 60), (50, 213, 213), -1)
-        img = cv2.rectangle(img, (200, 70), (200 - 2 * int(actual_steer) + 49 * 2, 90), (50, 70, 200), -1)
-        img = cv2.rectangle(img, (500, 120), (480, 100 - int(pre_motor) + 49), (50, 213, 213), -1)
-        img = cv2.rectangle(img, (510, 120), (530, 100 - int(actual_motor) + 49), (50, 70, 200), -1)
+        
+        cv2.rectangle(img, (200, 40), (200 - 2 * int(pre_steer) + 49 * 2, 60), (50, 213, 213), -1)
+        cv2.rectangle(img, (200, 70), (200 - 2 * int(actual_steer) + 49 * 2, 90), (50, 70, 200), -1)
+        cv2.rectangle(img, (500, 120), (480, 100 - int(pre_motor) + 49), (50, 213, 213), -1)
+        cv2.rectangle(img, (510, 120), (530, 100 - int(actual_motor) + 49), (50, 70, 200), -1)
 
-        img = cv2.line(img, (200, 40), (200, 90), (1,1,1), 1)
-        img = cv2.line(img, (480, 120), (530, 120), (10,10,10), 1)
-
+        cv2.line(img, (200, 40), (200, 90), (1,1,1), 1)
+        cv2.line(img, (480, 120), (530, 120), (10,10,10), 1)
+        
         # img = cv2.putText(img, 'Prediction_Steer', )
 
         plt.imshow(img)
-        pause(0.1)
+        pause(0.003)
         # pause(10)
 
 
