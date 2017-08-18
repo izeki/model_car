@@ -326,7 +326,7 @@ def main():
                                     n = d2f('-',bn.replace('/','-'),ts,ctr,flip)
                                     x_train = result['x_train']
                                     y_train = result['y_train']
-                                    if n not in solver_inputs:
+                                    if n     not in solver_inputs:
                                         grp = solver_inputs.create_group(n)
                                         grp['ZED_input'] = x_train['ZED_input'][:,:,:,:].astype('uint8')
                                         grp['meta_input'] = x_train['meta_input'][:]

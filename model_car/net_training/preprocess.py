@@ -1,3 +1,5 @@
+import sys
+sys.path.append('~/git/model_car/model_car')
 from model_car.vis import *
 from model_car.utils import *
 import rospy
@@ -15,7 +17,7 @@ left ZED image timestamps. This involes interpolating the sensor data and
 identifiying the correct right image which lags the left by ~5 ms. 
 
 $ python preprocess.py /media/ubuntu/rosbags ~/Desktop/temp_bag 30
-The first argument is source folder path for the bag files. The second 
+The first argument is source folder path for the bag files  . The second 
 argument is the destination folder path for the pkl files. The third argument
 is the frame rate for testing the quality of the synchronization (default is 30 fps). 
 The preprocessed data is saved in the bag folder under
@@ -37,7 +39,7 @@ def main(bag_folders_src_location, bag_folders_dst, NUM_STATE_ONE_STEPS):
     bag_folders_src = opj(bag_folders_src_location,'new' )
     bag_folders_dst_rgb1to4_path = opj(bag_folders_dst,'rgb_1to4')
     bag_folders_dst_meta_path = opj(bag_folders_dst,'meta')
-
+    print('bag_folders_src: '+bag_folders_src+'; bag_folders_dst: '+bag_folders_dst+'; bag_folders_dst_meta_path: '+bag_folders_dst_meta_path+'; bag_folders_dst_rgb1to4_path: '+bag_folders_dst_rgb1to4_path)
     runs = sgg(opj(bag_folders_src,'*'))
     assert(len(runs) > 0)
       
@@ -48,21 +50,25 @@ def main(bag_folders_src_location, bag_folders_dst, NUM_STATE_ONE_STEPS):
       
     for r in runs:
         bags = sgg(opj(r,'*.bag'))
+        print(bags)
         cprint(d2s(tb,fname(r),len(bags)))
         mtimes = []
-        for b in bags:
-            bag_size = os.path.getsize(b)
-            mtimes.append(os.path.getmtime(b))
-            if bag_size < 0.99 * 1074813904:
-                cprint(d2s('Bagfile',b,'has size',bag_size,'which is below full size.'),'red')
-                unix('mv '+b+' '+b+'.too_small')
-        mtimes = sorted(mtimes)
-        print(mtimes)
-        run_duration = mtimes[-1]-mtimes[0]
-        print run_duration
-        assert(run_duration/60./60. < 3.) # If clock set incorrectly, this can change during run leading to year-long intervals
-        cprint(d2s(r,'is okay'))
-     
+
+        # for b in bags:
+        #     bag_size = os.path.getsize(b)
+        #     mtimes.append(os.path.getmtime(b))
+        #     if bag_size < 0.99 * 1074813904:
+        #         cprint(d2s('Bagfile',b,'has size',bag_size,'which is below full size.'),'red')
+        #         unix('mv '+b+' '+b+'.too_small')
+
+        #
+        # mtimes = sorted(mtimes)
+        # print(mtimes)
+        # run_duration = mtimes[-1]-mtimes[0]
+        # print(run_duration)
+        # assert(run_duration/60./60. < 3.) # If clock set incorrectly, this can change during run leading to year-long intervals
+        # cprint(d2s(r,'is okay'))
+        #
     for r in runs:
         preprocess_bag_data(r)
 

@@ -36,7 +36,7 @@ weights_file_path = opjD('/home/bdd/Desktop/tmp/z2_color_version_1b_final_train2
 model = get_model(version, phase='train')
 model = load_model_weight(model, weights_file_path)
 model.compile(loss = 'mean_squared_error',
-                              optimizer = optimizers.SGD(lr = 0.01,  momentum = 0.001, decay = 0.000001, nesterov = True),
+                              optimizer = optimizers.SGD(lr = 0.01, momentum = 0.001, decay = 0.000001, nesterov = True),
                               metrics=['accuracy'])
 model.summary()
 
