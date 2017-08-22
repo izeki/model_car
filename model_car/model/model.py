@@ -207,11 +207,11 @@ def load_model_weight(model, weights_path):
     return model
     
     
-def fire(squeeze_planes, expand1x1_planes, expand3x3_planes):
+def fire(squeeze_planes, expand1x1_planes, expand3x3_planes, **kwargs):
     def f(input):
         squeeze1x1 = Conv2D(filters=squeeze_planes, kernel_size=1, padding='valid', activation='relu', data_format='channels_first', name='squeeze1x1')(input)
-        expand1x1 = Conv2D(filters=expand1x1_planes, kernel_size=1, padding='valid', activation='relu', data_format='channels_first', name='squeeze1x1')(squeeze1x1)
-        expand3x3 = Conv2D(filters=expand3x3_planes, kernel_size=3, padding='valid', activation='relu', data_format='channels_first', name='squeeze1x1')(squeeze1x1)
+        expand1x1 = Conv2D(filters=expand1x1_planes, kernel_size=1, padding='valid', activation='relu', data_format='channels_first', name='expand1x1')(squeeze1x1)
+        expand3x3 = Conv2D(filters=expand3x3_planes, kernel_size=3, padding='valid', activation='relu', data_format='channels_first', name='expand3x3')(squeeze1x1)
         expand3x3 = ZeroPadding2D(padding=(1, 1), data_format='channels_first')(expand3x3)
         return concatenate([expand1x1, expand3x3], axis=1, name='concat')
     return f    
