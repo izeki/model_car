@@ -1,243 +1,13 @@
 from keras.models import Model
-from keras.layers import Input, BatchNormalization, AveragePooling2D, Conv2D, MaxPooling2D, Dense, ZeroPadding2D,  Flatten, concatenate
+from keras.layers import Input, BatchNormalization, AveragePooling2D, Conv2D, 
+                         MaxPooling2D, Dense, ZeroPadding2D, Flatten, concatenate
 from keras import regularizers
-from keras.layers.core import Lambda
+from keras.layers.core import Lambda, Dropout, Reshape
 from keras.layers import Activation, Merge
 from keras import backend as K
 from keras.engine import Layer, InputSpec
 from keras import initializers, regularizers, constraints
 import numpy as np
-"""
-Karl's model car model:
-name: "z2_color_4_layers"
-layer {
-    name: "steer_motor_target_data"
-    type: "DummyData"
-    top: "steer_motor_target_data"
-    dummy_data_param {
-        shape {
-            dim: 1
-            dim: 20
-        }
-    }
-}
-
-layer {
-        name: "metadata"
-        type: "DummyData"
-        top: "metadata"
-        dummy_data_param {
-                shape {
-                        dim: 1
-                        dim: 6
-                        dim: 14
-                        dim: 26
-                }
-        }
-}
-
-layer {
-    name: "ZED_data"
-    type: "DummyData"
-    top: "ZED_data"
-    dummy_data_param {
-        shape {
-            dim: 1
-            dim: 12
-            dim: 376
-            dim: 672
-        }
-    }
-}
-
-layer {
-    name: "ZED_data_pool1"
-    type: "Pooling"
-    bottom: "ZED_data" #"MVN" #
-    top: "ZED_data_pool1"
-    pooling_param {
-        pool: AVE
-        kernel_size: 3
-        stride: 2
-        pad: 0
-    }
-}
-
-layer {
-    name: "ZED_data_pool2"
-    type: "Pooling"
-    bottom: "ZED_data_pool1"
-    top: "ZED_data_pool2"
-    pooling_param {
-        pool: AVE
-        kernel_size: 3
-        stride: 2
-        pad: 0
-    }
-}
-
-layer {
-  name: "ZED_data_pool2_scale"
-  type: "Scale"
-  bottom: "ZED_data_pool2"
-  top: "ZED_data_pool2_scale"
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
-  scale_param {
-    filler {
-      value: 0.003921    }
-    bias_term: true
-    bias_filler {
-      value: -0.5
-    }
-  }
-}
-    
-###################### Convolutional Layer Set 'conv1' ######################
-#
-layer {
-    name: "conv1"
-    type: "Convolution"
-    bottom: "ZED_data_pool2_scale"
-    top: "conv1"
-    convolution_param {
-        num_output: 96
-        group: 1
-        kernel_size: 11
-        stride: 3
-        pad: 0
-        weight_filler {
-            type: "gaussian" 
-            std: 0.00001
-        }
-    }
-}
-    
-layer {
-    name: "conv1_relu"
-    type: "ReLU"
-    bottom: "conv1"
-    top: "conv1"
-}
-    
-layer {
-    name: "conv1_pool"
-    type: "Pooling"
-    bottom: "conv1"
-    top: "conv1_pool"
-    pooling_param {
-        pool: MAX
-        kernel_size: 3
-        stride: 2
-        pad: 0
-    }
-}
-    
-############################################################
-
-layer {
-  name: "conv1_metadata_concat"
-  type: "Concat"
-  bottom: "conv1_pool"
-  bottom: "metadata"
-  top: "conv1_metadata_concat"
-  concat_param {
-    axis: 1
-  }     
-}               
-                        
-
-
-###################### Convolutional Layer Set 'conv2' ######################
-#
-layer {
-    name: "conv2"
-    type: "Convolution"
-    bottom: "conv1_metadata_concat"
-    top: "conv2"
-    convolution_param {
-        num_output: 256
-        group: 2
-        kernel_size: 3
-        stride: 2
-        pad: 0
-        weight_filler {
-            type: "gaussian" 
-            std: 0.1
-        }
-    }
-}
-    
-layer {
-    name: "conv2_relu"
-    type: "ReLU"
-    bottom: "conv2"
-    top: "conv2"
-}
-    
-layer {
-    name: "conv2_pool"
-    type: "Pooling"
-    bottom: "conv2"
-    top: "conv2_pool"
-    pooling_param {
-        pool: MAX
-        kernel_size: 3
-        stride: 2
-        pad: 0
-    }
-}
-    
-############################################################
-
-
-###################### IP Layer Set 'ip1' ######################
-#
-layer {
-    name: "ip1"
-    type: "InnerProduct"
-    bottom: "conv2_pool"
-    top: "ip1"
-    inner_product_param {
-        num_output: 512
-        weight_filler {
-            type: "xavier" 
-        }
-    }
-}
-    
-layer {
-    name: "ip1_relu"
-    type: "ReLU"
-    bottom: "ip1"
-    top: "ip1"
-}
-    
-############################################################
-
-
-###################### IP Layer Set 'ip2' ######################
-#
-layer {
-    name: "ip2"
-    type: "InnerProduct"
-    bottom: "ip1"
-    top: "ip2"
-    inner_product_param {
-        num_output: 20
-        weight_filler {
-            type: "xavier" 
-        }
-    }
-}
-"""
-
 
 #### keras does not implement the EuclideanLoss layer...################################
 #
@@ -434,4 +204,48 @@ def load_model_weight(model, weights_path):
         raise Exception("Unknown weights format.")
     return model
     
+    
+def fire(squeeze_planes, expand1x1_planes, expand3x3_planes):
+    def f(input):
+        squeeze1x1 = Conv2D(filters=squeeze_planes, kernel_size=1, strides=(2,2), padding='valid', activation='relu', data_format='channels_first', name='squeeze1x1')(input)
+        expand1x1 = Conv2D(filters=expand1x1_planes, kernel_size=1, strides=(2,2), padding='valid', activation='relu', data_format='channels_first', name='squeeze1x1')(squeeze1x1)
+        expand3x3 = Conv2D(filters=expand3x3_planes, kernel_size=3, strides=(2,2), padding='valid', activation='relu', data_format='channels_first', name='squeeze1x1')(squeeze1x1)
+        expand3x3 = ZeroPadding2D(padding=(1, 1), data_format='channels_first')(expand3x3)
+        return concat = concatenate([expand1x1, expand3x3], axis=1, name='concat')
+return f    
+
+
+def get_model_squeez_net(channel=3, meta_label=6, input_width=672, input_height=376,  phase='train'):
+    N_STEPS = 10
+    ZED_data = Input(shape=(channel*4, input_height, input_width), name='ZED_input')
+    metadata = Input(shape=(meta_label, 11, 20), name='meta_input')
+    
+    conv1 = Conv2D(filters=64, kernel_size=3, strides=(2,2), padding='valid', activation='relu', data_format='channels_first', name='conv1')(ZED_data)
+    conv1_pool = MaxPooling2D(pool_size=(3, 3), strides=(2,2), padding='valid', data_format='channels_first', name='conv1_pool')(conv1)
+
+    fire1 = fire(16, 64, 64)(conv1_pool)
+    fire2 = fire(16, 64, 64)(fire1)
+    fire_pool1 = MaxPooling2D(pool_size=(3, 3), strides=(2,2), padding='valid', data_format='channels_first', name='fire_pool1')(fire2)
+    fire_pool1_metadata_concat = concatenate([fire_pool1, metadata], axis=-3, name='fire_pool1_metadata_concat')    
+    
+    fire3 = fire(32, 128, 128)(fire_pool1_metadata_concat)
+    fire4 = fire(32, 128, 128)(fire3)
+    fire_pool2 = MaxPooling2D(pool_size=(3, 3), strides=(2,2), padding='valid', data_format='channels_first', name='fire_pool2')(fire4)
+    fire5 = fire(48, 192, 192)(fire_pool2)
+    fire6 = fire(48, 192, 192)(fire5)
+    fire7 = fire(64, 256, 256)(fire6)
+    fire8 = fire(64, 256, 256)(fire7)
+    
+    drop1 = Dropout(rate=0.5, name='drop1')(fire8)
+    conv2 = Conv2D(filters=2 * N_STEPS, kernel_size=1, strides=(2,2), padding='valid', data_format='channels_first', name='conv2')(drop1)
+    avg_pool1 = AveragePooling2D(pool_size=(5, 5), strides=(6,6), padding='valid', data_format='channels_first', name='avg_pool1')(conv2)
+    reshape1 = Reshape((avg_pool1.shape[0].value, -1))(avg_pool1)
+    
+    if phase == 'train':
+        model = Model(inputs=[ZED_data, metadata], outputs=reshape1) 
+    elif phase == 'test':
+        model = Model(inputs=[ZED_data, metadata], outputs=reshape1) 
+    else:
+        model = None
+    return model
     
