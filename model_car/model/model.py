@@ -222,7 +222,8 @@ def get_model_squeez_net(channel=3, meta_label=6, input_width=672, input_height=
     ZED_data = Input(shape=(channel*4, input_height, input_width), name='ZED_input')
     metadata = Input(shape=(meta_label, 11, 20), name='meta_input')
     ZED_data_pool1 = AveragePooling2D(pool_size=(3, 3), strides=(2,2), padding='valid', data_format='channels_first', name='ZED_data_pool1')(ZED_data)
-    conv1 = Conv2D(filters=64, kernel_size=3, strides=(2,2), padding='valid', activation='relu', data_format='channels_first', name='conv1')(ZED_data_pool1)
+    ZED_data_pool2 = AveragePooling2D(pool_size=(3, 3), strides=(2,2), padding='valid', data_format='channels_first', name='ZED_data_pool2')(ZED_data_pool1)
+    conv1 = Conv2D(filters=64, kernel_size=3, strides=(2,2), padding='valid', activation='relu', data_format='channels_first', name='conv1')(ZED_data_pool2)
     conv1_pool = MaxPooling2D(pool_size=(3, 3), strides=(2,2), padding='valid', data_format='channels_first', name='conv1_pool')(conv1)
 
     fire1 = fire(16, 64, 64)(conv1_pool)
