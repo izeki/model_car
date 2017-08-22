@@ -28,7 +28,7 @@ def plot_performance(steer,motor,loss1000):
 from keras import backend as K
 from keras import optimizers
 #solver_file_path = opjh("model_car/net_training/z2_color/solver.prototxt")
-version = 'version 1b'
+version = 'version_1b'
 solver_file_path = 'z2_color_' + version
 #weights_file_mode = 'most recent' #'this one' #None #'most recent' #'this one'  #None #'most recent'
 #weights_file_path = opjD('/home/bdd/git/model_car/model_car/model/z2_color_tf.npy') #opjD('z2_color_long_train_21_Jan2017') #None #opjh('kzpy3/caf6/z2_color/z2_color.caffemodel') #None #'/home/karlzipser/Desktop/z2_color' # None #opjD('z2_color')

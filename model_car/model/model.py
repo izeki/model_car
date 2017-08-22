@@ -137,7 +137,7 @@ class Scale(Layer):
 
 
 def get_model(version, channel=3, meta_label=6, input_width=672, input_height=376, phase='train'):
-    if version == 'version 1b':
+    if version == 'version_1b':
         return get_model_1b(channel, meta_label, input_width, input_height, phase)
     elif version == 'squeeze_net':
         return get_model_squeez_net(channel, meta_label, input_width, input_height, phase)

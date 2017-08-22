@@ -1,4 +1,0 @@
-karlzipser@bdd:~/caffe$ build/tools/caffe time --model=/home/karlzipser/kzpy3/caf6/z2_color/train_val.prototxt  --gpu=0
-Average Forward pass: 1.21125 ms.
-
-caffe time --model=/Users/karlzipser/kzpy3/caf3/z1/train_val.prototxt 

@@ -6,24 +6,24 @@ blue = [0,0,0.8]
 blue_green = [0,0.5,0.5]
 
 def training_data_generator(version,data,flip,show_data,camera_dropout):
-    if version == 'version 1':
+    if version == 'version_1':
         return training_data_generator_1(data,flip,show_data,camera_dropout)
-    if version == 'version 1b':
+    if version == 'version_1b':
         return training_data_generator_1b(data,flip,show_data,camera_dropout)
     if version == 'squeeze_net':
-        return training_data_generator_1b(data,flip,show_data,camera_dropout)
-    if version == 'version 2':
+        return training_data_generator_squeeze_net(data,flip,show_data,camera_dropout)
+    if version == 'version_2':
         return training_data_generator_2(data,flip,show_data,camera_dropout)
-    if version == 'version z3':
+    if version == 'version_z3':
         return training_data_generator_z3(data,flip,show_data,camera_dropout)
     assert(False)
     
 def visualize_data_model_version(version, data_set, flip):
-	if version == 'version 1':
+	if version == 'version_1':
 		return visualize_data_model_version_1(data_set, flip)
-	if version == 'version 1b':
+	if version == 'version_1b':
 		return visualize_data_model_version_1b(data_set, flip)
-	if version == 'version 2':
+	if version == 'version_2':
 		return visualize_data_model_version_2(data_set,flip)
 	assert(False)    
 
