@@ -10,6 +10,8 @@ def training_data_generator(version,data,flip,show_data,camera_dropout):
         return training_data_generator_1(data,flip,show_data,camera_dropout)
     if version == 'version 1b':
         return training_data_generator_1b(data,flip,show_data,camera_dropout)
+    if version == 'squeeze_net':
+        return training_data_generator_1b(data,flip,show_data,camera_dropout)
     if version == 'version 2':
         return training_data_generator_2(data,flip,show_data,camera_dropout)
     if version == 'version z3':

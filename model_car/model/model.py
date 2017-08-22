@@ -1,5 +1,5 @@
 from keras.models import Model
-from keras.layers import Input, BatchNormalization, AveragePooling2D, Conv2D, 
+from keras.layers import Input, BatchNormalization, AveragePooling2D, Conv2D, \
                          MaxPooling2D, Dense, ZeroPadding2D, Flatten, concatenate
 from keras import regularizers
 from keras.layers.core import Lambda, Dropout, Reshape
@@ -139,6 +139,8 @@ class Scale(Layer):
 def get_model(version, channel=3, meta_label=6, input_width=672, input_height=376, phase='train'):
     if version == 'version 1b':
         return get_model_1b(channel, meta_label, input_width, input_height, phase)
+    elif version == 'squeeze_net':
+        return get_model_squeez_net(channel, meta_label, input_width, input_height, phase)
     else:
         assert(False)
 
@@ -209,10 +211,10 @@ def fire(squeeze_planes, expand1x1_planes, expand3x3_planes):
     def f(input):
         squeeze1x1 = Conv2D(filters=squeeze_planes, kernel_size=1, strides=(2,2), padding='valid', activation='relu', data_format='channels_first', name='squeeze1x1')(input)
         expand1x1 = Conv2D(filters=expand1x1_planes, kernel_size=1, strides=(2,2), padding='valid', activation='relu', data_format='channels_first', name='squeeze1x1')(squeeze1x1)
-        expand3x3 = Conv2D(filters=expand3x3_planes, kernel_size=3, strides=(2,2), padding='valid', activation='relu', data_format='channels_first', name='squeeze1x1')(squeeze1x1)
-        expand3x3 = ZeroPadding2D(padding=(1, 1), data_format='channels_first')(expand3x3)
-        return concat = concatenate([expand1x1, expand3x3], axis=1, name='concat')
-return f    
+        expand3x3 = Conv2D(filters=expand3x3_planes, kernel_size=3, strides=(2,2), padding='same', activation='relu', data_format='channels_first', name='squeeze1x1')(squeeze1x1)
+        #expand3x3 = ZeroPadding2D(padding=(1, 1), data_format='channels_first')(expand3x3)
+        return concatenate([expand1x1, expand3x3], axis=1, name='concat')
+    return f    
 
 
 def get_model_squeez_net(channel=3, meta_label=6, input_width=672, input_height=376,  phase='train'):
