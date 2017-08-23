@@ -11,7 +11,7 @@ def training_data_generator(version,data,flip,show_data,camera_dropout):
     if version == 'version_1b':
         return training_data_generator_1b(data,flip,show_data,camera_dropout)
     if version == 'squeeze_net':
-        return training_data_generator_squeeze_net(data,flip,show_data,camera_dropout)
+        return training_data_generator_1b(data,flip,show_data,camera_dropout)
     if version == 'version_2':
         return training_data_generator_2(data,flip,show_data,camera_dropout)
     if version == 'version_z3':
@@ -208,7 +208,10 @@ def training_data_generator_1b(data,flip,show_data=False, camera_dropout=False):
                 #mi(data['right'][0][:,:,:],'right')
                 im_h, im_w, _ = data['left'][0].shape
                 ZED_input = np.zeros((1, 12, im_h, im_w))
-                meta_input = np.zeros((1,6, 14, 26))
+                # version 1b
+                # meta_input = np.zeros((1,6, 14, 26))
+                # squeez_net
+                meta_input = np.zeros((1,6, 11, 20))
                 steer_motor_target_data = np.zeros((1,20))                
                 
                 if not flip:
