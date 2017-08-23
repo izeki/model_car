@@ -242,12 +242,12 @@ def get_model_squeez_net(channel=3, meta_label=6, input_width=672, input_height=
     drop1 = Dropout(rate=0.5, name='drop1')(fire8)
     conv2 = Conv2D(filters=2 * N_STEPS, kernel_size=1, padding='valid', data_format='channels_first', name='conv2')(drop1)
     avg_pool1 = AveragePooling2D(pool_size=(5, 5), strides=(6,6), padding='valid', data_format='channels_first', name='avg_pool1')(conv2)
-    reshape1 = Reshape((2*N_STEPS, -1))(avg_pool1)
+    out = Flatten()(avg_pool1)
     
     if phase == 'train':
-        model = Model(inputs=[ZED_data, metadata], outputs=reshape1) 
+        model = Model(inputs=[ZED_data, metadata], outputs=out) 
     elif phase == 'test':
-        model = Model(inputs=[ZED_data, metadata], outputs=reshape1) 
+        model = Model(inputs=[ZED_data, metadata], outputs=out) 
     else:
         model = None
     return model
