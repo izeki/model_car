@@ -5,7 +5,8 @@ import model_car.net_training.type_handlers.Bag_File as Bag_File
 import cv2
 import h5py
 import sys, traceback
-version = 'version_1b'
+#version = 'version_1b'
+version = 'squeeze_net'
 working_path = sys.argv[1]
 dst_path = sys.argv[2]
 meta_dir = os.path.join(working_path,'meta')
