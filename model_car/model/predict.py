@@ -3,7 +3,7 @@ from model import get_model, load_model_weight
 from keras.layers import Input
 
 def get_trained_model(version, weights_file_path, input_width=672, input_height=376):
-    if version == 'version 1b':
+    if version == 'version_1b':
         return get_trained_model_1b(weights_file_path, input_width, input_height)
     else:
         assert(False)
@@ -11,7 +11,7 @@ def get_trained_model(version, weights_file_path, input_width=672, input_height=
 def get_trained_model_1b(weights_path, input_width=672, input_height=376):
     # Returns a model with loaded weights.
     
-    model = get_model('version 1b', input_width=input_width,  input_height=input_height, phase='test')
+    model = get_model('version_1b', input_width=input_width,  input_height=input_height, phase='test')
     
     model = load_model_weight(model, weights_path)
 
