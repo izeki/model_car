@@ -202,15 +202,16 @@ try:
                         
                         [AI_steer, AI_motor] =forward_pass(version, solver, ZED_data, meta_data_label)
 
-                        """
+                        ''' 
                         if AI_motor > 60:
                             AI_motor = (AI_motor-60)/39.0*10.0 + 60
-                        """
+                        '''
+                          
+                        if AI_motor > 56:
+                            AI_motor = 56
+                            #AI_motor = (AI_motor-50)/49.0*10.0 + 50
                         
-                        if AI_motor > 50:
-                            AI_motor = (AI_motor-50)/39.0*10.0 + 50
-
-                        
+                       
                         AI_motor = int((AI_motor-49.) * motor_gain + 49)
                         AI_steer = int((AI_steer-49.) * steer_gain + 49)
 
