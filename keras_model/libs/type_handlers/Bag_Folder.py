@@ -1,8 +1,11 @@
-from model_car.vis import *
 import numbers
 import cv2
+from ..vis2 import *
 
-def init(bag_folders_path_meta_path,bag_folders_rgb_1to4_path, left_image_bound_to_data_name='left_image_bound_to_data.pkl',NUM_STATE_ONE_STEPS=10,accepted_states=[1]):
+def init(bag_folders_path_meta_path,
+         bag_folders_rgb_1to4_path, 
+         left_image_bound_to_data_name='left_image_bound_to_data.pkl',
+         NUM_STATE_ONE_STEPS=10,accepted_states=[1]):
 
     BF = {}
 
@@ -24,14 +27,15 @@ def init(bag_folders_path_meta_path,bag_folders_rgb_1to4_path, left_image_bound_
 
     if 'acc' not in an_element(BF['left_image_bound_to_data']):
         for ts in BF['left_image_bound_to_data']:
-            #BF['left_image_bound_to_data'][ts]['acc'] = [0.,9.8,0.] #MMA8451
+            #BF['left_image_bound_to_data'][ts]['acc'] = [0., 9.8, 0.] #MMA8451
             BF['left_image_bound_to_data'][ts]['acc'] = [0., 0., 9.8] #BNO055
     BF['data'] = {}
     BF['data']['raw_timestamps'] = sorted(BF['left_image_bound_to_data'].keys())
 
     BF['data']['raw_timestamp_deltas'] = [0]
     for i in range(1,len(BF['data']['raw_timestamps'])):
-        BF['data']['raw_timestamp_deltas'].append(BF['data']['raw_timestamps'][i] - BF['data']['raw_timestamps'][i-1])
+        BF['data']['raw_timestamp_deltas'].append(BF['data']['raw_timestamps'][i]
+                                                  - BF['data']['raw_timestamps'][i-1])
     BF['data']['raw_timestamp_deltas'] = array(BF['data']['raw_timestamp_deltas'])
 
     BF['good_timestamps_to_raw_timestamps_indicies__dic'] = {}
@@ -46,7 +50,8 @@ def init(bag_folders_path_meta_path,bag_folders_rgb_1to4_path, left_image_bound_
             for s in ['left','right']:
                 for ts in bag_file_img_dic[s].keys():
                     BF['img_dic'][s][ts] = bag_file_img_dic[s][ts]
-    good_timestamps_set = set(BF['left_image_bound_to_data'].keys()) # & set(BF['img_dic']['left'].keys()) # Note, won't have this info here now.
+    # Note, won't have this info here now.                    
+    good_timestamps_set = set(BF['left_image_bound_to_data'].keys()) # & set(BF['img_dic']['left'].keys()) 
     bad_timestamps_list = []
 
     cprint('basic checking . . .','yellow')
@@ -141,12 +146,18 @@ def init(bag_folders_path_meta_path,bag_folders_rgb_1to4_path, left_image_bound_
 
     if len(bad_timestamps_list) > 0:
         good_timestamps_set -= set(bad_timestamps_list)
-        cprint(d2s('Removed bad_timestamps:',len(bad_timestamps_list),'of',len(BF['data']['raw_timestamps']),'total.'),'red')
+        cprint(d2s('Removed bad_timestamps:',
+                   len(bad_timestamps_list),
+                   'of',
+                   len(BF['data']['raw_timestamps']),
+                   'total.'),
+               'red')
         #print bad_timestamps_list
     cprint('basic checking done','yellow')
 
     # Corrections. We need to adjust some State values that were interpolated.
-    for ts in good_timestamps_set: # There i=was interpolation of values. For State we don't want this! Here we undo the problem.
+    # There i=was interpolation of values. For State we don't want this! Here we undo the problem.
+    for ts in good_timestamps_set: 
         s = BF['left_image_bound_to_data'][ts]['state'] 
         BF['left_image_bound_to_data'][ts]['state'] = np.round(s)
 
@@ -154,10 +165,11 @@ def init(bag_folders_path_meta_path,bag_folders_rgb_1to4_path, left_image_bound_
     del good_timestamps_set
 
     cprint('basic checking done','yellow')
-    for i in range(len(good_timestamps_list)-2): # Here we assume that isolated state 4 timepoints are rounding/sampling errors.
+    # Here we assume that isolated state 4 timepoints are rounding/sampling errors.
+    for i in range(len(good_timestamps_list)-2): 
         t0 = good_timestamps_list[i]
-        t1 = good_timestamps_list[i+1]
-        t2 = good_timestamps_list[i+2]
+        t1 = good_timestamps_list[i + 1]
+        t2 = good_timestamps_list[i + 2]
         if BF['left_image_bound_to_data'][t1]['state'] == 4:
             if BF['left_image_bound_to_data'][t0]['state'] != 4:
                 if BF['left_image_bound_to_data'][t2]['state'] != 4:
@@ -168,7 +180,9 @@ def init(bag_folders_path_meta_path,bag_folders_rgb_1to4_path, left_image_bound_
         BF['left_image_bound_to_data'][ts]['state_one_steps'] = 0 # overwrite loaded values
 
     for i in range(len(good_timestamps_list)-2,-1,-1):
-        if _is_timestamp_valid_data(BF,good_timestamps_list[i],accepted_states) and good_timestamps_list[i+1] - good_timestamps_list[i] < 0.1:
+        if _is_timestamp_valid_data(BF,
+                                    good_timestamps_list[i],
+                                    accepted_states) and good_timestamps_list[i+1] - good_timestamps_list[i] < 0.1:
             state_one_steps += 1
         else:
             state_one_steps = 0

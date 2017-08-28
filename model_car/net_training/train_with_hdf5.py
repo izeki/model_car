@@ -15,7 +15,7 @@ print_timer = Timer(5)
 ################## Setup Keras ####################################
 from keras import optimizers
 MODEL = 'z2_color'
-version = 'version 1b'
+version = 'version_1b'
 bair_car_data_path = opjD(sys.argv[1]) # '/media/karlzipser/ExtraDrive4/bair_car_data_new_28April2017'#opjD('bair_car_data_new')
 #weights_file_path =  most_recent_file_in_folder(opjD(fname(opjh(REPO,CAF,MODEL))))
 weights_file_path = opjD(sys.argv[2]) #weights_file_path = opjD('model_car/model_car/model/z2_color_tf.npy') 

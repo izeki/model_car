@@ -9,11 +9,13 @@ from keras import optimizers
 import matplotlib.pyplot as plt
 import cv2
 
-version = 'version 1b'
+weights_file_path = sys.argv[1]
+hdf5_filename = sys.argv[2]
+version = 'version_1b'
 solver_file_path = 'z2_color_' + version
 #weights_file_mode = 'most recent' #'this one' #None #'most recent' #'this one'  #None #'most recent'
 #weights_file_path = opjD('/home/bdd/git/model_car/model_car/model/z2_color_tf.npy') #opjD('z2_color_long_train_21_Jan2017') #None #opjh('kzpy3/caf6/z2_color/z2_color.caffemodel') #None #'/home/karlzipser/Desktop/z2_color' # None #opjD('z2_color')
-weights_file_path = opjD('/home/bdd/Desktop/tmp/z2_color_version_1b_final_18AUG.hdf5')
+weights_file_path = opjD(weights_file_path)
 model = get_model(version, phase='train')
 model = load_model_weight(model, weights_file_path)
 model.compile(loss = 'mean_squared_error',
@@ -23,7 +25,7 @@ model.summary()
 
 ZED_input = {}
 meta_input = {}
-hdf5_filename = '/home/bdd/Desktop/output_hdf5/hdf5/runs/01.hdf5' #runs_folder = '~/Desktop/tmp/hdf5/runs'
+#hdf5_filename = '/home/bdd/Desktop/output_hdf5/hdf5/runs/08.hdf5' #runs_folder = '~/Desktop/tmp/hdf5/runs'
 hdf5_content = h5py.File(hdf5_filename, 'r')
 print hdf5_filename
 kk = hdf5_content.keys()
@@ -59,7 +61,9 @@ while True:
             # print(pre_steer)
             # bar_len = int(20+pre_steer[9])
             # img = cv2.rectangle(img, (100, 20), (101, 60), (48, 156, 245), -1)
-
+            # print('pre_steer:{}, act_steer:{},  pre_motor:{}, act_motor:{}'.format(100-pre_steer, 100-actual_steer, pre_motor, actual_motor))
+            
+            
             cv2.rectangle(img, (200, 40), (200 - 2 * int(pre_steer) + 49 * 2, 60), (0, 0, 255), -1)
             cv2.rectangle(img, (200, 70), (200 - 2 * int(actual_steer) + 49 * 2, 90), (0, 0, 255), -1)
             cv2.rectangle(img, (500, 120), (480, 100 - int(pre_motor) + 49), (0, 255, 255), -1)
@@ -69,9 +73,12 @@ while True:
             cv2.line(img, (480, 120), (530, 120), (10,10,10), 1)
 
             # img = cv2.putText(img, 'Prediction_Steer', )
+            
+            
             cv2.imshow('Prediction_Steer',img)
             if cv2.waitKey(dt) & 0xFF == ord('q'):
                 pass
+            
             #plt.imshow(img)
             # pause(10)
 

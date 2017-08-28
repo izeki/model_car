@@ -6,22 +6,24 @@ blue = [0,0,0.8]
 blue_green = [0,0.5,0.5]
 
 def training_data_generator(version,data,flip,show_data,camera_dropout):
-    if version == 'version 1':
+    if version == 'version_1':
         return training_data_generator_1(data,flip,show_data,camera_dropout)
-    if version == 'version 1b':
+    if version == 'version_1b':
         return training_data_generator_1b(data,flip,show_data,camera_dropout)
-    if version == 'version 2':
+    if version == 'squeeze_net':
+        return training_data_generator_1b(data,flip,show_data,camera_dropout)
+    if version == 'version_2':
         return training_data_generator_2(data,flip,show_data,camera_dropout)
-    if version == 'version z3':
+    if version == 'version_z3':
         return training_data_generator_z3(data,flip,show_data,camera_dropout)
     assert(False)
     
 def visualize_data_model_version(version, data_set, flip):
-	if version == 'version 1':
+	if version == 'version_1':
 		return visualize_data_model_version_1(data_set, flip)
-	if version == 'version 1b':
+	if version == 'version_1b':
 		return visualize_data_model_version_1b(data_set, flip)
-	if version == 'version 2':
+	if version == 'version_2':
 		return visualize_data_model_version_2(data_set,flip)
 	assert(False)    
 
@@ -101,7 +103,7 @@ def training_data_generator_1(data,flip,show_data=False,camera_dropout=False):
                 Follow = 0.
                 Play = 0.
                 Furtive = 0.
-                Caf = 0.
+                AI = 0.
                 Racing = 0
 
                 if 'follow' in data['path']:
@@ -112,14 +114,14 @@ def training_data_generator_1(data,flip,show_data=False,camera_dropout=False):
                     Play = 1.0
                 if 'furtive' in data['path']:
                     Furtive = 1.0
-                if 'caffe' in data['path']:
-                    Caf = 1.0
+                if 'AI' in data['path']:
+                    AI = 1.0
                 if 'racing' in data['path']:
                     Racing = 1.0
                     Direct = 1.0
 
                 meta_input[0,0,:,:] = Racing#target_data[0]/99. #current steer
-                meta_input[0,1,:,:] = Caf#target_data[len(target_data)/2]/99. #current motor
+                meta_input[0,1,:,:] = AI#target_data[len(target_data)/2]/99. #current motor
                 meta_input[0,2,:,:] = Follow
                 meta_input[0,3,:,:] = Direct
                 meta_input[0,4,:,:] = Play
@@ -206,7 +208,10 @@ def training_data_generator_1b(data,flip,show_data=False, camera_dropout=False):
                 #mi(data['right'][0][:,:,:],'right')
                 im_h, im_w, _ = data['left'][0].shape
                 ZED_input = np.zeros((1, 12, im_h, im_w))
-                meta_input = np.zeros((1,6, 14, 26))
+                # version 1b
+                # meta_input = np.zeros((1,6, 14, 26))
+                # squeez_net
+                meta_input = np.zeros((1,6, 11, 20))
                 steer_motor_target_data = np.zeros((1,20))                
                 
                 if not flip:
@@ -255,7 +260,7 @@ def training_data_generator_1b(data,flip,show_data=False, camera_dropout=False):
                 Follow = 0.
                 Play = 0.
                 Furtive = 0.
-                Caf = 0.
+                AI = 0.
                 Racing = 0
 
                 if 'follow' in data['path']:
@@ -266,14 +271,14 @@ def training_data_generator_1b(data,flip,show_data=False, camera_dropout=False):
                     Play = 1.0
                 if 'furtive' in data['path']:
                     Furtive = 1.0
-                if 'caffe' in data['path']:
-                    Caf = 1.0
+                if 'AI' in data['path']:
+                    AI = 1.0
                 if 'racing' in data['path']:
                     Racing = 1.0
                     Direct = 1.0
 
                 meta_input[0,0,:,:] = Racing#target_data[0]/99. #current steer
-                meta_input[0,1,:,:] = Caf#target_data[len(target_data)/2]/99. #current motor
+                meta_input[0,1,:,:] = AI#target_data[len(target_data)/2]/99. #current motor
                 meta_input[0,2,:,:] = Follow
                 meta_input[0,3,:,:] = Direct
                 meta_input[0,4,:,:] = Play
@@ -412,7 +417,7 @@ def training_data_generator_2(data,flip,show_data=False,camera_dropout=False):
                 Follow = 0.
                 Play = 0.
                 Furtive = 0.
-                Caf = 0.
+                AI = 0.
                 Racing = 0
 
                 if 'follow' in data['path']:
@@ -423,14 +428,14 @@ def training_data_generator_2(data,flip,show_data=False,camera_dropout=False):
                     Play = 1.0
                 if 'furtive' in data['path']:
                     Furtive = 1.0
-                if 'caffe' in data['path']:
-                    Caf = 1.0
+                if 'AI' in data['path']:
+                    AI = 1.0
                 if 'racing' in data['path']:
                     Racing = 1.0
                     Direct = 1.0
 
                 meta_input[0,0,:,:] = Racing#target_data[0]/99. #current steer
-                meta_input[0,1,:,:] = Caf#target_data[len(target_data)/2]/99. #current motor
+                meta_input[0,1,:,:] = AI#target_data[len(target_data)/2]/99. #current motor
                 meta_input[0,2,:,:] = Follow
                 meta_input[0,3,:,:] = Direct
                 meta_input[0,4,:,:] = Play

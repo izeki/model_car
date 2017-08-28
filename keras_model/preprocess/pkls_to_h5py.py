@@ -1,20 +1,29 @@
-from model_car.utils import *
-from model_car.vis import *
-from model_car.net_training.training_data_generator_alt import training_data_generator, visualize_data_model_version
-import model_car.net_training.type_handlers.Bag_File as Bag_File
+import sys
+import traceback
 import cv2
 import h5py
-import sys, traceback
-#version = 'version_1b'
-version = 'squeeze_net'
-working_path = sys.argv[1]
-dst_path = sys.argv[2]
+
+from training_data_generator import training_data_generator, visualize_data_model
+from Parameters import ARGS
+from libs.utils2 import *
+from libs.vis2 import *
+import libs.type_handlers.Bag_File as Bag_File
+
+
+version = ARGS.version
+verbose = ARGS.verbose
+working_path = ARGS.data_path
+dst_path = ARGS.data_path
+NUM_STATE_ONE_STEPS = ARGS.nstateframes
 meta_dir = os.path.join(working_path,'meta')
 rgb_1to4_dir = os.path.join(working_path,'rgb_1to4')
-verbose = False
 
 
-def get_bag_names_dic(meta_dir,rgb_1to4_dir,to_ignore = ['xxx'],to_require=['']):#['caffe','home','racing']):
+def get_bag_names_dic(
+        meta_dir,
+        rgb_1to4_dir,
+        to_ignore = ['xxx'],
+        to_require=['']):#['ai','home','racing']):
 
     _,all_run_names = dir_as_dic_and_list(meta_dir)
 
@@ -49,32 +58,6 @@ def get_bag_names_dic(meta_dir,rgb_1to4_dir,to_ignore = ['xxx'],to_require=[''])
     cprint(d2n('Number of bags:',num_bag_files_to_load,', estimated hours = ',dp(num_bag_files_to_load/120.,1)))
 
     return bag_names_dic
-
-
-
-
-
-#if False:
-#
-#    BagFolder_dic = {}
-#    bag_img_dic = {}
-#
-#
-#    bn = 'direct_local_21Nov16_17h39m00s_Mr_Yellow/bair_car_2016-11-21-18-03-39_30.bag.pkl'
-#    run_name = bn.split('/')[0]
-#
-#    bf = fname(bn)
-#
-#    cprint('loading '+opj(run_name,'Bag_Folder.pkl'),'yellow','on_red')
-#    BagFolder_dic[run_name] = load_obj(opj(meta_dir,run_name,'Bag_Folder.pkl'))
-#    bag_img_dic[bn] = Bag_File.load_images(opj(rgb_1to4_dir,bn),color_mode="rgb8",include_flip=True)
-#    bag_names_dic[bn] == True
-#
-#    good_bag_timestamps = list(set(BagFolder_dic[run_name]['data']['good_start_timestamps']) & set(bag_img_dic[bn]['left'].keys()))
-#    if len(good_bag_timestamps) < 100:
-#        if verbose:
-#            print(d2n('\t',bn,' len(good_bag_timestamps) < 100'))
-
 
 
 def load_bag_file(bag_path,BagFolder_dic,bag_img_dic,skip_bag_dic,bag_names_dic,meta_dir,rgb_1to4_dir):
@@ -272,7 +255,7 @@ def main():
 
     timer = Timer(30)
 
-    bag_names_dic = get_bag_names_dic(meta_dir,rgb_1to4_dir)
+    bag_names_dic = get_bag_names_dic(meta_dir,rgb_1to4_dir,)
     bag_names_list = sorted(bag_names_dic,key=natural_keys)
 
     hdf5_runs_dic = {}
@@ -282,7 +265,6 @@ def main():
     skip_bag_dic = {}
     BagFolder_dic = {}
     
-    NUM_STATE_ONE_STEPS = 30
     ctr = 0
     t0 = time.time()
 
@@ -308,7 +290,8 @@ def main():
         if run_name in BagFolder_dic:
             if 'good_bag_timestamps' in BagFolder_dic[run_name]:
                 if bf in BagFolder_dic[run_name]['good_bag_timestamps']:
-                    cprint(d2s("""len(BagFolder_dic[run_name]['good_bag_timestamps'][bf]=""",len(BagFolder_dic[run_name]['good_bag_timestamps'][bf])))
+                    cprint(d2s("""len(BagFolder_dic[run_name]['good_bag_timestamps'][bf]=""",
+                               len(BagFolder_dic[run_name]['good_bag_timestamps'][bf])))
                     binned_timestamps = BagFolder_dic[run_name]['binned_timestamps'][bf]
                     ln = int(1.0 * min(len(binned_timestamps[0]),len(binned_timestamps[1])))
                     random.shuffle(binned_timestamps[0]); random.shuffle(binned_timestamps[1])
@@ -322,7 +305,6 @@ def main():
                             data = get_data(run_name,bf,ts,BagFolder_dic,bag_img_dic,skip_bag_dic,NUM_STATE_ONE_STEPS)
                             if data != None:
                                 result = training_data_generator(version, data, flip, show_data=False, camera_dropout=True)
-                                #result = load_data_into_model(caffe_net.solver,version,data,flip,False,True)
                                 if result != None:
                                     n = d2f('-',bn.replace('/','-'),ts,ctr,flip)
                                     x_train = result['x_train']
@@ -338,9 +320,20 @@ def main():
                                     #solver_inputs = h5py.File(hdf5_filename)
                                     visualize_data(data)
                                     if result != None:
-                                        visualize_data_model_version(version, result, flip)
-                                    cprint(d2s('ctr =',ctr,'rate =',dp(ctr/(time.time()-t0),1),'Hz','size =',dp(os.path.getsize(file_name)/10**12.,4),'TB'),'red','on_yellow') #ctr = 0
-                                    cprint(d2s('timestamp percent =', 100*len(timestamps)/(1.*len(BagFolder_dic[run_name]['good_bag_timestamps'][bf]))),'green')
+                                        visualize_data_model(version, result, flip)
+                                    #ctr = 0
+                                    cprint(d2s('ctr =',
+                                               ctr,
+                                               'rate =',
+                                               dp(ctr / (time.time() - t0), 1),
+                                               'Hz',
+                                               'size =',
+                                               dp(os.path.getsize(file_name) / 10 ** 12., 4),'TB'),
+                                           'red',
+                                           'on_yellow') 
+                                    cprint(d2s('timestamp percent =', 
+                                               100 * len(timestamps) / (1. * len(BagFolder_dic[run_name]['good_bag_timestamps'][bf]))),
+                                           'green')
                                     timer.reset()
     #hdf5_runs_dic[previous_run_name].close()
     for r in hdf5_runs_dic.keys():
@@ -353,5 +346,5 @@ def main():
                     
 if __name__ == "__main__":
     main()
-    print('------------------------------finished bag to hdf5 conversion-----------------------')
+    print('------------------------------finished pkls to hdf5 conversion-----------------------')
             
