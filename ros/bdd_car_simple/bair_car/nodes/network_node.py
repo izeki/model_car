@@ -7,7 +7,7 @@ roslaunch bair_car bair_car.launch use_zed:=true record:=false
 import sys
 import traceback
 import runtime_parameters as rp
-from keras_model import *
+from keras_code import *
 try:    
     ########################################################
     #          ROSPY SETUP SECTION
@@ -43,17 +43,16 @@ try:
         global left_list, right_list, solver
         cimg = bridge.imgmsg_to_cv2(data,"bgr8")
         if len(right_list) > nframes + 3:
-		    right_list = right_list[-(nframes + 3):]
-	    right_list.append(cimg)        
+            right_list = right_list[-(nframes + 3):]
+        right_list.append(cimg)        
 
         
-    def left__image_callback(data):
+    def left_image_callback(data):
         global left_list, right_list
-        B += 1
         cimg = bridge.imgmsg_to_cv2(data,"bgr8")
-	    if len(left_list) > nframes + 3:
-		    left_list = left_list[-(nframes + 3):]
-	    left_list.append(cimg)
+        if len(left_list) > nframes + 3:
+            left_list = left_list[-(nframes + 3):]
+        left_list.append(cimg)
         
         
     def state_transition_time_s_callback(data):
@@ -102,18 +101,18 @@ try:
         gyro = msg
         #if np.abs(gyro.y) > gyro_freeze_threshold:
         #    freeze = True
-        if np.sqrt(gyro.y**2+gyro.z**2) > gyro_freeze_threshold:
+        if np.sqrt(gyro.y**2+gyro.z**2) > rp.gyro_freeze_threshold:
             freeze = True
            
         
     def acc_callback(msg):
         global freeze
         acc = msg
-        if np.abs(acc.z) > acc_freeze_threshold_z:
+        if np.abs(acc.z) > rp.acc_freeze_threshold_z:
             freeze = True
-        if acc.y < acc_freeze_threshold_z_neg:
+        if acc.y < rp.acc_freeze_threshold_z_neg:
             freeze = True
-        if np.abs(acc.x) > acc_freeze_threshold_x:
+        if np.abs(acc.x) > rp.acc_freeze_threshold_x:
             freeze = True
         #if np.abs(acc.y) > acc_freeze_threshold_y:
         #    freeze = True
@@ -173,7 +172,7 @@ try:
             if (previous_state not in [3,5,6,7]):
                 previous_state = state
                 AI_enter_timer.reset()
-            if use_AI:
+            if rp.use_AI:
                 if not AI_enter_timer.check():
                     #print AI_enter_timer.check()
                     print "waiting before entering AI mode..."
@@ -185,34 +184,13 @@ try:
                     if len(left_list) > nframes + 2:
                         
                         camera_data = format_camera_data(left_list, right_list)
-                        metadata = format_metadata((rp.Racing, 0, rp.Follow, rp.Direct, rp.Play, rp.Furtive))
-					    [AI_steer, AI_motor] = run_model(camera_data, metadata)
-
-                        """
-                        if AI_motor > 60:
-                            AI_motor = (AI_motor-60)/39.0*10.0 + 60
-                        """
-                        
-                        if AI_motor > 50:
-                            AI_motor = (AI_motor-50)/39.0*10.0 + 50
-                        
-                        AI_motor = int((AI_motor-49.) * motor_gain + 49)
-                        AI_steer = int((AI_steer-49.) * steer_gain + 49)
-
-
-                        if AI_motor > 99:
-                            AI_motor = 99
-                        if AI_motor < 0:
-                            AI_motor = 0
-                        if AI_steer > 99:
-                            AI_steer = 99
-                        if AI_steer < 0:
-                            AI_steer = 0
-
-                        AI_steer = int((AI_steer+AI_steer_previous)/2.0)
-                        AI_steer_previous = AI_steer
-                        AI_motor = int((AI_motor+AI_motor_previous)/2.0)
-                        AI_motor_previous = AI_motor
+                        metadata = format_metadata({'Racing':rp.Racing, 
+                                                    'AI':0, 
+                                                    'Follow':rp.Follow,
+                                                    'Direct':rp.Direct, 
+                                                    'Play':rp.Play, 
+                                                    'Furtive':rp.Furtive})
+                        [AI_steer, AI_motor] = run_model(camera_data, metadata)                        
                         
 
                         if AI_motor > rp.motor_freeze_threshold and np.array(encoder_list[0:3]).mean() > 1 and np.array(encoder_list[-3:]).mean()<0.2 and state_transition_time_s > 1:
@@ -235,7 +213,7 @@ try:
 
                         
                         if True: #verbose:
-                            print("{},{},{},{}".format(AI_motor,AI_steer,motor_gain,steer_gain,state))
+                            print("{},{},{},{}".format(AI_motor,AI_steer,rp.motor_gain,rp.steer_gain,state))
                             #print AI_motor,AI_steer,motor_gain,steer_gain,state
 
         else:

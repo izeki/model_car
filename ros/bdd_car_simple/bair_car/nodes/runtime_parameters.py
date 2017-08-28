@@ -32,6 +32,7 @@ Location =  'generic' #Smyth_tape'
 
 #weights_file_path = opjh("model_car/model_car/model/z2_color_tf.npy")
 weights_file_path = opjh('model_car/keras_model/nets/z2_color_version_1b_final.hdf5') #
+use_AI = True
 verbose = False
 #use_caffe = True
 n_avg_IMU = 10
@@ -59,12 +60,21 @@ motor_gain = 1.0
 #acc2rd_threshold = 150
 
 PID_min_max = [1.5,2.5]
-motor_freeze_threshold = 55
 robot_acc2rd_threshold = 15
 robot_acc_y_exit_threshold = 0
 potential_acc2rd_collision = 10
 potential_motor_freeze_collision = 20
 acc_y_tilt_event = 1000
+
+gyro_freeze_threshold = 500
+acc_freeze_threshold_x = 12
+acc_freeze_threshold_y = 12
+acc_freeze_threshold_z = 12
+acc_freeze_threshold_z_neg = -7
+motor_freeze_threshold = 60
+
+
+
 #
 ###################################################################
 
