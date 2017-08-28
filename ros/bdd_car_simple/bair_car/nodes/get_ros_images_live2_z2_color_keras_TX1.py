@@ -5,6 +5,7 @@ reed to run roslaunch first, e.g.,
 roslaunch bair_car bair_car.launch use_zed:=true record:=false
 """
 import sys, traceback
+import runtime_parameters as rp
 try:
     ########################################################
     #          KARAS SETUP SECTION
@@ -231,7 +232,7 @@ try:
                         AI_motor_previous = AI_motor
                         
 
-                        if AI_motor > motor_freeze_threshold and np.array(encoder_list[0:3]).mean() > 1 and np.array(encoder_list[-3:]).mean()<0.2 and state_transition_time_s > 1:
+                        if AI_motor > rp.motor_freeze_threshold and np.array(encoder_list[0:3]).mean() > 1 and np.array(encoder_list[-3:]).mean()<0.2 and state_transition_time_s > 1:
                             freeze = True
 
                         
@@ -269,15 +270,11 @@ try:
             print(d2s("In state",state,"for",state_transition_time_s,"seconds, previous_state =",previous_state))
             time_step.reset()
             if not folder_display_timer.check():
-                print("*** Data foldername = "+foldername+ '***')
-        if reload_timer.check():
-            #reload(run_params)
-            #from run_params import *
-            #reload(kzpy3.teg2.car_run_params)
-            #from kzpy3.teg2.car_run_params import *
-            reload(model_car.car_run_params)
-            from model_car.car_run_params import *
-            model_name_pub.publish(std_msgs.msg.String(weights_file_path))
+                print("*** Data foldername = "+rp.foldername+ '***')
+        if reload_timer.check():            
+            reload(rp)
+            
+            model_name_pub.publish(std_msgs.msg.String(rp.weights_file_path))
             reload_timer.reset()
 
         if git_pull_timer.check():

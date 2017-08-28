@@ -1,0 +1,36 @@
+preprocss.py -> 
+pkls_to_h5py.py -> 
+segment_h5py.py: 
+    function_list_runs(auto_direct_labelling=True) ->
+    or
+    function_set_label() ->
+        available labels:                 
+                aruco_ring: 'ar_r',
+                mostly_human: 'mH',
+                mostly_ai: 'mA',
+                out1_in2: 'o1i2', 
+                direct: 'D',
+                home: 'H',
+                furtive: 'Fu',
+                play: 'P',
+                racing: 'R',
+                multicar: 'M',
+                campus: 'C',    
+                night: 'Ni',
+                Smyth: 'Smy',
+                left: 'Lf',
+                notes: 'N',
+                local: 'L',
+                Tilden: 'T',
+                reject_run: 'X',
+                reject_intervals: 'Xi',
+                snow: 'S',
+                follow: 'F',
+                only_states_1_and_6_good: '1_6'
+                
+        
+    
+    create_normal_and_flip_segments ->
+    create_valid_hdf5_data_moments -> 
+    compile_run_codes ->
+    compile_low_steer_and_high_steer 
