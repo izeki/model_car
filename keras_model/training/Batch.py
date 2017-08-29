@@ -116,7 +116,7 @@ class Batch:
                                                   {'steer_motor_target_data': self.target_data})
             self.outputs = self.net.get_layer_output({'ZED_input': self.camera_data,
                                                       'meta_input': self.metadata})
-        elif mode == 'eavl':
+        elif mode == 'eval':
             self.outputs = self.net.get_layer_output({'ZED_input': self.camera_data,
                                                       'meta_input': self.metadata})
             a = self.target_data - self.outputs
