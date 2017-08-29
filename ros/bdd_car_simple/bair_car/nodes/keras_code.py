@@ -47,8 +47,8 @@ def run_model(camera_input, metadata):
 
     #ai_motor = 100 * output[0][19].data[0]
     #ai_steer = 100 * output[0][9].data[0]
-    ai_motor = 100 * output[1][0]
-    ai_steer = 100 * output[0][0] 
+    ai_motor = output[1][0]
+    ai_steer = output[0][0] 
 
     if rp.verbose:
         print('AI Prescale Motor: ' + str(ai_motor))
@@ -62,11 +62,14 @@ def run_model(camera_input, metadata):
     ai_motor = min(99, ai_motor)
     ai_steer = min(99, ai_steer)
 
-    if ai_motor > 65:
-        ai_motor = 55
 
     ai_motor = int((ai_motor + run_model.ai_motor_previous) / 2.0)
+    if ai_motor > 60:
+        ai_motor = 60
+
     run_model.ai_motor_previous = ai_motor
+    
+
     ai_steer = int((ai_steer + run_model.ai_steer_previous) / 2.0)
     run_model.ai_steer_previous = ai_steer
 
@@ -90,9 +93,9 @@ def format_camera_data(left_list, right_list):
     listoftensors = []
     for i in range(nframes):
         for side in (left_list, right_list):
-            listoftensors.append(side[-i - 1])
+            listoftensors.append(side[i - 2])
     camera_data[0] = np.concatenate(listoftensors, axis=2)
-    camera_data[0] = camera_data/255. - 0.5
+    camera_data[0] = camera_data[0]/255. - 0.5
     camera_data = np.transpose(camera_data, (0,3,1,2))
 
     return camera_data

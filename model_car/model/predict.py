@@ -19,7 +19,7 @@ def get_trained_model_1b(weights_path, input_width=672, input_height=376):
 
 
 def forward_pass(version, trained_model, ZED_data, meta_data_label, input_width=672, input_height=376):
-    if version == 'version 1b':
+    if version == 'version_1b':
         return forward_pass_1b(trained_model, ZED_data, meta_data_label, input_width, input_height)
     else:
         return None
