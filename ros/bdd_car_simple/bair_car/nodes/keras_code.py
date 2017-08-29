@@ -50,7 +50,7 @@ def run_model(camera_input, metadata):
     ai_motor = output[1][0]
     ai_steer = output[0][0] 
 
-    if rp.verbose:
+    if True: #rp.verbose:
         print('AI Prescale Motor: ' + str(ai_motor))
         print('AI Prescale Steer: ' + str(ai_steer))
     
@@ -64,6 +64,7 @@ def run_model(camera_input, metadata):
 
 
     ai_motor = int((ai_motor + run_model.ai_motor_previous) / 2.0)
+    
     if ai_motor > 60:
         ai_motor = 60
 
@@ -89,7 +90,7 @@ def format_camera_data(left_list, right_list):
     :return: formatted camera data ready for input into pytorch z2color
     """
     camera_start = time.clock()
-    camera_data = np.zeros((1,376,672,3*2*nframes))
+    camera_data = np.zeros((1,3*2*nframes,376,672))
     listoftensors = []    
     for side in (left_list, right_list):        
         for i in range(nframes):
@@ -111,13 +112,11 @@ def format_metadata(meta_data_label):
                          solver.meta_label,
                          solver.metadata_size[0], 
                          solver.metadata_size[1]))
-            
-    metadata[0,0,:,:]= meta_data_label['Racing']
-    metadata[0,1,:,:]= meta_data_label['AI']
-    metadata[0,2,:,:]= meta_data_label['Follow']
-    metadata[0,3,:,:]= meta_data_label['Direct']
-    metadata[0,4,:,:]= meta_data_label['Play']
-    metadata[0,5,:,:]= meta_data_label['Furtive']
     
+    i_label=0
+
+    for label in meta_data_label:
+        metadata[0,i_label,:,:]= meta_data_label[label]
+        i_label+=1
     return metadata
 
