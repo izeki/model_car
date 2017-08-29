@@ -140,7 +140,7 @@ def get_model(version, channel=3, meta_label=6, input_width=672, input_height=37
     if version == 'version_1b':
         return get_model_1b(channel, meta_label, input_width, input_height, phase)
     elif version == 'squeeze_net':
-        return get_model_squeez_net(channel, meta_label, input_width, input_height, phase)
+        return get_model_squeeze_net(channel, meta_label, input_width, input_height, phase)
     else:
         assert(False)
 
@@ -217,7 +217,7 @@ def fire(name, squeeze_planes, expand1x1_planes, expand3x3_planes, **kwargs):
     return f    
 
 
-def get_model_squeez_net(channel=3, meta_label=6, input_width=672, input_height=376,  phase='train'):
+def get_model_squeeze_net(channel=3, meta_label=6, input_width=672, input_height=376,  phase='train'):
     N_STEPS = 10
     ZED_data = Input(shape=(channel*4, input_height, input_width), name='ZED_input')
     metadata = Input(shape=(meta_label, 11, 20), name='meta_input')

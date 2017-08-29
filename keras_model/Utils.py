@@ -71,13 +71,13 @@ def save_net(weights_file_name, net, snap=False):
             os.path.join(
                 ARGS.save_path,
                 weights_file_name
-                + '.hdf5')
+                + '.hdf5'))
     else:
         net.save(
             os.path.join(
                 ARGS.save_path,
                 weights_file_name
-                + '_snap.hdf5')
+                + '_snap.hdf5'))
     
 
 

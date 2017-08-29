@@ -37,9 +37,9 @@ def fire(name, squeeze_planes, expand1x1_planes, expand3x3_planes, **kwargs):
     return f    
 
     
-class SqueezNet(Net):
+class SqueezeNet(Net):
     def __init__(self, meta_label=6, input_width=672, input_height=376):
-        super(SqueezNet, self).__init__(meta_label, input_width, input_height)
+        super(SqueezeNet, self).__init__(meta_label, input_width, input_height)
         self.metadata_size = (11, 20)
     
     def _get_model(self):
@@ -117,7 +117,7 @@ class SqueezNet(Net):
 
 
 def unit_test():
-    test_net = SqueezNet(6, 672, 376)
+    test_net = SqueezeNet(6, 672, 376)
     test_net.model_init()
     test_net.net.summary()
     a = test_net.forward({'ZED_input': np.random.rand(1, 12, 376, 672),

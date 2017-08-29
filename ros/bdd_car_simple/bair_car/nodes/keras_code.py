@@ -2,7 +2,7 @@ from keras_model.libs.utils2 import *
 
 import numpy as np
 
-#from nets.SqueezNet import SqueezeNet
+#from nets.SqueezeNet import SqueezeNet
 from nets.Z2ColorBatchNorm import Z2ColorBatchNorm
 import runtime_parameters as rp
 

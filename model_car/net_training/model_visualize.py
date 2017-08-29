@@ -13,7 +13,7 @@ import cv2
 #weights_file_path = sys.argv[1]
 #hdf5_filename = sys.argv[2]
 weights_file_path = opjD('/home/bdd/Desktop/tmp/z2_color_squeeze_net_snap.hdf5')
-hdf5_filename = '/home/bdd/Desktop/training_data/hdf5/runs/25.hdf5' #sys.argv[2]
+hdf5_filename = '/home/bdd/Desktop/training_data/data_set/hdf5/runs/01.hdf5' #sys.argv[2]
 version = 'squeeze_net'
 #version = 'version_1b'
 solver_file_path = 'z2_color_' + version
