@@ -85,7 +85,7 @@ def main():
                     net.model_init(
                         os.path.join(ARGS.save_path,
                                      weights_file_name
-                                     + '.hdf5'))
+                                     + '_snap.hdf5'))
 
                     if ARGS.display:
                         batch.display()
