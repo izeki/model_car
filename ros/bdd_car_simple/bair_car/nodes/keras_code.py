@@ -90,10 +90,10 @@ def format_camera_data(left_list, right_list):
     """
     camera_start = time.clock()
     camera_data = np.zeros((1,376,672,3*2*nframes))
-    listoftensors = []
-    for i in range(nframes):
-        for side in (left_list, right_list):
-            listoftensors.append(side[i - 2])
+    listoftensors = []    
+    for side in (left_list, right_list):        
+        for i in range(nframes):
+            listoftensors.append(side[i-2])
     camera_input = np.concatenate(listoftensors, axis=2)
     camera_input = camera_input/255. - 0.5
     camera_input = np.transpose(camera_input, (2,0,1))

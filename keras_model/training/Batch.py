@@ -59,10 +59,9 @@ class Batch:
     def data_into_batch(self, data, data_number):
         self.names.insert(0, data['name'])
 
-        # Camera Data
-        list_camera_input = []
-        for t in range(ARGS.nframes):
-            for camera in ('left', 'right'):
+        # Camera Data        
+        for camera in ('left', 'right'):
+            for t in range(ARGS.nframes):            
                 list_camera_input.append(data[camera][t])
         camera_data = np.concatenate(list_camera_input, axis=2)
         camera_data = camera_data / 255. - 0.5
