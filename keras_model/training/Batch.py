@@ -135,8 +135,8 @@ class Batch:
 
     def display(self):
         if ARGS.display:
-            o = self.outputs[0].data.cpu().numpy()
-            t = self.target_data[0].cpu().numpy()
+            o = self.outputs[0]
+            t = self.target_data[0]
 
             print(
                 'Loss:',
