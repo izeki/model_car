@@ -90,8 +90,7 @@ def main():
                     if ARGS.display:
                         batch.display()
                         plt.figure('loss')
-                        plt.clf()  # clears figure
-                        print_timer.reset()
+                        #plt.clf()  # clears figure                        
                 
 
             data.train_index.epoch_complete = False
