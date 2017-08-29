@@ -1,5 +1,4 @@
 from keras_model.libs.utils2 import *
-from keras_model.Parameters import ARGS
 import numpy as np
 
 from nets.SqueezeNet import SqueezeNet
@@ -19,12 +18,8 @@ nframes = None
 def init_model():
     global solver, nframes
     print("Loaded "+rp.weights_file_path)
-    if ARGS.network_model == 'Z2ColorBatchNorm':
-        solver = Z2ColorBatchNorm()
-    elif ARGS.network_model == 'SqueezeNet':
-        solver = SqueezeNet()
-    else:
-        raise Exception("Unknown model.")
+    #solver = Z2ColorBatchNorm()
+    solver = SqueezeNet()
     solver.model_init(rp.weights_file_path)    
     nframes = solver.N_FRAMES
     

@@ -13,9 +13,6 @@ parser.add_argument('--display', dest='display', action='store_true')
 parser.add_argument('--no-display', dest='display', action='store_false')
 parser.set_defaults(display=True)
 
-parser.add_argument('--network-model', default='SqueezeNet', type=str,
-                    help='Network Model')
-
 parser.add_argument('--verbose', default=True, type=bool,
                     help='Debugging mode')
 parser.add_argument('--interactive', default=False, type=bool,
