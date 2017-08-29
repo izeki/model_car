@@ -58,7 +58,7 @@ class Batch:
 
     def data_into_batch(self, data, data_number):
         self.names.insert(0, data['name'])
-
+        list_camera_input = []
         # Camera Data        
         for camera in ('left', 'right'):
             for t in range(ARGS.nframes):            
@@ -69,8 +69,7 @@ class Batch:
         self.camera_data[data_number, :, :, :] = camera_data
 
         # Behavioral Modes/Metadata
-        metadata = np.zeros((ARGS.batch_size, 
-                             self.net.meta_label,
+        metadata = np.zeros((self.net.meta_label,
                              self.net.metadata_size[0], 
                              self.net.metadata_size[1]))
         
@@ -105,8 +104,9 @@ class Batch:
         steer = steer / 99.
         motor = motor / 99.
         target_data = np.zeros((steer.shape[0]+motor.shape[0]))
-        target_data[0:steer.size()[0]] = steer
-        target_data[steer.size()[0]:steer.size()[0] + motor.size()[0]] = motor
+        
+        target_data[0:len(steer)] = steer
+        target_data[len(steer):len(steer) + len(motor)] = motor
         self.target_data[data_number, :] = target_data
     
     def forward_backward(self, data_moment_loss_record, mode='train'):

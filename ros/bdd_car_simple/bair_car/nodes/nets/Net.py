@@ -74,5 +74,5 @@ class Net(object):
         ai_motor = 100*(prediction[:,19])
         return ai_steer.tolist(), ai_motor.tolist()
     
-    def save(model_path):
+    def save(self, model_path):
         self.net.save(model_path)

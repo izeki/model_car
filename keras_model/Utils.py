@@ -67,18 +67,9 @@ class RateCounter:
 
 def save_net(weights_file_name, net, snap=False):
     if not snap:
-        net.save(
-            os.path.join(
-                ARGS.save_path,
-                weights_file_name
-                + '.hdf5'))
+        net.save(os.path.join(ARGS.save_path, weights_file_name + '.hdf5'))
     else:
-        net.save(
-            os.path.join(
-                ARGS.save_path,
-                weights_file_name
-                + '_snap.hdf5'))
-    
+        net.save(os.path.join(ARGS.save_path, weights_file_name + '_snap.hdf5'))    
 
 
 def display_sort_data_moment_loss(data_moment_loss_record, data):

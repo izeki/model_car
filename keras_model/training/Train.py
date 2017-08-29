@@ -6,6 +6,7 @@ from Parameters import ARGS
 import Data
 import Batch
 import Utils
+from libs.utils2 import *
 from keras import backend as K
 import matplotlib.pyplot as plt
 
@@ -39,7 +40,7 @@ def main():
 
     def run_net(data_index, mode):
         batch.fill(data, data_index)  # Get batches ready
-        batch.forward_backward(data_moment_loss_record. mode)
+        batch.forward_backward(data_moment_loss_record, mode)
 
     try:
         epoch = 0
@@ -47,11 +48,11 @@ def main():
         avg_val_loss = Utils.LossLog()
         while True:
             logging.debug('Starting training epoch #{}'.format(epoch))
-
-            # Train mode
+            
+            # Train mode            
             epoch_train_loss = Utils.LossLog()
             print_counter = Utils.MomentCounter(ARGS.print_moments)
-
+            
             while not data.train_index.epoch_complete:  # Epoch of training
                 run_net(data.train_index, 'train')  # Run network, Backpropagate
 
@@ -100,12 +101,11 @@ def main():
             avg_train_loss.add(epoch, epoch_train_loss.average())
             avg_train_loss.export_csv('logs/avg_train_loss.csv')
             logging.debug('Finished training epoch #{}'.format(epoch))
-            logging.debug('Starting validation epoch #{}'.format(epoch))
-            epoch_val_loss = Utils.LossLog()
-
-            print_counter = Utils.MomentCounter(ARGS.print_moments)
-
+            
             # Evaluate mode
+            epoch_val_loss = Utils.LossLog()
+            logging.debug('Starting validation epoch #{}'.format(epoch))
+            print_counter = Utils.MomentCounter(ARGS.print_moments)            
             while not data.val_index.epoch_complete:
                 run_net(data.val_index, 'eval')  # Run network
                 epoch_val_loss.add(data.train_index.ctr, batch.loss)
@@ -135,6 +135,7 @@ def main():
                 (epoch, epoch_val_loss.average()), net)
             epoch += 1
     except Exception:
+        traceback.print_exc(file=sys.stdout)
         logging.error(traceback.format_exc())  # Log exception
 
         # Interrupt Saves

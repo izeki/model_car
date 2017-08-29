@@ -30,8 +30,8 @@ class Data:
                                        self.hdf5_runs_path)
 
         # Load data indexes for training and validation
-        train_all_steer_path = ARGS.data_path + '/train_all_steer'
-        val_all_steer_path = ARGS.data_path + '/val_all_steer'
+        train_all_steer_path = self.hdf5_segment_metadata_path + '/train_all_steer'
+        val_all_steer_path = self.hdf5_segment_metadata_path + '/val_all_steer'
         print('loading train_valid_data_moments...')
         self.train_index = DataIndex(lo(train_all_steer_path), -1, 0)
         print('loading val_valid_data_moments...')

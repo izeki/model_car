@@ -197,7 +197,8 @@ class Z2ColorBatchNorm(Net):
         get_outputs = K.function([self.net.layers[0].input, 
                                   self.net.layers[9].input, K.learning_phase()],
                                  [self.net.layers[20].output])
-        layer_outputs = get_outputs([model_input[0], model_input[1], training_flag])[0]
+        layer_outputs = get_outputs([model_input['ZED_input'], model_input['meta_input'], training_flag])[0]
+        
         return layer_outputs      
 
 

@@ -19,7 +19,7 @@ parser.add_argument('--interactive', default=False, type=bool,
                     help='Interactive mode')
 # parser.add_argument('--aruco', default=True, type=bool, help='Use Aruco data')
 parser.add_argument('--data-path', default='/home/bdd/' 
-                    + 'Desktop/training_data/', type=str)
+                    + 'Desktop/training_data', type=str)
 parser.add_argument('--resume-path', default='/home/bdd/' 
                     + 'Desktop/tmp/z2_color_squeeze_net_snap.hdf5',
                     type=str, help='Path to'
