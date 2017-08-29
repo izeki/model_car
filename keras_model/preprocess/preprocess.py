@@ -37,7 +37,7 @@ data preprocess
 """
 
 def main():
-    bag_folders_src = ARGS.data_path
+    bag_folders_src = opj(ARGS.data_path,'new')
     bag_folders_dst = ARGS.data_path
     bag_folders_dst_rgb1to4_path = opj(ARGS.data_path,'rgb_1to4')
     bag_folders_dst_meta_path = opj(ARGS.data_path,'meta')

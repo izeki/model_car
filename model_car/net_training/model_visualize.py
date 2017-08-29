@@ -1,6 +1,7 @@
 
 from model_car.model.model import *
 from model_car.data_analysis.data_parsing.get_data_from_bag_files import *
+from model_car.car_run_params import *
 
 import numpy as np
 from numpy import *
@@ -9,9 +10,12 @@ from keras import optimizers
 import matplotlib.pyplot as plt
 import cv2
 
-weights_file_path = sys.argv[1]
-hdf5_filename = sys.argv[2]
-version = 'version_1b'
+#weights_file_path = sys.argv[1]
+#hdf5_filename = sys.argv[2]
+weights_file_path = opjD('/home/bdd/Desktop/tmp/z2_color_squeeze_net_snap.hdf5')
+hdf5_filename = '/home/bdd/Desktop/training_data/hdf5/runs/25.hdf5' #sys.argv[2]
+version = 'squeeze_net'
+#version = 'version_1b'
 solver_file_path = 'z2_color_' + version
 #weights_file_mode = 'most recent' #'this one' #None #'most recent' #'this one'  #None #'most recent'
 #weights_file_path = opjD('/home/bdd/git/model_car/model_car/model/z2_color_tf.npy') #opjD('z2_color_long_train_21_Jan2017') #None #opjh('kzpy3/caf6/z2_color/z2_color.caffemodel') #None #'/home/karlzipser/Desktop/z2_color' # None #opjD('z2_color')
@@ -35,7 +39,16 @@ while True:
         if "True" in k:
             continue
         ZED_input = hdf5_content[k]['ZED_input'][:]/255.-0.5
-        meta_input = hdf5_content[k]['meta_input'][:]
+        #version_1b
+        #meta_input = hdf5_content[k]['meta_input'][:]        
+        meta_data_label = {'Direct': Direct, 'Follow': Follow, 'Play': Play, 'Furtive': Furtive, 'AI': AI, 'Racing': Racing}
+        meta_input = np.zeros((1,6, 11, 20))
+        i_label=0        
+        for label in meta_data_label:
+            meta_input[0,i_label,:,:]= meta_data_label[label]
+            i_label+=1        
+        
+        
         # print(ZED_input[0, 0, :, :])
         prediction = model.predict_on_batch({'ZED_input': ZED_input, 'meta_input': meta_input})
         pre_steer = 100 * prediction[0, 9]
