@@ -11,7 +11,7 @@
         </node>
 
         <node name="run_AI" pkg="bair_car" type="network_node.py" output="screen" if="$(arg use_AI)">
-        <!--<node name="run_AI" pkg="bair_car" type="get_ros_images_live2_z2_color_keras_TX1.py" output="screen" if="$(arg use_AI)">-->
+        
         </node>
 
         <group ns="zed" if="$(arg use_zed)">        

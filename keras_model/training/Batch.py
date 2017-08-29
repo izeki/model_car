@@ -66,7 +66,7 @@ class Batch:
                 list_camera_input.append(data[camera][t])
         camera_data = np.concatenate(list_camera_input, axis=2)
         camera_data = camera_data / 255. - 0.5
-        camera_data = np.transpose(camera, (2,0,1))
+        camera_data = np.transpose(camera_data, (2,0,1))
         self.camera_data[data_number, :, :, :] = camera_data
 
         # Behavioral Modes/Metadata

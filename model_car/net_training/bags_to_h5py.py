@@ -1,6 +1,6 @@
 from model_car.utils import *
 from model_car.vis import *
-from model_car.net_training.training_data_generator_alt import training_data_generator, visualize_data_model_version
+from model_car.net_training.training_data_generator_alt import training_data_generator, visualize_data_model
 import model_car.net_training.type_handlers.Bag_File as Bag_File
 import cv2
 import h5py
@@ -338,7 +338,7 @@ def main():
                                     #solver_inputs = h5py.File(hdf5_filename)
                                     visualize_data(data)
                                     if result != None:
-                                        visualize_data_model_version(version, result, flip)
+                                        visualize_data_model(version, result, flip)
                                     cprint(d2s('ctr =',ctr,'rate =',dp(ctr/(time.time()-t0),1),'Hz','size =',dp(os.path.getsize(file_name)/10**12.,4),'TB'),'red','on_yellow') #ctr = 0
                                     cprint(d2s('timestamp percent =', 100*len(timestamps)/(1.*len(BagFolder_dic[run_name]['good_bag_timestamps'][bf]))),'green')
                                     timer.reset()

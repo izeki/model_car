@@ -94,9 +94,10 @@ def format_camera_data(left_list, right_list):
     for i in range(nframes):
         for side in (left_list, right_list):
             listoftensors.append(side[i - 2])
-    camera_data[0] = np.concatenate(listoftensors, axis=2)
-    camera_data[0] = camera_data[0]/255. - 0.5
-    camera_data = np.transpose(camera_data, (0,3,1,2))
+    camera_input = np.concatenate(listoftensors, axis=2)
+    camera_input = camera_input/255. - 0.5
+    camera_input = np.transpose(camera_input, (2,0,1))
+    camera_data[0, :, :, :] = camera_input
 
     return camera_data
 
