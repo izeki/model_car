@@ -133,11 +133,13 @@ def main():
                 "epoch%02d_save_%f" %
                 (epoch, epoch_val_loss.average()), net)
             epoch += 1
-    except Exception:
+    
+    except KeyboardInterrupt or Exception:
         traceback.print_exc(file=sys.stdout)
         logging.error(traceback.format_exc())  # Log exception
 
         # Interrupt Saves
+        print('Save interrupt model snapshot...')
         Utils.save_net('interrupt_save', net)
         epoch_train_loss.export_csv(
             'logs/interrupt%02d_train_loss.csv' %

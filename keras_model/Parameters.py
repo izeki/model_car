@@ -21,7 +21,7 @@ parser.add_argument('--interactive', default=False, type=bool,
 parser.add_argument('--data-path', default='/home/bdd/' 
                     + 'Desktop/training_data', type=str)
 parser.add_argument('--resume-path', default='/home/bdd/' 
-                    + 'Desktop/tmp/z2_color_squeeze_net_snap.hdf5',
+                    + 'Desktop/tmp/epoch25_save_snap.hdf5',
                     type=str, help='Path to'
                     + ' resume file containing network state dictionary')
 parser.add_argument('--save-path', default='/home/bdd/' 
