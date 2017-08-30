@@ -8,7 +8,7 @@ parser = argparse.ArgumentParser(  # pylint: disable=invalid-name
 
 # parser.add_argument('--gpu', default=0, type=int, help='Cuda GPU ID, \
 #                        not support, leave for keras to assign GPU resource')
-parser.add_argument('--batch-size', default=100, type=int)
+parser.add_argument('--batch-size', default=200, type=int)
 parser.add_argument('--display', dest='display', action='store_true')
 parser.add_argument('--no-display', dest='display', action='store_false')
 parser.set_defaults(display=True)
