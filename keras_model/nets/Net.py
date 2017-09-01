@@ -55,6 +55,25 @@ class Net(object):
                 metrics=['accuracy'])
         self.net = model
         
+        
+    def model_compile(self, 
+                      learning_rate,
+                      momentum,
+                      decay,
+                      nesterov = True):
+        model = self.net
+        
+        model.compile(
+                loss = 'mean_squared_error', 
+                optimizer = optimizers.SGD(
+                                    lr = learning_rate,
+                                    momentum = momentum, 
+                                    decay = decay,
+                                    nesterov = nesterov),
+                metrics=['accuracy'])
+        self.net = model
+        
+        
     def _get_model(self):
         raise NotImplementedError
         
