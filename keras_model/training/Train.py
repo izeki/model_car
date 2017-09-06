@@ -30,6 +30,13 @@ def main():
     
     data = Data.Data()
     batch = Batch.Batch(net)
+    
+    first = True
+    pre_valid_loss = -1
+    lr = 0.01
+    momentum = 0.001 
+    decay = 0.000001
+    
 
     # Maitains a list of all inputs to the network, and the loss and outputs for
     # each of these runs. This can be used to sort the data by highest loss and
@@ -86,6 +93,9 @@ def main():
                         os.path.join(ARGS.save_path,
                                      weights_file_name
                                      + '_snap.hdf5'))
+                    net.model_compile(lr,
+                                      momentum,
+                                      decay)
 
                     if ARGS.display:
                         batch.display()
@@ -107,7 +117,7 @@ def main():
             print_counter = Utils.MomentCounter(ARGS.print_moments)            
             while not data.val_index.epoch_complete:
                 run_net(data.val_index, 'eval')  # Run network
-                epoch_val_loss.add(data.train_index.ctr, batch.loss)
+                epoch_val_loss.add(data.train_index.ctr, batch.loss)                
 
                 if print_counter.step(data.val_index):
                     epoch_val_loss.export_csv(
@@ -127,6 +137,16 @@ def main():
             data.val_index.epoch_complete = False
             avg_val_loss.add(epoch, epoch_val_loss.average())
             avg_val_loss.export_csv('logs/avg_val_loss.csv')
+            
+            if first:
+                pre_valid_loss = epoch_val_loss.average()
+            else:
+                first = False
+                cur_valid_loss = epoch_val_loss.average()
+                if cur_valid_loss < pre_valid_loss:
+                    lr = lr / 2
+                pre_valid_loss = cur_valid_loss         
+            
             logging.debug('Finished validation epoch #{}'.format(epoch))
             logging.info('Avg Val Loss = {}'.format(epoch_val_loss.average()))
             Utils.save_net(

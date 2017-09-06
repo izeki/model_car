@@ -32,7 +32,7 @@ Location =  'generic' #Smyth_tape'
 
 #weights_file_path = opjh("model_car/model_car/model/z2_color_tf.npy")
 #weights_file_path = opjh('model_car/keras_model/nets/z2_color_version_1b_final.hdf5') #
-weights_file_path = opjh('model_car/keras_model/nets/z2_color_squeeze_net.hdf5') #
+weights_file_path = opjh('model_car/keras_model/nets/z2_color_squeeze_net.hdf5')
 use_AI = True
 verbose = False
 #use_caffe = True
