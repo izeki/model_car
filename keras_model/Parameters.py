@@ -15,7 +15,7 @@ parser.set_defaults(display=True)
 
 parser.add_argument('--verbose', default=True, type=bool,
                     help='Debugging mode')
-parser.add_argument('--interactive', default=False, type=bool,
+parser.add_argument('--interactive', default=True, type=bool,
                     help='Interactive mode')
 # parser.add_argument('--aruco', default=True, type=bool, help='Use Aruco data')
 parser.add_argument('--data-path', default='/home/bdd/' 
